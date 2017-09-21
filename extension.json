@@ -1,0 +1,75 @@
+{
+	"name": "WikiPathways",
+	"version": "1.0",
+	"license-name": "GPL-3.0",
+	"author": [
+		"[http://mwstake.org Mark A. Hershberger]",
+		"..."
+	],
+	"requires": {
+		"MediaWiki": ">=1.29"
+	},
+	"url": "https://wikipathways.org/",
+	"descriptionmsg": "wikipathways-desc",
+	"type": "misc",
+	"MessagesDirs": {
+		"WikiPathways": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"WikiPathways\\MagicWord": "src/MagicWord.php",
+		"WikiPathways\\Hook": "src/Hook.php",
+		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
+		"WikiPathways\\PathwayViewer": "src/PathwayViewer.php",
+		"WikiPathways\\PathwayThumb": "src/PathwayThumb.php",
+		"WikiPathways\\EditApplet": "src/EditApplet.php"
+	},
+	"ExtensionFunctions": [
+		"WikiPathways\\XrefPanel::xref",
+		"WikiPathways\\Hook::pathwayViewer"
+	],
+	"Hooks": {
+		"ArticleSaveComplete":  "WikiPathways\\Hook::updateTags",
+		"LanguageGetMagic": [
+			"WikiPathways\\MagicWord::onLanguageGetMagic",
+			"WikiPathways\\Hook::pathwayMagic"
+		],
+		"LinkerMakeExternalLink":  "WikiPathways\\Hook::externalLink",
+		"MagicWordMagicWords": "WikiPathways\\MagicWord::onMagicWordMagicWords",
+		"MagicWordwgVariableIDs":  "WikiPathways\\MagicWord::onMagicWordwgVariableIDs",
+		"OutputPageParserOutput": "WikiPathways\\Hook::addJavascript",
+		"PageDisplay": "WikiPathways\\Hook::stopDisplay",
+		"ParserGetVariableValueSwitch":  "WikiPathways\\MagicWord::onParserGetVariableValueSwitch"
+	},
+	"GroupPermissions": {
+		"sysop": {
+			"addpagetoanywatchlist": true,
+			"seepagewatchers": true
+		}
+	},
+	"AvailableRights": [
+		"addpagetoanywatchlist",
+		"seepagewatchers"
+	],
+	"ResourceModules": {
+		"ext.whoIsWatching": {
+			"styles": [
+				"modules/ext.whoIsWatching.css"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": ""
+	},
+	"config": {
+		"_prefix": "whoiswatching_",
+		"nametype": "RealName",
+		"allowaddingpeople": false,
+		"showifzero": true,
+		"showwatchingusers": false,
+		"maxPicklistUsers": 10
+	},
+	"manifest_version": 1
+}

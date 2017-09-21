@@ -1,4 +1,23 @@
 <?php
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	echo "This file is part of MediaWiki, it is not a valid entry point.\n";
@@ -15,12 +34,11 @@ function wfotag() {
 }
 
 function oheader(&$parser, &$text) {
-	//DEPRECATED//$text = preg_replace(
-	//	'/<!-- ENCODED_CONTENT ([0-9a-zA-Z\\+]+=*) -->/e',
-	//	'base64_decode("$1")',
-	//	$text);
-	$text = preg_replace_callback('/<!-- ENCODED_CONTENT ([0-9a-zA-Z\\+]+=*) -->/',
-		create_function('$matches', 'return base64_decode($matches[1]);'), $text);
+	$text = preg_replace_callback(
+		'/<!-- ENCODED_CONTENT ([0-9a-zA-Z\\+]+=*) -->/',
+		function ( $matches ) {
+			return base64_decode( $matches[1] );
+		}, $text );
 
 	return true;
 }

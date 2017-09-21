@@ -61,4 +61,3 @@ require_once( "$IP/wpi/extensions/ContributionScores/ContributionScores.php" );
 require_once( "$IP/wpi/extensions/PullPages/PullPages.php" );
 require_once( "$IP/wpi/search.php" );
 require_once( "$IP/wpi/extensions/TissueAnalyzer/TissueAnalyzer.php" );
-

@@ -1,5 +1,27 @@
 <?php
+
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
+
 error_reporting( -1 );
+$wgScriptPath = "/gladstone";
 
 wfLoadExtensions( [
 	"Cite",
@@ -17,7 +39,8 @@ wfLoadExtensions( [
 	"SyntaxHighlight_GeSHi",
 	"TitleBlacklist",
 	"UserSnoop",
-	"WikiEditor"
+	"WikiEditor",
+	"WikiPathways"
 ] );
 
 wfLoadSkin( "Vector" );
@@ -28,7 +51,6 @@ require_once "$IP/extensions/UserMerge/UserMerge.php";
 require_once "$IP/extensions/BiblioPlus/BiblioPlus.php";
 
 $wgCaptchaClass = 'QuestyCaptcha';
-$wgScriptPath = "/gladstone";
 
 // Set to true if you want to exclude Bots from the reporting - Can be omitted.
 $contribScoreIgnoreBots = true;
@@ -71,9 +93,6 @@ $wgRCMaxAge = 60 * 24 * 3600;
 
 // JS Type http://developers.pathvisio.org/ticket/1567
 $wgJsMimeType = "text/javascript";
-
-// Lastly, include javascripts (that may have been added by other extensions)
-# require_once('wpi/Javascript.php');
 
 /* Users have to have a confirmed email address to edit.  This also
  * requires a valid email at account creation time. */
@@ -310,106 +329,11 @@ $wgEnableUserEmail  = true;
 $wgEmergencyContact = "wikipathways@gladstone.ucsf.edu";
 $wgPasswordSender = "no-reply@wikipathways.com";
 
-class LocalHooks {
-	/* http://developers.pathvisio.org/ticket/1559 */
-	static function stopDisplay( $output, $sk ) {
-		if( strtolower( 'MediaWiki:Questycaptcha-qna' ) === strtolower( $output->getPageTitle() ) ||
-			strtolower( 'MediaWiki:Questycaptcha-q&a' ) === strtolower( $output->getPageTitle() ) ) {
-			global $wgUser, $wgTitle;
-			if( !$wgTitle->userCan( "edit" ) ) {
-				$output->clearHTML();
-				$wgUser->mBlock = new Block( '127.0.0.1', 'WikiSysop', 'WikiSysop', 'none', 'indefinite' );
-				$wgUser->mBlockedby = 0;
-				$output->blockedPage();
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/* http://www.pathvisio.org/ticket/1539 */
-	static public function externalLink ( &$url, &$text, &$link, &$attribs = null ) {
-		global $wgExternalLinkTarget;
-		wfProfileIn( __METHOD__ );
-		wfDebug(__METHOD__.": Looking at the link: $url\n");
-
-		$linkTarget = "_blank";
-		if( isset( $wgExternalLinkTarget ) && $wgExternalLinkTarget != "") {
-			$linkTarget = $wgExternalLinkTarget;
-		}
-
-		/**AP20070417 -- moved from Linker.php by mah 20130327
-		 * Added support for opening external links as new page
-		 * Usage: [http://www.genmapp.org|_new Link]
-		 */
-		if ( substr( $url, -5 ) == "|_new" ) {
-			$url = substr( $url, 0, strlen( $url ) - 5 );
-			$linkTarget = "new";
-		} elseif ( substr( $url, -7 ) == "%7c_new" ) {
-			$url = substr( $url, 0, strlen( $url ) - 7 );
-			$linkTarget = "new";
-		}
-
-		# Hook changed to include attribs in 1.15
-		if( $attribs !== null ) {
-			$attribs["target"] = $linkTarget;
-			return true;		/* nothing else should be needed, so we can leave the rest */
-		}
-
-		/* ugh ... had to copy this bit from makeExternalLink */
-		$l = new Linker;
-		$style = $l->getExternalLinkAttributes( $url, $text, 'external ' );
-		global $wgNoFollowLinks, $wgNoFollowNsExceptions;
-		if( $wgNoFollowLinks && !(isset($ns) && in_array($ns, $wgNoFollowNsExceptions)) ) {
-			$style .= ' rel="nofollow"';
-		}
-
-		$link = '<a href="'.$url.'" target="'.$linkTarget.'"'.$style.'>'.$text.'</a>';
-		wfProfileOut( __METHOD__ );
-
-		return false;
-	}
-
-
-	static public function updateTags( &$article, &$user, $text, $summary, $minoredit, $watchthis, $sectionanchor, &$flags,
-		$revision, &$status = null, $baseRevId = null ) {
-		$title = $article->getTitle();
-		if( $title->getNamespace() !== NS_PATHWAY ) {
-			return true;
-		}
-
-		if( !$title->userCan( "autocurate" ) ) {
-			wfDebug( __METHOD__ . ": User can't autocurate\n" );
-			return true;
-		}
-
-		wfDebug( __METHOD__ . ": Autocurating tags for {$title->getText()}\n" );
-		$db = wfGetDB( DB_MASTER );
-		$tags = MetaTag::getTagsForPage( $title->getArticleID() );
-		foreach( $tags as $tag ) {
-			$oldRev = $tag->getPageRevision();
-			if ( $oldRev ) {
-				wfDebug( __METHOD__ . ": Setting {$tag->getName()} to {$revision->getId()}\n" );
-				$tag->setPageRevision( $revision->getId() );
-				$tag->save();
-			} else {
-				wfDebug( __METHOD__ . ": No revision information for {$tag->getName()}\n" );
-			}
-		}
-		return true;
-	}
-}
-
-$wgHooks['LinkerMakeExternalLink'][] = 'LocalHooks::externalLink';
-$wgHooks['BeforePageDisplay'][] = 'LocalHooks::stopDisplay';
-$wgHooks['ArticleSaveComplete'][] = 'LocalHooks::updateTags';
-
 require_once "wpi.php";
 require_once "PathwayOfTheDay/PathwayOfTheDay.php";
 require_once "siteStats.php";
 require_once "pathwayInfo.php";
 require_once "imageSize.php";
-require_once "magicWords.php";
 require_once "PopularPathwaysPage2/PopularPathwaysPage.php";
 require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
 require_once "NewPathwaysPage/NewPathwaysPage.php";
@@ -421,10 +345,8 @@ require_once "LabeledSectionTransclusion/lsth.php";
 require_once "SearchPathways/SearchPathways.php";
 require_once "SearchPathways/searchPathwaysBox.php";
 require_once "button.php";
-require_once "pathwayThumb.php";
 require_once "imageLink.php";
 require_once "BrowsePathways/BrowsePathways.php";
-require_once "editApplet.php";
 require_once "listPathways.php";
 require_once "movePathway.php";
 require_once "deletePathway.php";
@@ -452,16 +374,13 @@ require_once "recentChangesBox.php";
 require_once "pathwayBibliography.php";
 require_once "otag/otags_main.php";
 require_once "ontologyindex/ontologyindex.php";
-require_once "PathwayViewer/PathwayViewer.php";
 require_once "StubManager/StubManager.php";
 require_once "ParserFunctionsHelper/ParserFunctionsHelper.php";
 require_once "SecureHTML/SecureHTML.php";
 #require_once "RSS/rss.php";
-require_once "XrefPanel.php";
 require_once "statistics/StatisticsHook.php";
 require_once "PageEditor/PageEditor.php";
 #require_once "ContributionScores/ContributionScores.php";
 require_once "PullPages/PullPages.php";
 require_once "search.php";
 require_once "TissueAnalyzer/TissueAnalyzer.php";
-
