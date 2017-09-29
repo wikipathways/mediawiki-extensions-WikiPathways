@@ -8,64 +8,106 @@ function wfImageLink() {
 }
 
 function wfImageLink_Magic( &$magicWords, $langCode ) {
-	$magicWords['imgLink'] = array( 0, 'imgLink' );
+	$magicWords['imgLink'] = [ 0, 'imgLink' ];
 	return true;
 }
 
-/** Modifies from pathwayThumb.php
- * Insert arbitrary images as thumbnail links to any SPECIAL, PATHWAY, HELP or MAIN page, or external link.
- * Parameters: image filename, display width, horizonal alignment, caption, namespace (special, pathway, main (default), or external), page title (stable id for pathways, e.g., WP274), tooltip.
- * Usage: Special page example: {{#imgLink:Wishlist_thumb_200.jpg|200|center|Wish list page|special|SpecialWishList|Wish list}}
- *        Pathway page example: {{#imgLink:Sandbox_thumb_200.jpg|200|center|Sandbox page|pathway|WP274|Sandbox}}
- *        Main page example: {{#imgLink:Download_all_thumb_200.jpg|200|center|Download page||Download_Pathways|Download pathways}}
- * 	  External link example: {{#imgLink:WikiPathwaysSearch2.png|200|center||Help|{{FULLPAGENAME}}/WikiPathwaysSearch|Search}}
+/**
+ * Modifies from pathwayThumb.php
+ *
+ * Insert arbitrary images as thumbnail links to any SPECIAL, PATHWAY,
+ * HELP or MAIN page, or external link.
+ *
+ * @param Parser $parser object
+ * @param string $img image filename
+ * @param int $width display width
+ * @param string $align horizonal alignment
+ * @param string $caption caption
+ * @param string $namespace namespace (special, pathway, main (default), or external)
+ * @param string $pagetitle stable id for pathways, e.g., WP274
+ * @param string $tooltip tooltip.
+ * @param string $id id
+ * @return array
+ *
+ * Usage: Special page example:
+ *     {{#imgLink:Wishlist_thumb_200.jpg|200|center|Wish list page
+ *         |special|SpecialWishList|Wish list}}
+ *
+ *    Pathway page example:
+ *     {{#imgLink:Sandbox_thumb_200.jpg|200|center|Sandbox page|pathway|WP274|Sandbox}}
+ *
+ *    Main page example:
+ *     {{#imgLink:Download_all_thumb_200.jpg|200|center|Download page||Download_Pathways
+ *         |Download pathways}}
+ *
+ * 	  External link example:
+ *     {{#imgLink:WikiPathwaysSearch2.png|200|center||Help|{{FULLPAGENAME}}/WikiPathwaysSearch|Search}}
  */
-function renderImageLink( &$parser, $img, $width = 200, $align = '', $caption = '', $namespace = '', $pagetitle = '', $tooltip = '', $id='imglink') {
-	global $wgUser;
+function renderImageLink(
+	Parser $parser, $img, $width = 200, $align = '', $caption = '', $namespace = '',
+	$pagetitle = '', $tooltip = '', $id='imglink'
+) {
 	$parser->disableCache();
 	try {
 
-		$caption = html_entity_decode($caption);        //This can be quite dangerous (injection),
-		//we would rather parse wikitext, let me know if
-		//you know a way to do that (TK)
+		// FIXME This can be quite dangerous (injection),
+		$caption = html_entity_decode( $caption );
+		// we would rather parse wikitext, let me know if
+		// you know a way to do that (TK)
 
-		$output = makeImageLinkObj($img, $caption, $namespace, $pagetitle, $tooltip, $align, $id, $width);
+		$output = makeImageLinkObj(
+			$img, $caption, $namespace, $pagetitle, $tooltip, $align, $id, $width
+		);
 
-	} catch(Exception $e) {
+	} catch ( Exception $e ) {
 		return "invalid image link: $e";
 	}
-	return array($output, 'isHTML'=>1, 'noparse'=>1);
+	return [ $output, 'isHTML' => 1, 'noparse' => 1 ];
 }
 
-
-/** MODIFIED FROM Linker.php
+/**
+ * MODIFIED FROM Linker.php
  * Make HTML for a thumbnail including image, border and caption
- * $img is an Image object
+ *
+ * @param string $img an Image object
+ * @param string $label caption
+ * @param string $namespace namespace (special, pathway, main (default), or external)
+ * @param string $pagetitle stable id for pathways, e.g., WP274
+ * @param string $alt tool tip text
+ * @param string $align alignment
+ * @param string $id id
+ * @param int $boxwidth width
+ * @param bool $boxheight unused
+ * @param bool $framed unused
+ * @return string
  */
-function makeImageLinkObj( $img, $label = '', $namespace = '', $pagetitle = '', $alt, $align = 'right', $id = 'thumb', $boxwidth = 180, $boxheight=false, $framed=false ) {
-	global $wgStylePath, $wgContLang;
+function makeImageLinkObj(
+	$img, $label = '', $namespace = '', $pagetitle = '', $alt = '', $align = 'right',
+	$id = 'thumb', $boxwidth = 180, $boxheight=false, $framed=false
+) {
+	global $wgContLang;
 
-	$img = new LocalFile(Title::makeTitleSafe( NS_IMAGE, $img ), RepoGroup::singleton()->getLocalRepo());
+	$img = wfLocalFile( Title::makeTitleSafe( NS_IMAGE, $img ) );
 	$imgURL = $img->getURL();
 
 	$href = '';
 
-	switch($namespace){
+	switch ( $namespace ) {
 		case 'special':
-			$title = Title::newFromText($pagetitle, NS_SPECIAL);
-			if( $title ) {
+			$title = Title::newFromText( $pagetitle, NS_SPECIAL );
+			if ( $title ) {
 				$href = $title->getFullUrl();
 			}
 			break;
 		case 'pathway':
-			$title = Title::newFromText($pagetitle, NS_PATHWAY);
-			if( $title ) {
+			$title = Title::newFromText( $pagetitle, NS_PATHWAY );
+			if ( $title ) {
 				$href = $title->getFullUrl();
 			}
 			break;
 		case 'help':
-			$title = Title::newFromText($pagetitle, NS_HELP);
-			if( $title ) {
+			$title = Title::newFromText( $pagetitle, NS_HELP );
+			if ( $title ) {
 				$href = $title->getFullUrl();
 			}
 			break;
@@ -73,8 +115,8 @@ function makeImageLinkObj( $img, $label = '', $namespace = '', $pagetitle = '', 
 			$href = $pagetitle;
 			break;
 		default:
-			$title = Title::newFromText($pagetitle, NS_MAIN);
-			if( $title ) {
+			$title = Title::newFromText( $pagetitle, NS_MAIN );
+			if ( $title ) {
 				$href = $title->getFullUrl();
 			}
 	}
@@ -99,27 +141,33 @@ function makeImageLinkObj( $img, $label = '', $namespace = '', $pagetitle = '', 
 		$boxheight = $height;
 		$thumbUrl  = $img->getViewURL();
 	} else {
-		if ( $boxheight === false ) $boxheight = -1;
-		$thumb = $img->getThumbnail( $boxwidth, $boxheight );
+		$params = [ 'width' => $boxwidth ];
+		if ( $boxheight !== false ) {
+			$params['height'] = $boxheight;
+		}
+
+		$thumb = $img->transform( $params );
+
 		if ( $thumb ) {
 			$thumbUrl = $thumb->getUrl();
-			$boxwidth = $thumb->width;
-			$boxheight = $thumb->height;
+			$boxwidth = $thumb->getWidth();
+			$boxheight = $thumb->getHeight();
 		} else {
 			$error = $img->getLastError();
 		}
 	}
 	$oboxwidth = $boxwidth + 2;
 
-	$more = htmlspecialchars( wfMsg( 'thumbnail-more' ) );
+	$more = htmlspecialchars( wfMessage( 'thumbnail-more' ) );
 	$magnifyalign = $wgContLang->isRTL() ? 'left' : 'right';
 	$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
 
-	$s = "<div id=\"{$id}\" class=\"thumb t{$align}\"><div class=\"thumbinner\" style=\"width:{$oboxwidth}px;\">";
-	if( $thumbUrl == '' ) {
+	$s = '<div id="' . $id . '" class="thumb t' . $align
+	   . '"><div class="thumbinner" style="width:' . $oboxwidth . 'px;">';
+	if ( $thumbUrl == '' ) {
 		// Couldn't generate thumbnail? Scale the image client-side.
 		$thumbUrl = $img->getViewURL();
-		if( $boxheight == -1 ) {
+		if ( $boxheight == -1 ) {
 			// Approximate...
 			$boxheight = intval( $height * $boxwidth / $width );
 		}
@@ -127,9 +175,9 @@ function makeImageLinkObj( $img, $label = '', $namespace = '', $pagetitle = '', 
 
 	if ( $error ) {
 		$s .= htmlspecialchars( $error );
-	} elseif( !$img->exists() ) {
+	} elseif ( !$img->exists() ) {
 		$s .= "Image does not exist";
-	} elseif( $href === "" ) {
+	} elseif ( $href === "" ) {
 		$s .= "Title error";
 	} else {
 		$s .= '<a href="'.$href.'" class="internal" title="'.$alt.'">'.
@@ -138,6 +186,5 @@ function makeImageLinkObj( $img, $label = '', $namespace = '', $pagetitle = '', 
 			'longdesc="'.$href.'" class="thumbimage" /></a>';
 	}
 	$s .= '  <div class="thumbcaption"'.$textalign.'>'.$label."</div></div></div>";
-	return str_replace("\n", ' ', $s);
-	//return $s;
+	return str_replace( "\n", ' ', $s );
 }
