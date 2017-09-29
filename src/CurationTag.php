@@ -1,99 +1,35 @@
 <?php
-
-require_once(WPI_SCRIPT_PATH . "/MetaTag.php");
-require_once("CurationTagsMailer.php");
-
-$wgExtensionMessagesFiles['CurationTags'] = dirname( __FILE__ ) . '/CurationTags.i18n.php';
-$wfCurationTagsPath = WPI_URL . "/extensions/CurationTags";
-
-//Register AJAX functions
-$wgAjaxExportList[] = "CurationTagsAjax::getTagNames";
-$wgAjaxExportList[] = "CurationTagsAjax::getTagData";
-$wgAjaxExportList[] = "CurationTagsAjax::saveTag";
-$wgAjaxExportList[] = "CurationTagsAjax::removeTag";
-$wgAjaxExportList[] = "CurationTagsAjax::getAvailableTags";
-$wgAjaxExportList[] = "CurationTagsAjax::getTagHistory";
-$wgAjaxExportList[] = "CurationTagsAjax::getTags";
-
-$wgExtensionFunctions[] = "wfCurationTags";
-
-function wfCurationTags() {
-// 	global $wgParser;
-// 	$wgParser->setHook( "curationTags", "displayCurationTags" );
-
-	
-// 	global $wgMessageCache;
-// 	$wgMessageCache->addMessages(
-// 	array(
-// 	'tagemail_subject' => '{{SITENAME}} page $PAGETITLE has been changed by $PAGEEDITOR',
-// 	'tagemail_body' => 'Dear $WATCHINGUSERNAME,
-
-
-// $PAGEEDITOR $ACTIONd curation tag "$TAGNAME" on page $PAGETITLE. See $PAGETITLE_URL for the current version.
-
-// Contact the editor:
-// mail: $PAGEEDITOR_EMAIL
-// wiki: $PAGEEDITOR_WIKI
-
-// There will be no other notifications in case of further changes unless you visit this page.
-// You could also reset the notification flags for all your watched pages on your watchlist.
-
-// 			 Your friendly {{SITENAME}} notification system
-
-// --
-// To change your watchlist settings, visit
-// {{fullurl:{{ns:special}}:Watchlist/edit}}
-
-// Feedback and further assistance:
-// {{fullurl:{{MediaWiki:Helppage}}}}'
-// 	)
-// );
-}
-
-function displayCurationTags($input, $argv, $parser) {
-	global $wgOut, $wfCurationTagsPath, $wgJsMimeType;
-
-	//Add CSS
-	$wgOut->addStyle("wikipathways/CurationTags.css");
-
-	$title = $parser->getTitle();
-	$mayEdit = $title->userCan('edit') ? true : false;
-	$revision = $parser->getRevisionId();
-	if(!$revision) {
-		$parser->mTitle->getLatestRevId();
-	}
-	$helpLink = Title::newFromText("CurationTags", NS_HELP)->getFullURL();
-
-	//Add javascript
-	$wgOut->addScriptFile( "../wikipathways/CurationTags.js"  );
-	$wgOut->addScript(
-		"<script type=\"{$wgJsMimeType}\">" .
-		"CurationTags.extensionPath=\"$wfCurationTagsPath\";" .
-		"CurationTags.mayEdit=\"$mayEdit\";" .
-		"CurationTags.pageRevision=\"$revision\";" .
-		"CurationTags.helpLink=\"$helpLink\";" .
-		"</script>\n"
-	);
-
-	$pageId = $parser->mTitle->getArticleID();
-	$elementId = 'curationTagDiv';
-	return "<div id='$elementId'></div><script type=\"{$wgJsMimeType}\">CurationTags.insertDiv('$elementId', '$pageId');</script>\n";
-}
-
 /**
- * Processes events after a curation tag has changed
+ * Copyright (C) 2017  Mark A. Hershberger
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-function curationTagChanged($tag) {
-	global $wgEnotifUseJobQ;
 
-	$hist = MetaTag::getHistoryForPage($tag->getPageId(), wfTimestamp(TS_MW));
+namespace WikiPathways;
 
-	if(count($hist) > 0) {
-		$taghist = $hist[0];
-		$enotif = new TagChangeNotification($taghist);
-		$enotif->notifyOnTagChange();
-	}
-}
+use SimpleXMLElement;
+
+// $wfCurationTagsPath = WPI_URL . "/extensions/CurationTags";
+
+// //Register AJAX functions
+// $wgAjaxExportList[] = "CurationTagsAjax::getTagNames";
+// $wgAjaxExportList[] = "CurationTagsAjax::getTagData";
+// $wgAjaxExportList[] = "CurationTagsAjax::saveTag";
+// $wgAjaxExportList[] = "CurationTagsAjax::removeTag";
+// $wgAjaxExportList[] = "CurationTagsAjax::getAvailableTags";
+// $wgAjaxExportList[] = "CurationTagsAjax::getTagHistory";
+// $wgAjaxExportList[] = "CurationTagsAjax::getTags";
 
 /**
  * API for reading/writing Curation tags
@@ -101,6 +37,51 @@ function curationTagChanged($tag) {
 class CurationTag {
 	private static $TAG_LIST = "Curationtags-definition.xml";
 	private static $TAG_LIST_PAGE = "MediaWiki:Curationtags-definition.xml";
+
+	public static function displayCurationTags($input, $argv, $parser) {
+		global $wgOut, $wfCurationTagsPath, $wgJsMimeType;
+
+		//Add CSS
+		$wgOut->addStyle("wikipathways/CurationTags.css");
+
+		$title = $parser->getTitle();
+		$mayEdit = $title->userCan('edit') ? true : false;
+		$revision = $parser->getRevisionId();
+		if(!$revision) {
+			$parser->mTitle->getLatestRevId();
+		}
+		$helpLink = Title::newFromText("CurationTags", NS_HELP)->getFullURL();
+
+		//Add javascript
+		$wgOut->addScriptFile( "../wikipathways/CurationTags.js"  );
+		$wgOut->addScript(
+			"<script type=\"{$wgJsMimeType}\">" .
+			"CurationTags.extensionPath=\"$wfCurationTagsPath\";" .
+			"CurationTags.mayEdit=\"$mayEdit\";" .
+			"CurationTags.pageRevision=\"$revision\";" .
+			"CurationTags.helpLink=\"$helpLink\";" .
+			"</script>\n"
+		);
+
+		$pageId = $parser->mTitle->getArticleID();
+		$elementId = 'curationTagDiv';
+		return "<div id='$elementId'></div><script type=\"{$wgJsMimeType}\">CurationTags.insertDiv('$elementId', '$pageId');</script>\n";
+	}
+
+	/**
+	 * Processes events after a curation tag has changed
+	 */
+	public static function curationTagChanged($tag) {
+		global $wgEnotifUseJobQ;
+
+		$hist = MetaTag::getHistoryForPage($tag->getPageId(), wfTimestamp(TS_MW));
+
+		if(count($hist) > 0) {
+			$taghist = $hist[0];
+			$enotif = new TagChangeNotification($taghist);
+			$enotif->notifyOnTagChange();
+		}
+	}
 
 	/**
 	 * Tags with this prefix will be recognized
@@ -239,7 +220,7 @@ class CurationTag {
 				$rest[] = $tag;
 			}
 		}
-		$visible[ wfMsg('browsepathways-all-tags') ] = $rest;
+		$visible[ wfMessage('browsepathways-all-tags') ] = $rest;
 		return $visible;
 	}
 
@@ -257,7 +238,7 @@ class CurationTag {
 	 **/
 	public static function getTagDefinition() {
 		if(!self::$tagDefinition) {
-			$ref = wfMsg( self::$TAG_LIST );
+			$ref = wfMessage( self::$TAG_LIST );
 			if(!$ref) {
 				throw new Exception("No content for [[".self::$TAG_LIST_PAGE."]].  It must be a valid XML document.");
 			}
@@ -296,7 +277,7 @@ class CurationTag {
 			$tag->setPageRevision($revision);
 		}
 		$tag->save();
-		curationTagChanged($tag);
+		self::curationTagChanged($tag);
 	}
 
 	/**
@@ -309,7 +290,7 @@ class CurationTag {
 
 		$tag = new MetaTag($tagname, $pageId);
 		$tag->remove();
-		curationTagChanged($tag);
+		self::curationTagChanged($tag);
 	}
 
 	public static function getCurationTags($pageId) {

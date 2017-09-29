@@ -1,7 +1,7 @@
 <?php
-$allMessages = array(
-        'en' => array( 
-                'recentpathwaychanges' => 'Recent Pathway Changes'
-        )
+$messages = array(
+		'en' => array(
+				'recentpathwaychanges' => 'Recent Pathway Changes'
+		)
 );
 ?>

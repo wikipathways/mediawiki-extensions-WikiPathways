@@ -123,7 +123,7 @@ To add a tag, add a <Tag> element in the xml code below. The element may contain
  icon="MissingDescription.png"
 />
 
-<Tag 
+<Tag
   name="Curation:Stub"
   displayName="Stub"
   description="This is a Pathway for an interesting / useful topic, but it's incomplete, needs to be improved, and more details need to be filled out."
@@ -131,7 +131,7 @@ To add a tag, add a <Tag> element in the xml code below. The element may contain
   icon="Stub.png"
 />
 
-<Tag 
+<Tag
   name="Curation:NeedsWork"
   displayName="Needs work"
   dropDown="Pathways in progress"
@@ -140,7 +140,7 @@ To add a tag, add a <Tag> element in the xml code below. The element may contain
   icon="NeedsWork.png"
 />
 
-<Tag 
+<Tag
   name="Curation:NonTypicalPathway"
   displayName="Non-typical pathway"
   description="Use this tag to notify the community that the contents do not represent a typical pathway. Please explain what the pathway represents in the tag text."

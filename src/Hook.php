@@ -35,12 +35,16 @@ class Hook {
 		$wgParser->setFunctionHook(
 			"editApplet", "WikiPathways\\EditApplet::createApplet"
 		);
+		$wgParser->setFunctionHook(
+			"pathwayOfTheDay", "WikiPathways\\PathwayOfTheDay::get"
+		);
 	}
 
 	public static function pathwayMagic( &$magicWords, $langCode ) {
 		$magicWords['PathwayViewer'] = [ 0, 'PathwayViewer' ];
 		$magicWords['pwImage'] = [ 0, 'pwImage' ];
 		$magicWords['editApplet'] = [ 0, 'editApplet' ];
+		$magicWords['pathwayOfTheDay'] = [ 0, 'pathwayOfTheDay' ];
 	}
 
 	/* http://developers.pathvisio.org/ticket/1559 */

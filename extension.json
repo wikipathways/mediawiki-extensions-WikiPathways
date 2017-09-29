@@ -17,13 +17,29 @@
 			"i18n"
 		]
 	},
+	"SpecialPages": {
+		"RecentPathwayChanges": "WikiPathways\\RecentPathwayChanges",
+		"BrowsePathways": "WikiPathways\\BrowsePathways"
+	},
 	"AutoloadClasses": {
 		"WikiPathways\\MagicWord": "src/MagicWord.php",
 		"WikiPathways\\Hook": "src/Hook.php",
 		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
 		"WikiPathways\\PathwayViewer": "src/PathwayViewer.php",
 		"WikiPathways\\PathwayThumb": "src/PathwayThumb.php",
-		"WikiPathways\\EditApplet": "src/EditApplet.php"
+		"WikiPathways\\EditApplet": "src/EditApplet.php",
+		"WikiPathways\\RecentPathwayChanges": "src/RecentPathwayChanges.php",
+		"WikiPathways\\RecentQueryPage": "src/RecentQueryPage.php",
+		"WikiPathways\\BrowsePathways": "src/BrowsePathways.php",
+		"WikiPathways\\BasePathwaysPager": "src/BasePathwaysPager.php",
+		"WikiPathways\\PathwaysPagerFactory": "src/PathwaysPagerFactory.php",
+		"WikiPathways\\ListPathwaysPager": "src/ListPathwaysPager.php",
+		"WikiPathways\\SinglePathwaysPager": "src/SinglePathwaysPager.php",
+		"WikiPathways\\ThumbPathwaysPager": "src/ThumbPathwaysPager.php",
+		"WikiPathways\\CurationTag": "src/CurationTag.php",
+		"WikiPathways\\PathwayOfTheDay": "src/PathwayOfTheDay.php",
+		"WikiPathways\\TaggedPathway": "src/TaggedPathway.php",
+		"WikiPathways\\FeaturedPathway": "src/FeaturedPathway.php"
 	},
 	"ExtensionFunctions": [
 		"WikiPathways\\XrefPanel::xref",
