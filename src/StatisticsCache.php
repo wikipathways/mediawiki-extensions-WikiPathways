@@ -1,29 +1,31 @@
 <?php
-
-
-require_once("DataSources.php");
-
-
-if(isset($argv[0]) && $argv[0] == "StatisticsCache.php") { //Called from commandline, update cache
-	ini_set("memory_limit", "256M");
-	echo("Updating statistics cache\n");
-	$start = microtime(true);
-
-	StatisticsCache::updatePathwaysCache();
-	foreach(Pathway::getAvailableSpecies() as $species) {
-		StatisticsCache::updateUniqueGenesCache($species);
-	}
-
-	$time = (microtime(true) - $start);
-	echo("\tUpdated in $time seconds\n");
-}
+/**
+ * This class is responsible for reading values from and writing
+ * values to that cache.
+ *
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger <mah@nichework.com>
+ */
 
 /**
    Since counting unique genes accross all pathways is an expensive operation,
    these calculations are cached.
-
-   This class is responsible for reading values from and writing values to that cache.
-*/
+ */
 class StatisticsCache
 {
 	private static $pathways;
@@ -278,5 +280,45 @@ class StatisticsCache
 		return $data;
 	}
 
+public static function getSiteStats( &$parser, $tableAttr ) {
+	$nrPathways = StatisticsCache::howManyPathways('total');
+	$output = "* There are '''{$nrPathways}''' pathways";
+
+	if( ! is_dir( WPI_CACHE_PATH ) && ! wfMkdirParents( WPI_CACHE_PATH ) ) {
+		wfDebug( "Can't create: " . WPI_CACHE_PATH );
+		throw new Exception( "Can't create WPI_CACHE_PATH!" );
+	}
+
+	$table = <<<EOD
+
+* Number of '''pathways''' ''(and unique genes)'' per species:
+{| align="center" $tableAttr
+EOD;
+	foreach(Pathway::getAvailableSpecies() as $species) {
+		$nr = StatisticsCache::howManyPathways($species);
+		$genes = StatisticsCache::howManyUniqueGenes($species);
+		if ($nr > 0) {  // skip listing species with 0 pathways
+			$table .= <<<EOD
+
+|-align="left"
+|$species:
+|'''$nr'''
+|''($genes)''
+EOD;
+		}
+	}
+	$table .= "\n|}";
+	$output .= $table;
+	//$output .= "\n* There are '''{{NUMBEROFUSERS}}''' registered users";
+	$output .= "\n* [[WikiPathways:Statistics|Additional statistics... ]]";
+
+	$output = $parser->recursiveTagParse( $output );
+	return array( $output, 'isHTML' => true, 'noparse' => true, 'nowiki' => true );
+}
+
+
+public static function getSpecies() {
+	return Pathway::getAvailableSpecies();
+}
 
 }

@@ -41,7 +41,7 @@ class PermissionManager {
 	}
 
 	private function read() {
-		$tag = new MetaTag(self::$TAG, $this->pageId);
+		$tag = new WikiPathways\MetaTag(self::$TAG, $this->pageId);
 		if($tag->exists()) {
 			$this->permissions = unserialize($tag->getText());
 		}

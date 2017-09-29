@@ -1,11 +1,30 @@
 <?php
-require_once('Organism.php');
-require_once('PathwayData.php');
-require_once('MetaDataCache.php');
-
 /**
-Class that represents a Pathway on WikiPathways
-**/
+ * Class that represents a Pathway on WikiPathways
+ *
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger <mah@nichework.com>
+ */
+namespace WikiPathways;
+
+use Revision;
+use Title;
+
 class Pathway {
 	public static $ID_PREFIX = 'WP';
 	public static $DELETE_PREFIX = "Deleted pathway: ";
@@ -183,7 +202,6 @@ class Pathway {
 	 * Find out if the current user has permissions to view this pathway
 	 */
 	public function isReadable() {
-		return $this->getTitleObject()->userCanRead();
 		// After MW 1.19, this form should be used, but in earlier MW it is buggy.
 		return $this->getTitleObject()->userCan('read');
 	}
@@ -532,7 +550,7 @@ class Pathway {
 		$gpmlTitle = $this->getTitleObject();
 		$gpmlRef = Revision::newFromTitle($gpmlTitle, $this->revision);
 
-		return $gpmlRef == NULL ? "" : $gpmlRef->getText();
+		return $gpmlRef == NULL ? "" : $gpmlRef->getSerializedData();
 	}
 
 	/**
@@ -557,11 +575,15 @@ class Pathway {
 	 * \param whether to update the cache (if needed) or not
 	 */
 	public function getFileLocation($fileType, $updateCache = true) {
+		return $this->getFileObj( $fileType, $updateCache )->getPath();
+	}
+
+	public function getFileObj($fileType, $updateCache = true) {
 		if($updateCache) { //Make sure to have up to date version
 			$this->updateCache($fileType);
 		}
 		$fn = $this->getFileName($fileType);
-		return wfLocalFile( $fn )->getPath();
+		return wfLocalFile( $fn );
 	}
 
 	/**
@@ -737,20 +759,20 @@ class Pathway {
 		$lastidNum = substr($lastid, 2);
 		//Check deleted pathways from archive table
 		$query2 = "SELECT ar_title FROM archive " .
-                        "WHERE ar_namespace =$ns " .
-                        "AND ar_title LIKE '{$prefix}_%' " .
-                        "ORDER BY length(ar_title) DESC, ar_title DESC " .
-                        "LIMIT 0 , 1 ";
-                $res2 = $dbr->query($query2);
-                $row2 = $dbr->fetchObject( $res2 );
-                if($row2) {
-                        $lastid2 = $row2->page_title;
-                } else {
-                        $lastid2 = Pathway::$ID_PREFIX . "0";
-                }
-                $dbr->freeResult( $res2 );
+						"WHERE ar_namespace =$ns " .
+						"AND ar_title LIKE '{$prefix}_%' " .
+						"ORDER BY length(ar_title) DESC, ar_title DESC " .
+						"LIMIT 0 , 1 ";
+				$res2 = $dbr->query($query2);
+				$row2 = $dbr->fetchObject( $res2 );
+				if($row2) {
+						$lastid2 = $row2->page_title;
+				} else {
+						$lastid2 = Pathway::$ID_PREFIX . "0";
+				}
+				$dbr->freeResult( $res2 );
 
-                $lastidNum2 = substr($lastid2, 2);
+				$lastidNum2 = substr($lastid2, 2);
 		//Pick largest WPID
 		if ((int)$lastidNum2 > (int)$lastidNum){
 			$lastidNum = $lastidNum2;
@@ -767,7 +789,7 @@ class Pathway {
 	 */
 	public function updatePathway($gpmlData, $description) {
 		global $wgUser;
-		
+
 		//First validate the gpml
 		if($error = self::validateGpml($gpmlData)) {
 			throw new Exception($error);
@@ -946,9 +968,11 @@ class Pathway {
 		}
 		if($useCache && !$revision) {
 			$deprev = $this->getMetaDataCache()->getValue(MetaDataCache::$FIELD_DELETED);
-			if($deprev) {
+			if( $deprev ) {
 				$rev = $this->getActiveRevision();
-				if($rev == 0 || $rev == $deprev) return true;
+				if( $rev == 0 || $rev == $deprev ) {
+					return true;
+				}
 			}
 
 			return false;
@@ -1062,8 +1086,7 @@ class Pathway {
 	}
 
 	public function getImage() {
-		$repo = RepoGroup::singleton()->getLocalRepo();
-		$img = new LocalFile($this->getFileTitle(FILETYPE_IMG), $repo);
+		$img = wfLocalFile($this->getFileTitle(FILETYPE_IMG));
 		$img->loadFromFile();
 
 		if ( !$img->exists() ) { /* Avoid calling this unless we need to */
@@ -1104,9 +1127,9 @@ class Pathway {
 			$gpmlDate = -1;
 		}
 
-		$file = $this->getFileLocation($fileType, false);
+		$file = $this->getFileObj($fileType, false);
 
-		if(file_exists($file)) {
+		if ( $file->exists() ) {
 			$fmt = wfTimestamp(TS_MW, filemtime($file));
 			wfDebug("\tFile exists, cache: $fmt, gpml: $gpmlDate\n");
 			return  $fmt < $gpmlDate;

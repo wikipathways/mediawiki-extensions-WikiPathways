@@ -1,51 +1,45 @@
 <?php
-require_once("DataSources.php");
+/**
+ * Generates info text for pathway page
+ *
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/*
-  Generates info text for pathway page
-  Generate table of datanodes and interactions
-*/
-
-#### DEFINE EXTENSION
-# Define a setup function
-$wgExtensionFunctions[] = 'wfPathwayInfo';
-# Add a hook to initialise the magic word
-$wgHooks['LanguageGetMagic'][]  = 'wfPathwayInfo_Magic';
-
-function wfPathwayInfo() {
-	global $wgParser;
-	$wgParser->setFunctionHook( 'pathwayInfo', 'getPathwayInfoText' );
-}
-
-function getPathwayInfoText( &$parser, $pathway, $type ) {
-	global $wgRequest;
-	$parser->disableCache();
-	try {
-		$pathway = Pathway::newFromTitle($pathway);
-		$oldid = $wgRequest->getval('oldid');
-		if($oldid) {
-			$pathway->setActiveRevision($oldid);
-		}
-		$info = new PathwayInfo($parser, $pathway);
-		if(method_exists($info, $type)) {
-			return $info->$type();
-		} else {
-			throw new Exception("method PathwayInfo->$type doesn't exist");
-		}
-	} catch(Exception $e) {
-		return "Error: $e";
-	}
-}
-
-function wfPathwayInfo_Magic( &$magicWords, $langCode ) {
-	$magicWords['pathwayInfo'] = array( 0, 'pathwayInfo' );
-	return true;
-}
-
-require_once("Pathways/Pathway.php");
-/* Need autoloader here */
 class PathwayInfo extends PathwayData {
 	private $parser;
+
+	public static function getPathwayInfoText( &$parser, $pathway, $type ) {
+		global $wgRequest;
+		$parser->disableCache();
+		try {
+			$pathway = Pathway::newFromTitle($pathway);
+			$oldid = $wgRequest->getval('oldid');
+			if($oldid) {
+				$pathway->setActiveRevision($oldid);
+			}
+			$info = new PathwayInfo($parser, $pathway);
+			if(method_exists($info, $type)) {
+				return $info->$type();
+			} else {
+				throw new Exception("method PathwayInfo->$type doesn't exist");
+			}
+		} catch(Exception $e) {
+			return "Error: $e";
+		}
+	}
 
 	function __construct($parser, $pathway) {
 		parent::__construct($pathway);
@@ -67,7 +61,7 @@ class PathwayInfo extends PathwayData {
 			$key .= $elm->Xref['ID'];
 			$key .= $elm->Xref['Database'];
 			$nodes[(string)$key] = $elm;
-		}		
+		}
 		//Create collapse button
 		$nrShow = 5;
 		$button = "";
@@ -135,11 +129,11 @@ class PathwayInfo extends PathwayData {
 	/**
 	 * Creates a table of all interactions and their info
 	 */
-	function interactionAnnotations() {		
+	function interactionAnnotations() {
 		$table = '<table class="wikitable sortable" id="inTable">';
 		$table .= '<tbody><th>Source<th>Target<th>Type<th>Database reference<th>Comment';
 		$all = $this->getAllAnnotatedInteractions();
-		
+
 		//Check for uniqueness, based on Source-Target-Type-Xref
 		$nodes = array();
 		foreach($all as $elm) {
@@ -148,7 +142,7 @@ class PathwayInfo extends PathwayData {
 				$key .= $elm->getTarget()['TextLabel'];
 				$key .= $elm->getType();
 				$key .= $elm->getEdge()->Xref['ID'];
-				$key .= $elm->getEdge()->Xref['Database'];				
+				$key .= $elm->getEdge()->Xref['Database'];
 				$nodes[(string)$key] = $elm;
 			}
 		}
@@ -163,7 +157,7 @@ class PathwayInfo extends PathwayData {
 				'doToggle("inTable", this, "'.$expand.'", "'.$collapse.'")'."' style='cursor:pointer;color:#0000FF'>".
 				"$expand<td width='45%'></table>";
 		}
-		//Sort and iterate over all elements		
+		//Sort and iterate over all elements
 		ksort($nodes);
 		$i = 0;
 		foreach($nodes as $datanode) {
@@ -210,7 +204,7 @@ class PathwayInfo extends PathwayData {
 				$table .= "</ul>";
 			} elseif( count( $comment ) == 1 ) {
 				$table .= $comment[0]."</br>";
-			}			
+			}
 		}
 		$table .= '</tbody></table>';
 		if (count($nodes)==0)$table= "<cite>No annotated interactions</cite>";

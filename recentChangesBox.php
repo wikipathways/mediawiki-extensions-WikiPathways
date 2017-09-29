@@ -70,7 +70,7 @@ class RecentChangesBox {
 	private function query() {
 		global $wgLang;
 
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 
 		//Query a couple more titles, in case
 		//the result contains titles that are
@@ -128,7 +128,7 @@ class RecentChangesBox {
 
 		$title = Title::newFromText($row->rc_title, $this->namespace);
 
-		if(!$title->userCanRead()) return ''; //Skip titles hidden for this user
+		if(!$title->userCan("read")) return ''; //Skip titles hidden for this user
 		//if(!$title->userCan('read')) return ''; //Skip titles hidden for this user
 
 		$perm = new PermissionManager($title->getArticleId());

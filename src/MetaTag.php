@@ -27,6 +27,7 @@
 namespace WikiPathways;
 
 use MWException;
+use Title;
 
 class MetaTag {
 	public static $TAG_HISTORY_TABLE = "tag_history";
@@ -150,22 +151,22 @@ class MetaTag {
 
 		$dbr = wfGetDB( DB_SLAVE );
 
-		$name = mysql_real_escape_string($name);
+		$name = $dbr->addQuotes( $name );
 
-		$where = array('tag_name' => $name);
+		$where = [ 'tag_name' => $name ];
 		if($text !== false) {
 			$text_field = "tag_text";
 			if(!$case) {
 				$text = strtolower($text);
 				$text_field = "LOWER($text_field)";
 			}
-			$text = mysql_real_escape_string($text);
-			$text = " AND $text_field = '$text' ";
+			$text = $dbr->addQuotes( $text );
+			$text = " AND $text_field = $text ";
 		}
 
 		$query =
 			"SELECT page_id FROM " . self::$TAG_TABLE .
-			" WHERE tag_name = '$name' " .
+			" WHERE tag_name = $name " .
 			$text;
 
 		wfDebug(__METHOD__ . ": $query\n");

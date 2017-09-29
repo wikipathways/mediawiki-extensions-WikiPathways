@@ -329,9 +329,9 @@ $wgEnableUserEmail  = true;
 $wgEmergencyContact = "wikipathways@gladstone.ucsf.edu";
 $wgPasswordSender = "no-reply@wikipathways.com";
 
+require_once "globals.php";
 require_once "wpi.php";
 require_once "siteStats.php";
-require_once "pathwayInfo.php";
 require_once "imageSize.php";
 require_once "PopularPathwaysPage2/PopularPathwaysPage.php";
 require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
@@ -348,8 +348,6 @@ require_once "imageLink.php";
 require_once "listPathways.php";
 require_once "movePathway.php";
 require_once "deletePathway.php";
-require_once "batchDownload.php";
-require_once "Pathways/PathwayPage.php";
 require_once "SpecialWishList/SpecialWishList.php";
 require_once "SpecialWishList/TopWishes.php";
 require_once "DiffAppletPage/DiffAppletPage.php";
@@ -357,7 +355,6 @@ require_once "DiffViewer/DiffViewer.php";
 require_once "ParserFunctions/ParserFunctions.php";
 require_once "CheckGpmlOnSave.php";
 require_once "CreateUserPage.php";
-#require_once "UserSnoop.php";
 require_once "AuthorInfo/AuthorInfo.php";
 require_once "CurationTags/SpecialCurationTags/SpecialCurationTags.php";
 require_once "UserLoginLog/UserLoginLog.php";
@@ -373,10 +370,12 @@ require_once "ontologyindex/ontologyindex.php";
 require_once "StubManager/StubManager.php";
 require_once "ParserFunctionsHelper/ParserFunctionsHelper.php";
 require_once "SecureHTML/SecureHTML.php";
-#require_once "RSS/rss.php";
 require_once "statistics/StatisticsHook.php";
 require_once "PageEditor/PageEditor.php";
 #require_once "ContributionScores/ContributionScores.php";
 require_once "PullPages/PullPages.php";
 require_once "search.php";
 require_once "TissueAnalyzer/TissueAnalyzer.php";
+//Register the supported file types
+
+
