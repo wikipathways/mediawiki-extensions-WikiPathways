@@ -21,20 +21,23 @@
 
 namespace WikiPathways;
 
-class RecentPathwayChanges extends \SpecialPage {
-	public function __construct() {
-		parent::__construct( "RecentPathwayChanges" );
-	}
+class RecentPathwayChanges extends \SpecialPage
+{
+    public function __construct() 
+    {
+        parent::__construct("RecentPathwayChanges");
+    }
 
-	public function execute( $par ) {
-		$this->setHeaders();
+    public function execute( $par ) 
+    {
+        $this->setHeaders();
 
-		list( $limit, $offset ) = $this->getRequest()->getLimitOffset();
-		// Recently changed pathway articles
-		$ppp = new RecentQueryPage( NS_PATHWAY );
+        list( $limit, $offset ) = $this->getRequest()->getLimitOffset();
+        // Recently changed pathway articles
+        $ppp = new RecentQueryPage(NS_PATHWAY);
 
-		$ppp->doQuery( $offset, $limit );
+        $ppp->doQuery($offset, $limit);
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -330,7 +330,6 @@ $wgEmergencyContact = "wikipathways@gladstone.ucsf.edu";
 $wgPasswordSender = "no-reply@wikipathways.com";
 
 require_once "wpi.php";
-require_once "PathwayOfTheDay/PathwayOfTheDay.php";
 require_once "siteStats.php";
 require_once "pathwayInfo.php";
 require_once "imageSize.php";
