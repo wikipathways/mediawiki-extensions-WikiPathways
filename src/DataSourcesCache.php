@@ -25,20 +25,20 @@ namespace WikiPathways;
 use Exception;
 
 class DataSourcesCache {
-	private static $url = "http://svn.bigcat.unimaas.nl/bridgedb/trunk/org.bridgedb.bio/resources/org/bridgedb/bio/datasources.txt";
+	private static $url = "https://cdn.rawgit.com/bridgedb/BridgeDb/master/org.bridgedb.bio/resources/org/bridgedb/bio/datasources.txt";
 	static $file = "datasources.txt";
 	static $content = null;
 
 	public static function update() {
 		## Download a fresh datasources file
-		$txt = file_get_contents(self::$url);
-		if($txt) { //Only update if file could be downloaded
+		$txt = file_get_contents( self::$url );
+		if ( $txt ) { // Only update if file could be downloaded
 			$f = WPI_CACHE_PATH . "/" . self::$file;
-			$fh = fopen($f, 'w');
-			if( $fh !== false ) {
-				fwrite($fh, $txt);
-				fclose($fh);
-				chmod($f, 0666);
+			$fh = fopen( $f, 'w' );
+			if ( $fh !== false ) {
+				fwrite( $fh, $txt );
+				fclose( $fh );
+				chmod( $f, 0666 );
 			} else {
 				throw new Exception( "Could't open $f for writing!" );
 			}
@@ -48,16 +48,16 @@ class DataSourcesCache {
 
 	private static function read() {
 		$f = WPI_CACHE_PATH . "/" . self::$file;
-		if(file_exists($f)) {
-			return file_get_contents($f);
+		if ( file_exists( $f ) ) {
+			return file_get_contents( $f );
 		}
 	}
 
 	public static function getContent() {
-		if(!self::$content) {
-			//Try to read from cached file
+		if ( !self::$content ) {
+			// Try to read from cached file
 			$txt = self::read();
-			if(!$txt) { //If no cache exists, update it
+			if ( !$txt ) { // If no cache exists, update it
 				self::update();
 			} else {
 				self::$content = $txt;
@@ -66,4 +66,3 @@ class DataSourcesCache {
 		return self::$content;
 	}
 }
-?>
