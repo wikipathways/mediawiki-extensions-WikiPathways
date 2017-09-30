@@ -19,10 +19,12 @@
 	},
 	"SpecialPages": {
 		"RecentPathwayChanges": "WikiPathways\\RecentPathwayChanges",
-		"BrowsePathways": "WikiPathways\\BrowsePathways"
+		"BrowsePathways": "WikiPathways\\BrowsePathways",
+		"BrowsePathwaysPage": "WikiPathways\\BrowsePathways"
 	},
 	"AutoloadClasses": {
 		"WikiPathways\\BasePathwaysPager": "src/BasePathwaysPager.php",
+		"WikiPathways\\PathwayBibliography": "src/PathwayBibliography.php",
 		"WikiPathways\\BrowsePathways": "src/BrowsePathways.php",
 		"WikiPathways\\CurationTag": "src/CurationTag.php",
 		"WikiPathways\\EditApplet": "src/EditApplet.php",
@@ -48,11 +50,19 @@
                 "WikiPathways\\DataSource": "src/DataSource.php",
                 "WikiPathways\\DataSourcesCache": "src/DataSourcesCache.php",
                 "WikiPathways\\BatchDownloader": "src/BatchDownloader.php",
+                "WikiPathways\\PathwayHandler": "src/PathwayHandler.php",
+                "WikiPathways\\PathwayContent": "src/PathwayContent.php",
                 "WikiPathways\\PathwayInfo": "src/PathwayInfo.php",
-                "WikiPathways\\StatisticsCache": "src/StatisticsCache.php"
+                "WikiPathways\\PermissionManager": "src/PermissionManager.php",
+                "WikiPathways\\PagePermission": "src/PagePermission.php",
+                "WikiPathways\\PathwayPage": "src/PathwayPage.php",
+                "WikiPathways\\PathwayHistory": "src/PathwayHistory.php",
+                "WikiPathways\\PathwaysPagerFactory": "src/PathwaysPagerFactory.php",
+                "WikiPathways\\Statistics": "src/Statistics.php",
+                "WikiPathways\\StatisticsCache": "src/StatisticsCache.php",
+                "WikiPathways\\GpmlHistoryPager": "src/GpmlHistoryPager.php"
 	},
 	"ExtensionFunctions": [
-		"WikiPathways\\XrefPanel::xref",
 		"WikiPathways\\Hook::pathwayViewer"
 	],
 	"Hooks": {
@@ -66,7 +76,13 @@
 		"MagicWordwgVariableIDs":  "WikiPathways\\MagicWord::onMagicWordwgVariableIDs",
 		"OutputPageParserOutput": "WikiPathways\\Hook::addJavascript",
 		"PageDisplay": "WikiPathways\\Hook::stopDisplay",
-		"ParserGetVariableValueSwitch":  "WikiPathways\\MagicWord::onParserGetVariableValueSwitch"
+		"ParserGetVariableValueSwitch":  "WikiPathways\\MagicWord::onParserGetVariableValueSwitch",
+                "userCan": "WikiPathways\\PermissionManager::checkRestrictions",
+                "SkinTemplateContentActions": "WikiPathways\\PermissionManager::addPermissionTab",
+                "UnknownAction": "WikiPathways\\PermissionManager::permissionTabAction",
+                "ParserBeforeStrip": "WikiPathways\\PathwayPage::render",
+                "BeforePageDisplay": "WikiPathways\\PathwayPage::addPreloaderScript"
+
 	},
 	"GroupPermissions": {
 		"sysop": {

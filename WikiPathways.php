@@ -337,7 +337,6 @@ require_once "PopularPathwaysPage2/PopularPathwaysPage.php";
 require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
 require_once "NewPathwaysPage/NewPathwaysPage.php";
 require_once "CreatePathwayPage/CreatePathwayPage.php";
-require_once "pathwayHistory.php";
 require_once "LabeledSectionTransclusion/compat.php";
 require_once "LabeledSectionTransclusion/lst.php";
 require_once "LabeledSectionTransclusion/lsth.php";
@@ -352,7 +351,6 @@ require_once "SpecialWishList/SpecialWishList.php";
 require_once "SpecialWishList/TopWishes.php";
 require_once "DiffAppletPage/DiffAppletPage.php";
 require_once "DiffViewer/DiffViewer.php";
-require_once "ParserFunctions/ParserFunctions.php";
 require_once "CheckGpmlOnSave.php";
 require_once "CreateUserPage.php";
 require_once "AuthorInfo/AuthorInfo.php";
@@ -364,13 +362,10 @@ require_once "PrivatePathways/PrivatePathways.php";
 require_once "PrivatePathways/ListPrivatePathways.php";
 require_once "PrivatePathways/PrivateContributions.php";
 require_once "recentChangesBox.php";
-require_once "pathwayBibliography.php";
 require_once "otag/otags_main.php";
 require_once "ontologyindex/ontologyindex.php";
 require_once "StubManager/StubManager.php";
-require_once "ParserFunctionsHelper/ParserFunctionsHelper.php";
 require_once "SecureHTML/SecureHTML.php";
-require_once "statistics/StatisticsHook.php";
 require_once "PageEditor/PageEditor.php";
 #require_once "ContributionScores/ContributionScores.php";
 require_once "PullPages/PullPages.php";
@@ -379,3 +374,6 @@ require_once "TissueAnalyzer/TissueAnalyzer.php";
 //Register the supported file types
 
 
+$wgContentHandlerTextFallback = 'serialize';
+$wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_PATHWAY;
+$wgContentHandlers[CONTENT_MODEL_PATHWAY] = 'WikiPathways\\PathwayHandler';

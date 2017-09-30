@@ -19,7 +19,7 @@ $wpiScriptFile = 'wpi.php';
 
 $host = isset( $_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "wikipathways.org";
 $wpiScriptPath = realpath(dirname(__FILE__));
-$wpiScript = "$wpiScriptPath/$wpiScriptFile"; 
+$wpiScript = "$wpiScriptPath/$wpiScriptFile";
 $wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
 $siteURL = "http://$host/$wgScriptPath";
 $wpiURL = "$siteURL/$wpiPathName";
@@ -43,4 +43,9 @@ define("JS_SRC_PROTOTYPE", $wgScriptPath . "/wpi/js/prototype.js");
 //Users
 define("USER_MAINT_BOT", "MaintBot"); //User account for maintenance scripts
 
-?>
+// Content
+define( 'CONTENT_MODEL_PATHWAY', 'pathway' );
+
+// WikiPathways data
+define('COMMENT_WP_CATEGORY', 'WikiPathways-category');
+define('COMMENT_WP_DESCRIPTION', 'WikiPathways-description');

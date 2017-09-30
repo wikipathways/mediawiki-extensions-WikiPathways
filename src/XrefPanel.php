@@ -25,91 +25,94 @@
 
 namespace WikiPathways;
 
-class XrefPanel
-{
-    public static function xref() 
-    {
-        global $wgParser;
-        $wgParser->setHook("Xref", "XrefPanel::renderXref");
+use Parser;
 
-        self::addXrefPanelScripts();
-    }
+class XrefPanel {
+	public static function xref() {
+		global $wgParser;
+		$wgParser->setHook( "Xref", "WikiPathways\\XrefPanel::renderXref" );
 
-    public static function renderXref( $input, $argv, &$parser ) 
-    {
-        return wpiXrefHTML(
-            $argv['id'], $argv['datasource'], $input, $argv['species']
-        );
-    }
+		self::addXrefPanelScripts();
+	}
 
-    public static function getXrefHTML(
-        $id, $datasource, $label, $text, $species
-    ) {
-        $datasource = json_encode($datasource);
-        $label = json_encode($label);
-        $id = json_encode($id);
-        $species = json_encode($species);
-        $url = SITE_URL . '/skins/common/images/info.png';
-        $fun = 'XrefPanel.registerTrigger(this, '
-        . "$id, $datasource, $species, $label);";
-        $title = "Show additional info and linkouts";
-        $html = $text . " <img title='$title' style='cursor:pointer;'"
-        . " onload='$fun' src='$url'/>";
-        return $html;
-    }
+	public static function renderXref( $input, $argv, Parser $parser )
+	{
+		var_dump($input);
+		var_dump($argv);
+		exit;
+		return self::getXrefHTML(
+			$argv['id'], $argv['datasource'], $input, $argv['species']
+		);
+	}
 
-    public static function getJsDependencies() 
-    {
-        global $jsJQueryUI, $wgScriptPath;
+	public static function getXrefHTML(
+		$id, $datasource, $label, $text, $species
+	) {
+		$datasource = json_encode($datasource);
+		$label = json_encode($label);
+		$id = json_encode($id);
+		$species = json_encode($species);
+		$url = SITE_URL . '/skins/common/images/info.png';
+		$fun = 'XrefPanel.registerTrigger(this, '
+		. "$id, $datasource, $species, $label);";
+		$title = "Show additional info and linkouts";
+		$html = $text . " <img title='$title' style='cursor:pointer;'"
+		. " onload='$fun' src='$url'/>";
+		return $html;
+	}
 
-        $js = [ "$wgScriptPath/wpi/js/xrefpanel.js", $jsJQueryUI ];
+	public static function getJsDependencies()
+	{
+		global $jsJQueryUI, $wgScriptPath;
 
-        return $js;
-    }
+		$js = [ "$wgScriptPath/wpi/js/xrefpanel.js", $jsJQueryUI ];
 
-    public static function getJsSnippets() 
-    {
-        global $wpiXrefPanelDisableAttributes, $wpiBridgeUrl,
-        $wpiBridgeUseProxy;
+		return $js;
+	}
 
-        $js = [];
+	public static function getJsSnippets()
+	{
+		global $wpiXrefPanelDisableAttributes, $wpiBridgeUrl,
+		$wpiBridgeUseProxy;
 
-        $js[] = 'XrefPanel_searchUrl = "' . SITE_URL
-        . '/index.php?title=Special:SearchPathways'
-        . '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
-        if ($wpiXrefPanelDisableAttributes ) {
-            $js[] = 'XrefPanel_lookupAttributes = false;';
-        }
+		$js = [];
 
-        $bridge = "XrefPanel_dataSourcesUrl = '" . WPI_CACHE_URL
-        . "/datasources.txt';\n";
+		$js[] = 'XrefPanel_searchUrl = "' . SITE_URL
+		. '/index.php?title=Special:SearchPathways'
+		. '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
+		if ($wpiXrefPanelDisableAttributes ) {
+			$js[] = 'XrefPanel_lookupAttributes = false;';
+		}
 
-        if ($wpiBridgeUrl !== false ) {
-            if (!isset($wpiBridgeUrl) || $wpiBridgeUseProxy ) {
-                // Point to bridgedb proxy by default
-                $bridge .= "XrefPanel_bridgeUrl = '" . WPI_URL
-                . '/extensions/bridgedb.php' . "';\n";
-            } else {
-                $bridge .= "XrefPanel_bridgeUrl = '$wpiBridgeUrl';\n";
-            }
-        }
-        $js[] = $bridge;
+		$bridge = "XrefPanel_dataSourcesUrl = '" . WPI_CACHE_URL
+		. "/datasources.txt';\n";
 
-        return $js;
-    }
+		if ($wpiBridgeUrl !== false ) {
+			if (!isset($wpiBridgeUrl) || $wpiBridgeUseProxy ) {
+				// Point to bridgedb proxy by default
+				$bridge .= "XrefPanel_bridgeUrl = '" . WPI_URL
+				. '/extensions/bridgedb.php' . "';\n";
+			} else {
+				$bridge .= "XrefPanel_bridgeUrl = '$wpiBridgeUrl';\n";
+			}
+		}
+		$js[] = $bridge;
 
-    public static function addXrefPanelScripts() 
-    {
-        global $wpiJavascriptSources, $wpiJavascriptSnippets,
-        $cssJQueryUI, $wgScriptPath, $wgStylePath, $wgOut,
-        $jsRequireJQuery;
+		return $js;
+	}
 
-        $jsRequireJQuery = true;
+	public static function addXrefPanelScripts()
+	{
+		global $wpiJavascriptSources, $wpiJavascriptSnippets,
+		$cssJQueryUI, $wgScriptPath, $wgStylePath, $wgOut,
+		$jsRequireJQuery;
 
-        // Hack to add a css that's not in the skins directory
-        $oldStylePath = $wgStylePath;
-        $wgStylePath = dirname($cssJQueryUI);
-        $wgOut->addStyle(basename($cssJQueryUI));
-        $wgStylePath = $oldStylePath;
-    }
+		$jsRequireJQuery = true;
+
+		// Hack to add a css that's not in the skins directory
+		$oldStylePath = $wgStylePath;
+		$wgStylePath = dirname($cssJQueryUI);
+		$wgOut->addStyle(basename($cssJQueryUI));
+		$wgStylePath = $oldStylePath;
+	}
 }

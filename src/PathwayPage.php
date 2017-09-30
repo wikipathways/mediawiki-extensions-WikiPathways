@@ -1,27 +1,59 @@
 <?php
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+namespace WikiPathways;
 
-$wgHooks['ParserBeforeStrip'][] = array('renderPathwayPage');
-$wgHooks['BeforePageDisplay'][] = array('addPreloaderScript');
+class PathwayPage {
+	private $pathway;
+	private $data;
+	static $msgLoaded = false;
 
-function renderPathwayPage(&$parser, &$text, &$strip_state) {
-	global $wgUser, $wgRequest;
+	public static function addPreloaderScript(&$out) {
+		global $wgTitle, $wgUser, $wgScriptPath;
+		/*	if($wgTitle->getNamespace() == NS_PATHWAY && $wgUser->isLoggedIn() &&
+			strstr( $out->getHTML(), "pwImage" ) !== false ) {
+			$base = $wgScriptPath . "/wpi/applet/";
+			$class = "org.wikipathways.applet.Preloader.class";
 
-	$title = $parser->getTitle();
-	$oldId = $wgRequest->getVal( "oldid" );
-	if( $title && $title->getNamespace() == NS_PATHWAY &&
-		preg_match("/^\s*\<\?xml/", $text)) {
-		$parser->disableCache();
+			$out->addHTML("<applet code='$class' codebase='$base'
+			width='1' height='1' name='preloader'></applet>");
+			} */
+		return true;
+	}
 
-		try {
-			$pathway = Pathway::newFromTitle($title);
-			if($oldId) {
-				$pathway->setActiveRevision($oldId);
-			}
-			$pathway->updateCache(FILETYPE_IMG); //In case the image page is removed
-			$page = new PathwayPage($pathway);
-			$text = $page->getContent();
-		} catch(Exception $e) { //Return error message on any exception
-			$text = <<<ERROR
+	public static function render( &$parser, &$text, &$strip_state ) {
+		global $wgUser, $wgRequest;
+
+		$title = $parser->getTitle();
+		$oldId = $wgRequest->getVal( "oldid" );
+		if( $title && $title->getNamespace() == NS_PATHWAY &&
+			preg_match("/^\s*\<\?xml/", $text)) {
+			$parser->disableCache();
+
+			try {
+				$pathway = Pathway::newFromTitle($title);
+				if($oldId) {
+					$pathway->setActiveRevision($oldId);
+				}
+				$pathway->updateCache(FILETYPE_IMG); //In case the image page is removed
+				$page = new PathwayPage($pathway);
+				$text = $page->getContent();
+			} catch(Exception $e) { //Return error message on any exception
+				$text = <<<ERROR
 = Error rendering pathway page =
 This revision of the pathway probably contains invalid GPML code. If this happens to the most recent revision, try reverting
 the pathway using the pathway history displayed below or contact the site administrators (see [[WikiPathways:About]]) to resolve this problem.
@@ -33,30 +65,12 @@ the pathway using the pathway history displayed below or contact the site admini
 </pre>
 ERROR;
 
+			}
 		}
+		return true;
 	}
-	return true;
-}
 
-function addPreloaderScript(&$out) {
-	global $wgTitle, $wgUser, $wgScriptPath;
-/*	if($wgTitle->getNamespace() == NS_PATHWAY && $wgUser->isLoggedIn() &&
-		strstr( $out->getHTML(), "pwImage" ) !== false ) {
-		$base = $wgScriptPath . "/wpi/applet/";
-		$class = "org.wikipathways.applet.Preloader.class";
-
-		$out->addHTML("<applet code='$class' codebase='$base'
-			width='1' height='1' name='preloader'></applet>");
-	} */
-	return true;
-}
-
-class PathwayPage {
-	private $pathway;
-	private $data;
-	static $msgLoaded = false;
-
-	function __construct($pathway) {
+	public function __construct($pathway) {
 		$this->pathway = $pathway;
 		$this->data = $pathway->getPathwayData();
 
@@ -70,7 +84,7 @@ class PathwayPage {
 		}
 	}
 
-	function getContent() {
+	public function getContent() {
 		$text = <<<TEXT
 {$this->titleEditor()}
 {$this->privateWarning()}
@@ -84,18 +98,18 @@ TEXT;
 return $text;
 	}
 
-	function titleEditor() {
+	public function titleEditor() {
 		$title = $this->pathway->getName();
 		return "<pageEditor id='pageTitle' type='title'>$title</pageEditor>";
 	}
 
-	function privateWarning() {
+	public function privateWarning() {
 		global $wgScriptPath, $wgLang;
 
 		$warn = '';
 		if(!$this->pathway->isPublic()) {
 			$url = SITE_URL;
-			$msg = wfMsg('private_warning');
+			$msg = wfMessage('private_warning' )->plain();
 
 			$pp = $this->pathway->getPermissionManager()->getPermissions();
 			$expdate = $pp->getExpires();
@@ -106,13 +120,13 @@ return $text;
 		return $warn;
 	}
 
-	function curationTags() {
+	public function curationTags() {
 		$tags = "== Quality Tags ==\n" .
 			"<CurationTags></CurationTags>";
 		return $tags;
 	}
 
-	function descriptionText() {
+	public function descriptionText() {
 		//Get WikiPathways description
 		$content = $this->data->getWikiDescription();
 
@@ -147,7 +161,7 @@ return $text;
 	}
 
 
-	function ontologyTags() {
+	public function ontologyTags() {
 		global $wpiEnableOtag;
 		if($wpiEnableOtag) {
 			$otags = "== Ontology Terms ==\n" .
@@ -157,7 +171,7 @@ return $text;
 	}
 
 
-	function bibliographyText() {
+	public function bibliographyText() {
 		global $wgUser;
 
 		$out = "<pathwayBibliography></pathwayBibliography>";
@@ -173,7 +187,7 @@ return $text;
 			//"$out</div>\n{{#editApplet:bibEdit|bibliography|0||bibliography|0|250px}}";
 	}
 
-	function editButton($href, $title, $id = '') {
+	public function editButton($href, $title, $id = '') {
 		global $wgUser, $wgTitle;
 		# Check permissions
 		if( $wgUser->isLoggedIn() && $wgTitle && $wgTitle->userCan('edit')) {
@@ -190,18 +204,17 @@ return $text;
 		return "<fancyButton title='$title' href='$href' id='$id'>$label</fancyButton>";
 	}
 
-	static function getDownloadURL($pathway, $type) {
+	public static function getDownloadURL($pathway, $type) {
 		if($pathway->getActiveRevision()) {
 			$oldid = "&oldid={$pathway->getActiveRevision()}";
 		}
 		return WPI_SCRIPT_URL . "?action=downloadFile&type=$type&pwTitle={$pathway->getTitleObject()->getFullText()}{$oldid}";
 	}
 
-	static function editDropDown($pathway) {
+	public static function editDropDown($pathway) {
 		global $wgOut;
 
 		//AP20081218: Operating System Detection
-		require_once 'DetectBrowserOS.php';
 		//echo (browser_detection( 'os' ));
 		 $download = array(
 						'PathVisio (.gpml)' => self::getDownloadURL($pathway, 'gpml'),
@@ -249,7 +262,8 @@ SCRIPT;
 $wgOut->addScript($script);
 return $dropdown;
 	}
-	static function formatPubMed($text) {
+
+	public static function formatPubMed($text) {
 		$link = "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&cmd=Retrieve&dopt=AbstractPlus&list_uids=";
 		if(preg_match_all("/PMID: ([0-9]+)/", $text, $ids)) {
 			foreach($ids[1] as $id) {

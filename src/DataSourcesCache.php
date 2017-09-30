@@ -22,6 +22,8 @@
  */
 namespace WikiPathways;
 
+use Exception;
+
 class DataSourcesCache {
 	private static $url = "http://svn.bigcat.unimaas.nl/bridgedb/trunk/org.bridgedb.bio/resources/org/bridgedb/bio/datasources.txt";
 	static $file = "datasources.txt";

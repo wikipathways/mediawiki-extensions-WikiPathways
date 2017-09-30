@@ -136,6 +136,7 @@ function toGlobalLink($localLink) {
 }
 
 function writeFile($filename, $data) {
+	throw new \Exception("Find who called me");
 	$dir = dirname($filename);
 	if(!file_exists($dir)) {
 		wfDebug( "Making $dir for $filename.\n" );

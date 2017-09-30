@@ -27,6 +27,13 @@ class Hook
 	public static function pathwayViewer() 
 	{
 		global $wgParser;
+		$wgParser->setHook( "pathwayBibliography", "WikiPathways\\PathwayBibliography::output" );
+		$wgParser->setHook( "Xref", "WikiPathways\\XrefPanel::renderXref" );
+		$wgParser->setHook( "pathwayHistory", "WikiPathways\\PathwayHistory::history" );
+		$wgParser->setHook(
+			"batchDownload", "WikiPathways\\BatchDownloader::createDownloadLinks"
+		);
+
 		$wgParser->setFunctionHook(
 			"PathwayViewer", "WikiPathways\\PathwayViewer::enable"
 		);
@@ -45,9 +52,11 @@ class Hook
 		$wgParser->setFunctionHook(
 			'pathwayInfo', 'WikiPathways\\PathwayInfo::getPathwayInfoText'
 		);
-		$wgParser->setHook(
-			"batchDownload", "WikiPathways\\BatchDownloader::createDownloadLinks"
+		$wgParser->setFunctionHook(
+			"Statistics", "WikiPathways\\Statistics::loadStatistics"
 		);
+
+		XrefPanel::addXrefPanelScripts();
 
 		Pathway::registerFileType( FILETYPE_PDF );
 		Pathway::registerFileType( FILETYPE_PWF );
@@ -63,6 +72,7 @@ class Hook
 		$magicWords['pathwayOfTheDay'] = [ 0, 'pathwayOfTheDay' ];
 		$magicWords['pathwayInfo'] = [ 0, 'pathwayInfo' ];
 		$magicWords['siteStats'] = [ 0, 'siteStats' ];
+		$magicWords['Statistics'] = [ 0, 'Statistics' ];
 	}
 
 	/* http://developers.pathvisio.org/ticket/1559 */

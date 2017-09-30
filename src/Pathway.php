@@ -24,6 +24,7 @@ namespace WikiPathways;
 
 use Revision;
 use Title;
+use Exception;
 
 class Pathway {
 	public static $ID_PREFIX = 'WP';
@@ -575,7 +576,8 @@ class Pathway {
 	 * \param whether to update the cache (if needed) or not
 	 */
 	public function getFileLocation($fileType, $updateCache = true) {
-		return $this->getFileObj( $fileType, $updateCache )->getPath();
+		global $wgUploadDirectory;
+		return $wgUploadDirectory .'/'. $this->getFileObj( $fileType, $updateCache )->getURLRel();
 	}
 
 	public function getFileObj($fileType, $updateCache = true) {
@@ -978,7 +980,7 @@ class Pathway {
 			return false;
 		} else {
 			if(!$revision) $revision = $this->getLatestRevision();
-			$text = Revision::newFromId($revision)->getText();
+			$text = Revision::newFromId($revision)->getSerializedData();
 			return self::isDeletedMark($text);
 		}
 	}
@@ -1156,13 +1158,9 @@ class Pathway {
 	 */
 	private function saveConvertedCache($fileType) {
 		# Convert gpml to fileType
-		$gpmlFile = realpath($this->getFileLocation(FILETYPE_GPML));
+		$gpmlFile = $this->getFileLocation(FILETYPE_GPML);
 		wfDebug( "Saving $gpmlFile to $fileType" );
 		$conFile = $this->getFileLocation($fileType, false);
-		$dir = dirname($conFile);
-		if ( !is_dir( $dir ) && !wfMkdirParents( $dir ) ) {
-			throw new MWException( "Couldn't make directory: $dir" );
-		}
 		self::convert($gpmlFile, $conFile);
 		return $conFile;
 	}
@@ -1174,12 +1172,10 @@ class Pathway {
 	 */
 	public static function convert($gpmlFile, $outFile) {
 		global $wgMaxShellMemory;
-
-		$gpmlFile = realpath($gpmlFile);
-
 		$basePath = WPI_SCRIPT_PATH;
 		$maxMemoryM = intval($wgMaxShellMemory / 1024); //Max script memory on java program in megabytes
 		$cmd = "java -Xmx{$maxMemoryM}M -jar $basePath/bin/pathvisio_core.jar \"$gpmlFile\" \"$outFile\" 2>&1";
+		var_dump($cmd);exit;
 		wfDebug("CONVERTER: $cmd\n");
 		$msg = wfJavaExec($cmd, $status);
 
@@ -1197,9 +1193,9 @@ class Pathway {
 	private function saveGpmlCache() {
 		$gpml = $this->getGpml();
 		if($gpml) { //Only write cache if there is GPML
-			$file = $this->getFileLocation(FILETYPE_GPML, false);
-			writeFile($file, $gpml);
-			wfDebug( "GPML CACHE SAVED: $file" );
+			$file = $this->getFileObj(FILETYPE_GPML, false);
+			$file->publish($gpml);
+			wfDebug( "GPML CACHE SAVED: " . $file->getPath() );
 		}
 	}
 
