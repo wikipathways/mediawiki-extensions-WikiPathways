@@ -61,6 +61,8 @@ class Hook {
 		Pathway::registerFileType( FILETYPE_PWF );
 		Pathway::registerFileType( FILETYPE_TXT );
 		Pathway::registerFileType( FILETYPE_BIOPAX );
+
+        RecentChangesBox::init;
 	}
 
 	public static function pathwayMagic( &$magicWords, $langCode ) {

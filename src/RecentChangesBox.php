@@ -23,6 +23,9 @@
  */
 namespace WikiPathways;
 
+use Title;
+use User;
+
 class RecentChangesBox {
 	private $namespace;
 	private $limit;
@@ -106,7 +109,8 @@ class RecentChangesBox {
 			$title_res = $dbr->query(
 				"SELECT rc_title, rc_timestamp, rc_user, rc_comment, rc_new
 				FROM recentchanges
-				WHERE rc_title = '{$rc_title_quotesafe}' AND rc_namespace = {$this->namespace}
+				WHERE rc_title = '{$rc_title_quotesafe}'
+				AND rc_namespace = {$this->namespace}
 				AND rc_timestamp = '{$row->rc_timestamp}'
 				"
 			);
@@ -150,23 +154,27 @@ class RecentChangesBox {
 
 		$titleLink = $this->titleLink($title);
 
-		if($row->rc_new) {
+		if( $row->rc_new ) {
 			$icon = SITE_URL . "/skins/common/images/comment_add.png";
-		} else if(substr($row->rc_comment, 0, strlen(Pathway::$DELETE_PREFIX)) == Pathway::$DELETE_PREFIX) {
+		} else if( substr( $row->rc_comment, 0, strlen( Pathway::$DELETE_PREFIX ) ) ==
+                   Pathway::$DELETE_PREFIX ) {
 			$icon = SITE_URL . "/skins/common/images/comment_remove.png";
 		} else {
 			$icon = SITE_URL . "/skins/common/images/comment_edit.png";
 		}
 		$comment = htmlentities($row->rc_comment);
 		$img = "<img src=\"$icon\" title=\"{$comment}\"></img>";
-		return "<TR><TD>$img<TD>$titleLink by <a href=\"$userUrl\" title=\"{$comment}\">{$this->getDisplayName($user)}</a>";
+		return "<TR><TD>$img<TD>$titleLink by <a href=\"$userUrl\" "
+            . "title=\"{$comment}\">{$this->getDisplayName($user)}</a>";
 	}
 
 	private function getDisplayName($user) {
 		$name = $user->getRealName();
 
 		//Filter out email addresses
-		if(preg_match("/^[-_a-z0-9\'+*$^&%=~!?{}]++(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*+@(?:(?![-.])[-a-z0-9.]+(?<![-.])\.[a-z]{2,6}|\d{1,3}(?:\.\d{1,3}){3})(?::\d++)?$/iD", $name)) {
+		if(preg_match("/^[-_a-z0-9\'+*$^&%=~!?{}]++(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*"
+                      . "+@(?:(?![-.])[-a-z0-9.]+(?<![-.])\.[a-z]{2,6}|\d{1,3}"
+                      . "(?:\.\d{1,3}){3})(?::\d++)?$/iD", $name)) {
 			$name = ''; //use username instead
 		}
 		if(!$name) $name = $user->getName();

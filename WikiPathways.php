@@ -20,7 +20,9 @@
  * @author Mark A. Hershberger
  */
 
+# Passwords and secrets and such
 require_once "$IP/../pass.php";
+
 wfLoadExtensions( [
 	"Cite",
 	"ConfirmEdit",
