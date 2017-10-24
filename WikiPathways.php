@@ -20,12 +20,11 @@
  * @author Mark A. Hershberger
  */
 
-error_reporting( -1 );
-$wgScriptPath = "/gladstone";
-
+require_once "$IP/../pass.php";
 wfLoadExtensions( [
 	"Cite",
 	"ConfirmEdit",
+	"ConfirmEdit/QuestyCaptcha",
 	"EmbedVideo",
 	"Gadgets",
 	"ImageMap",
@@ -42,13 +41,53 @@ wfLoadExtensions( [
 	"WikiEditor",
 	"WikiPathways"
 ] );
-
-wfLoadSkin( "Vector" );
-
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
 require_once "$IP/extensions/UserMerge/UserMerge.php";
 require_once "$IP/extensions/BiblioPlus/BiblioPlus.php";
+
+wfLoadSkin( "Vector" );
+
+require_once "globals.php";
+require_once "wpi.php";
+require_once "siteStats.php";
+require_once "imageSize.php";
+require_once "PopularPathwaysPage2/PopularPathwaysPage.php";
+require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
+require_once "NewPathwaysPage/NewPathwaysPage.php";
+require_once "CreatePathwayPage/CreatePathwayPage.php";
+require_once "LabeledSectionTransclusion/compat.php";
+require_once "LabeledSectionTransclusion/lst.php";
+require_once "LabeledSectionTransclusion/lsth.php";
+require_once "SearchPathways/SearchPathways.php";
+require_once "SearchPathways/searchPathwaysBox.php";
+require_once "button.php";
+require_once "imageLink.php";
+require_once "listPathways.php";
+require_once "movePathway.php";
+require_once "deletePathway.php";
+require_once "SpecialWishList/SpecialWishList.php";
+require_once "SpecialWishList/TopWishes.php";
+require_once "DiffAppletPage/DiffAppletPage.php";
+require_once "DiffViewer/DiffViewer.php";
+require_once "CheckGpmlOnSave.php";
+require_once "CreateUserPage.php";
+require_once "AuthorInfo/AuthorInfo.php";
+require_once "CurationTags/SpecialCurationTags/SpecialCurationTags.php";
+require_once "UserLoginLog/UserLoginLog.php";
+require_once "ShowError/ShowError.php";
+require_once "pathwayParserFunctions.php";
+require_once "PrivatePathways/PrivatePathways.php";
+require_once "PrivatePathways/ListPrivatePathways.php";
+require_once "PrivatePathways/PrivateContributions.php";
+require_once "otag/otags_main.php";
+require_once "ontologyindex/ontologyindex.php";
+require_once "StubManager/StubManager.php";
+require_once "SecureHTML/SecureHTML.php";
+require_once "PageEditor/PageEditor.php";
+require_once "PullPages/PullPages.php";
+require_once "search.php";
+require_once "TissueAnalyzer/TissueAnalyzer.php";
 
 $wgCaptchaClass = 'QuestyCaptcha';
 
@@ -329,51 +368,37 @@ $wgEnableUserEmail  = true;
 $wgEmergencyContact = "wikipathways@gladstone.ucsf.edu";
 $wgPasswordSender = "no-reply@wikipathways.com";
 
-require_once "globals.php";
-require_once "wpi.php";
-require_once "siteStats.php";
-require_once "imageSize.php";
-require_once "PopularPathwaysPage2/PopularPathwaysPage.php";
-require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
-require_once "NewPathwaysPage/NewPathwaysPage.php";
-require_once "CreatePathwayPage/CreatePathwayPage.php";
-require_once "LabeledSectionTransclusion/compat.php";
-require_once "LabeledSectionTransclusion/lst.php";
-require_once "LabeledSectionTransclusion/lsth.php";
-require_once "SearchPathways/SearchPathways.php";
-require_once "SearchPathways/searchPathwaysBox.php";
-require_once "button.php";
-require_once "imageLink.php";
-require_once "listPathways.php";
-require_once "movePathway.php";
-require_once "deletePathway.php";
-require_once "SpecialWishList/SpecialWishList.php";
-require_once "SpecialWishList/TopWishes.php";
-require_once "DiffAppletPage/DiffAppletPage.php";
-require_once "DiffViewer/DiffViewer.php";
-require_once "CheckGpmlOnSave.php";
-require_once "CreateUserPage.php";
-require_once "AuthorInfo/AuthorInfo.php";
-require_once "CurationTags/SpecialCurationTags/SpecialCurationTags.php";
-require_once "UserLoginLog/UserLoginLog.php";
-require_once "ShowError/ShowError.php";
-require_once "pathwayParserFunctions.php";
-require_once "PrivatePathways/PrivatePathways.php";
-require_once "PrivatePathways/ListPrivatePathways.php";
-require_once "PrivatePathways/PrivateContributions.php";
-require_once "recentChangesBox.php";
-require_once "otag/otags_main.php";
-require_once "ontologyindex/ontologyindex.php";
-require_once "StubManager/StubManager.php";
-require_once "SecureHTML/SecureHTML.php";
-require_once "PageEditor/PageEditor.php";
-#require_once "ContributionScores/ContributionScores.php";
-require_once "PullPages/PullPages.php";
-require_once "search.php";
-require_once "TissueAnalyzer/TissueAnalyzer.php";
-//Register the supported file types
-
-
 $wgContentHandlerTextFallback = 'serialize';
 $wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_PATHWAY;
 $wgContentHandlers[CONTENT_MODEL_PATHWAY] = 'WikiPathways\\PathwayHandler';
+
+if ( !isset( $wpiJavascriptSnippets ) ) {
+	$wpiJavascriptSnippets = [];
+}
+if ( !isset( $wpiJavascriptSources ) ) {
+	$wpiJavascriptSources = [];
+}
+if ( !isset( $jsJQuery ) ) {
+	$jsJQuery = "$wgScriptPath/skins/wikipathways/jquery-1.8.3.min.js";
+}
+if ( !isset( $jsJQueryUI ) ) {
+	$jsJQueryUI = "$wgScriptPath/wpi/js/jquery-ui/jquery-ui-1.8.10.custom.min.js";
+}
+if ( !isset( $cssJQueryUI ) ) {
+	$cssJQueryUI = "$wgScriptPath/wpi/js/jquery-ui/jquery-ui-1.8.10.custom.css";
+}
+if ( !isset( $jsSvgWeb ) ) {
+	$jsSvgWeb = "$wgScriptPath/wpi/js/svgweb/svg-uncompressed.js\""
+			  . "data-path=\"$wgScriptPath/wpi/js/svgweb";
+}
+// Only load jquery when required by extension
+$jsRequireJQuery = false;
+
+// Disable email on test server
+$wgEnableEmail = true;
+$wgEnableUserEmail = false;
+$wgEnotifUserTalk = false;
+$wgEnotifWatchlist = false;
+
+// enable ontology tags on pathway page
+$wpiEnableOtag = true;

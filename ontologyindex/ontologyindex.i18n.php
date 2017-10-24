@@ -1,7 +1,6 @@
 <?php
-$messages = array();
+$messages = [];
 
-$messages['en'] = array(
+$messages['en'] = [
 	'ontologyindex' => 'Ontology Index',
-);
-?>
+];

@@ -1,10 +1,7 @@
 <?php
-$aliases = array();
+$aliases = [];
 
 /** English */
-$aliases['en'] = array(
-    'ontologyindex' => array( 'Ontology Index' ),
-);
-
-
-?>
+$aliases['en'] = [
+	'ontologyindex' => [ 'Ontology Index' ],
+];

@@ -7,7 +7,7 @@
 class TagChangeNotification extends EmailNotification {
 	var $taghist;
 
-	function __construct($taghist) {
+	function __construct( $taghist ) {
 		$this->taghist = $taghist;
 	}
 
@@ -27,8 +27,8 @@ class TagChangeNotification extends EmailNotification {
 	function notifyOnTagChange() {
 		$taghist = $this->taghist;
 		$this->actuallyNotifyOnPageChange(
-			User::newFromId($taghist->getUser()),
-			Title::newFromId($taghist->getPageId()),
+			User::newFromId( $taghist->getUser() ),
+			Title::newFromId( $taghist->getPageId() ),
 			$taghist->getTime(),
 			$taghist->getAction(),
 			"1",
@@ -50,14 +50,14 @@ class TagChangeNotification extends EmailNotification {
 
 		$from    = ''; /* fail safe */
 		$replyto = ''; /* fail safe */
-		$keys    = array();
+		$keys    = [];
 
 		$pagetitle = $this->title->getPrefixedText();
 		$keys['$PAGETITLE']          = $pagetitle;
 		$keys['$PAGETITLE_URL']      = $this->title->getFullUrl();
 
 		$keys['$ACTION'] = $this->taghist->getAction();
-		$keys['$TAGNAME'] = CurationTag::getDisplayName($this->taghist->getTagName());
+		$keys['$TAGNAME'] = CurationTag::getDisplayName( $this->taghist->getTagName() );
 
 		$subject = strtr( $subject, $keys );
 
@@ -68,11 +68,11 @@ class TagChangeNotification extends EmailNotification {
 		$name    = $editor->getName();
 		$adminAddress = new MailAddress( $wgPasswordSender, 'WikiPathways' );
 		$editorAddress = new MailAddress( $editor );
-		if( $wgEnotifRevealEditorAddress
+		if ( $wgEnotifRevealEditorAddress
 			&& ( $editor->getEmail() != '' )
 			&& $editor->getOption( 'enotifrevealaddr' ) ) {
-			if( $wgEnotifFromEditor ) {
-				$from    = $editorAddress;
+			if ( $wgEnotifFromEditor ) {
+				$from = $editorAddress;
 			} else {
 				$from    = $adminAddress;
 				$replyto = $editorAddress;
@@ -82,14 +82,14 @@ class TagChangeNotification extends EmailNotification {
 			$replyto = new MailAddress( $wgNoReplyAddress );
 		}
 
-		if( $editor->isIP( $name ) ) {
-			#real anon (user:xxx.xxx.xxx.xxx)
-			$utext = wfMsgForContent('enotif_anon_editor', $name);
-			$subject = str_replace('$PAGEEDITOR', $utext, $subject);
+		if ( $editor->isIP( $name ) ) {
+			# real anon (user:xxx.xxx.xxx.xxx)
+			$utext = wfMsgForContent( 'enotif_anon_editor', $name );
+			$subject = str_replace( '$PAGEEDITOR', $utext, $subject );
 			$keys['$PAGEEDITOR']       = $utext;
 			$keys['$PAGEEDITOR_EMAIL'] = wfMsgForContent( 'noemailtitle' );
 		} else {
-			$subject = str_replace('$PAGEEDITOR', $name, $subject);
+			$subject = str_replace( '$PAGEEDITOR', $name, $subject );
 			$keys['$PAGEEDITOR']          = $name;
 			$emailPage = SpecialPage::getSafeTitleFor( 'Emailuser', $name );
 			$keys['$PAGEEDITOR_EMAIL'] = $emailPage->getFullUrl();
@@ -104,9 +104,7 @@ class TagChangeNotification extends EmailNotification {
 		$this->replyto = $replyto;
 		$this->subject = $subject;
 		$this->body    = $body;
-		wfDebug(var_export($this->subject, TRUE) . " SUBJ_END\n");
-		wfDebug(var_export($this->body, TRUE) . " BODY_END\n");
+		wfDebug( var_export( $this->subject, true ) . " SUBJ_END\n" );
+		wfDebug( var_export( $this->body, true ) . " BODY_END\n" );
 	}
 }
-
-?>

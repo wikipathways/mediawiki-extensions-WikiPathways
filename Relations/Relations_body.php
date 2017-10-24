@@ -1,26 +1,22 @@
 <?php
 
-
-class Relations extends SpecialPage
-{		
+class Relations extends SpecialPage {
 	function __construct() {
 		parent::__construct( 'Relations' );
-		
 	}
 
 	function execute( $par ) {
-            
-		global $wgRequest, $wgOut;
-                $pathToApp = WPI_URL . "/extensions/Relations/app/index.html";
+					global $wgRequest, $wgOut;
+				$pathToApp = WPI_URL . "/extensions/Relations/app/index.html";
 
 		$this->setHeaders();
 
-                $wgOut->setPagetitle("Relations Visualization");
+				$wgOut->setPagetitle( "Relations Visualization" );
 
 		# Get request data from, e.g.
-		$param = $wgRequest->getText('param');
+		$param = $wgRequest->getText( 'param' );
 
-                $wgOut->addHTML("
+				$wgOut->addHTML( "
                         <div>Relations Visualization is a simple Flex application which shows relationships between Pathways.
                         It is intended to be both a useful means of graphically exploring the large database, and also find relationships
                         between various pathways on the basis of multiple parameters. It gives an idea about how pathways relate and may help to
@@ -46,9 +42,6 @@ class Relations extends SpecialPage
                             <li>Open the pathway by double clicking the node.</li>
                          </ul>
 
-                        ");
-
+                        " );
 	}
 }
-
-?>

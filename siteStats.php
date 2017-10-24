@@ -6,4 +6,3 @@ Statistics for main page
 - how many organisms
 - how many pathways per organism
 */
-

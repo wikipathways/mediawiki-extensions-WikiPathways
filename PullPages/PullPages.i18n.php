@@ -1,5 +1,5 @@
 <?php
-$messages['en'] = array(
+$messages['en'] = [
 	'pullpages' => 'Pull Pages',
 	'pullpage-intro' => "Please specify the wiki you want to pull pages from.  If a username and password isn't given, then the pull will be done anonymously and imgauth will not be able to be used.",
 	'pullpage-source-wiki' => "Base URL of source wiki.  (e.g. http://example.com/index.php):",
@@ -21,4 +21,4 @@ $messages['en'] = array(
 	'pagepuller-tmp-create-error'  => "Error creating tmp file: $1",
 	'pagepuller-save-tmp-error'  => "Error saving tmp file: $1",
 	'pagepuller-upload-error'  => "Errors during upload: $1",
-);
+];

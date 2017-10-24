@@ -1,10 +1,9 @@
 <?php
-require_once("QueryPage.php");
+require_once "QueryPage.php";
 
-class PopularPathwaysPage extends SpecialPage
-{
+class PopularPathwaysPage extends SpecialPage {
 		function PopularPathwaysPage() {
-				SpecialPage::SpecialPage("PopularPathwaysPage");
+				SpecialPage::SpecialPage( "PopularPathwaysPage" );
 				self::loadMessages();
 		}
 
@@ -23,10 +22,11 @@ class PopularPathwaysPage extends SpecialPage
 		static function loadMessages() {
 				static $messagesLoaded = false;
 				global $wgMessageCache;
-				if ( $messagesLoaded ) return true;
+				if ( $messagesLoaded ) { return true;
+				}
 				$messagesLoaded = true;
 
-				require( dirname( __FILE__ ) . '/PopularPathwaysPage.i18n.php' );
+				require __DIR__ . '/PopularPathwaysPage.i18n.php';
 				foreach ( $allMessages as $lang => $langMessages ) {
 						$wgMessageCache->addMessages( $langMessages, $lang );
 				}
@@ -44,7 +44,9 @@ class PPQueryPage extends QueryPage {
 		# page_counter is not indexed
 		return true;
 	}
-	function isSyndicated() { return false; }
+	function isSyndicated() {
+ return false;
+ }
 
 	function getSQL() {
 		$dbr =& wfGetDB( DB_SLAVE );
@@ -63,17 +65,18 @@ class PPQueryPage extends QueryPage {
 
 	function formatResult( $skin, $result ) {
 		global $wgLang, $wgContLang;
-		$taggedIds = CurationTag::getPagesForTag('Curation:Tutorial');
-		if (in_array($result->id, $taggedIds)){
+		$taggedIds = CurationTag::getPagesForTag( 'Curation:Tutorial' );
+		if ( in_array( $result->id, $taggedIds ) ) {
 			return null;
 		}
-		$pathway = Pathway::newFromTitle($result->title);
-		if(!$pathway->isReadable()) return null; //Skip private pathways
+		$pathway = Pathway::newFromTitle( $result->title );
+		if ( !$pathway->isReadable() ) { return null; // Skip private pathways
+		}
 		$title = Title::makeTitle( $result->namespace, $pathway->getSpecies().":".$pathway->getName() );
 				$id = Title::makeTitle( $result->namespace, $result->title );
 		$link = $skin->makeKnownLinkObj( $id, htmlspecialchars( $wgContLang->convert( $title->getBaseText() ) ) );
-		$nv = wfMsgExt( 'nviews', array( 'parsemag', 'escape'),
+		$nv = wfMsgExt( 'nviews', [ 'parsemag', 'escape' ],
 			$wgLang->formatNum( $result->value ) );
-		return wfSpecialList($link, $nv);
+		return wfSpecialList( $link, $nv );
 	}
 }

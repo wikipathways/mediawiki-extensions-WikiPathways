@@ -4,83 +4,81 @@ class TissueAnalyzer extends SpecialPage {
 	protected $name = 'TissueAnalyzer';
 
 	function TissueAnalyzer() {
-		SpecialPage::SpecialPage ( $this->name  );
+		SpecialPage::SpecialPage( $this->name );
 		self::loadMessages();
 	}
 
-	function execute($par) {
+	function execute( $par ) {
 		global $wgOut, $wgUser, $wgLang;
-		$this->setHeaders ();
-		$wgOut->setPagetitle ("TissueAnalyzer");
+		$this->setHeaders();
+		$wgOut->setPagetitle( "TissueAnalyzer" );
 
-		$species = (isset ( $_GET ["species"] )) ? $_GET ["species"] : "Human";
-		$cutoff = (isset ( $_GET ["cutoff"] )) ? $_GET ["cutoff"] : "5";
-		$dataset = (isset ( $_GET ["dataset"] )) ? $_GET ["dataset"] : "E-MTAB-2836";
-		$generic = (isset ( $_GET ["generic"] )) ? $_GET ["generic"] : "";
+		$species = ( isset( $_GET ["species"] ) ) ? $_GET ["species"] : "Human";
+		$cutoff = ( isset( $_GET ["cutoff"] ) ) ? $_GET ["cutoff"] : "5";
+		$dataset = ( isset( $_GET ["dataset"] ) ) ? $_GET ["dataset"] : "E-MTAB-2836";
+		$generic = ( isset( $_GET ["generic"] ) ) ? $_GET ["generic"] : "";
 		$select = $_GET ["select"];
-		
-				
+
 		$datasetSelect = "<SELECT name='dataset' id='dataSelect' size='1'>";
 		$path = "wpi/bin/TissueAnalyzer/datasets/datasets.config";
-		$datasetFile = fopen($path, r);
-		$hashArray = array ();
-		$speciesArray = array();
-		while ( ! feof ( $datasetFile ) ) {
-			$line = fgets ( $datasetFile );
-			$pieces = explode ( "\t", $line );
+		$datasetFile = fopen( $path, r );
+		$hashArray = [];
+		$speciesArray = [];
+		while ( ! feof( $datasetFile ) ) {
+			$line = fgets( $datasetFile );
+			$pieces = explode( "\t", $line );
 			$id = $pieces [0];
-			if ($id === '')break;
-			$datasetSpecies = 	$pieces [1];
-			array_push ($speciesArray, $pieces[1]);
+			if ( $id === '' ) { break;   }			$datasetSpecies = $pieces [1];
+			array_push( $speciesArray, $pieces[1] );
 			$hashArray[$id]["species"] = $datasetSpecies;
 			$hashArray[$id]["short"] = $pieces [2];
-			if (strcmp ( trim ( $species ),trim ($datasetSpecies )) == 0){		
-				$datasetSelect .= (strcmp ( trim ( $dataset ), trim ( $id ) ) == 0) ? "<option selected=\"selected\">$id</option>" : "<option>$id</option>";
+			if ( strcmp( trim( $species ), trim( $datasetSpecies ) ) == 0 ) {
+				$datasetSelect .= ( strcmp( trim( $dataset ), trim( $id ) ) == 0 ) ? "<option selected=\"selected\">$id</option>" : "<option>$id</option>";
 			}
 		}
-		fclose ( $datasetFile );
-		$datasetSelect .="</SELECT>";
-		$speciesArray = array_unique($speciesArray);
+		fclose( $datasetFile );
+		$datasetSelect .= "</SELECT>";
+		$speciesArray = array_unique( $speciesArray );
 
-		$topTenFile = fopen("wpi/bin/TissueAnalyzer/datasets/".$dataset."_generic.txt", r);
-		$topTen = array ();
-		while (!feof($topTenFile)) {
-			array_push ( $topTen, trim (fgets($topTenFile)) );
+		$topTenFile = fopen( "wpi/bin/TissueAnalyzer/datasets/".$dataset."_generic.txt", r );
+		$topTen = [];
+		while ( !feof( $topTenFile ) ) {
+			array_push( $topTen, trim( fgets( $topTenFile ) ) );
 		}
-		fclose ( $topTenFile );
+		fclose( $topTenFile );
 
 		$welcomePage = false;
-		if (!isset ( $select )) {
-				$select="adipose tissue";
+		if ( !isset( $select ) ) {
+				$select = "adipose tissue";
 				$welcomePage = true;
-		}	
+		}
 
-		$this->addJs($topTen,$hashArray);		
-		$this->createCriteriaDiv($select, $dataset, $cutoff, $species, $datasetSelect, $speciesArray, $generic);		
-		$this->createTableResults($select, $dataset, $cutoff, $topTen);	
-		$this->createViewerDivs($welcomePage, $cutoff);
-		
+		$this->addJs( $topTen, $hashArray );
+		$this->createCriteriaDiv( $select, $dataset, $cutoff, $species, $datasetSelect, $speciesArray, $generic );
+		$this->createTableResults( $select, $dataset, $cutoff, $topTen );
+		$this->createViewerDivs( $welcomePage, $cutoff );
+
 		return true;
 	}
 
-	function addJs($topTen,$hashArray){
+	function addJs( $topTen,$hashArray ) {
 		global $wgOut;
-		$top = json_encode($topTen);
-		$hash = json_encode($hashArray);
-		
-		//Add CSS
-		//Hack to add a css that's not in the skins directory
+		$top = json_encode( $topTen );
+		$hash = json_encode( $hashArray );
+
+		// Add CSS
+		// Hack to add a css that's not in the skins directory
 		global $wgStylePath;
 		$oldStylePath = $wgStylePath;
 		$wgStylePath = "/wpi/lib/tissueanalyzer/";
-		$wgOut->addStyle("/fancybox/jquery.fancybox-1.3.4.css");
+		$wgOut->addStyle( "/fancybox/jquery.fancybox-1.3.4.css" );
 		$wgStylePath = $oldStylePath;
 
-		$wgOut->addScriptFile('/wpi/lib/tissueanalyzer/fancybox/jquery.fancybox-1.3.4.js');		
-		$wgOut->addScript('<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>');
-		$wgOut->addScriptFile("/wpi/lib/tissueanalyzer/ChartFancy.js");
+		$wgOut->addScriptFile( '/wpi/lib/tissueanalyzer/fancybox/jquery.fancybox-1.3.4.js' );
+		$wgOut->addScript( '<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>' );
+		$wgOut->addScriptFile( "/wpi/lib/tissueanalyzer/ChartFancy.js" );
 
-		$wgOut->addScript('
+		$wgOut->addScript( '
 				<script language="JavaScript">
 					function doToggleTA( elId, msg, expand, collapse ) {
 							$("#"+elId+" .toggleMe").toggle();
@@ -110,8 +108,8 @@ class TissueAnalyzer extends SpecialPage {
 							});
 						}
 					}
-				</script>');
-		$wgOut->addScript('<script language="JavaScript">
+				</script>' );
+		$wgOut->addScript( '<script language="JavaScript">
 					function tissue_viewer(id,genes,pathway_name){
 						genes = genes.replace(/\./g," ");
 						$("#pwyname").attr("style","");
@@ -121,8 +119,8 @@ class TissueAnalyzer extends SpecialPage {
 						"http://www.wikipathways.org/wpi/PathwayWidget.php?id="+id+genes);
 						$("#path_viewer").attr("style","overflow:hidden;");
 					}
-				</script>');
- 		$wgOut->addScript('<script type="text/javascript">
+				</script>' );
+		 $wgOut->addScript( '<script type="text/javascript">
     			function updateTextInput(val) {
     			  document.getElementById("cutoff_label").innerHTML=val; 
 					}				
@@ -152,39 +150,39 @@ class TissueAnalyzer extends SpecialPage {
 						$("#tissueSelect").load("/wpi/bin/TissueAnalyzer/datasets/"+id+"_tissues_opt.txt"); //update the tissue drop down with the new first id;
 					});
 				});
-				</script>');
+				</script>' );
 	}
 
-	function createCriteriaDiv($select, $dataset, $cutoff, $species, $datasetSelect, $speciesArray, $generic){
+	function createCriteriaDiv( $select, $dataset, $cutoff, $species, $datasetSelect, $speciesArray, $generic ) {
 		global $wgOut;
-		
+
 		$speciesSelect = "<form name= action=''><SELECT name='species' id='speciesSelect' size='1'>";
-		foreach ($speciesArray as $value) {
-    	$speciesSelect .= (strcmp ( trim ( $species ), $value ) == 0) ? "<option selected=\"selected\">$value</option>" : "<option>$value</option>";
+		foreach ( $speciesArray as $value ) {
+		$speciesSelect .= ( strcmp( trim( $species ), $value ) == 0 ) ? "<option selected=\"selected\">$value</option>" : "<option>$value</option>";
 		}
-		$speciesSelect .=  "</SELECT>";
+		$speciesSelect .= "</SELECT>";
 
 		$tissueSelect = "<SELECT name='select' id='tissueSelect' size='1'>";
 		$path = "wpi/bin/TissueAnalyzer/datasets/".$dataset."_tissues_opt.txt";
-		$tissuesFile = fopen ($path , r );
-		while ( ! feof ( $tissuesFile ) ) {
-			$line = fgets ( $tissuesFile );
-			$tissue = str_replace("</option>",'',$line);
-			$tissue = str_replace("<option>",'',$tissue);
-			$tissue = trim ( $tissue );
-			if ($tissue === '')
+		$tissuesFile = fopen( $path, r );
+		while ( ! feof( $tissuesFile ) ) {
+			$line = fgets( $tissuesFile );
+			$tissue = str_replace( "</option>", '', $line );
+			$tissue = str_replace( "<option>", '', $tissue );
+			$tissue = trim( $tissue );
+			if ( $tissue === '' ) {
 				break;
-			$tissueSelect .= (strcmp ( trim ( $select ), trim ( $tissue ) ) == 0) ? "<option selected=\"selected\">$tissue</option>" : "<option>$tissue</option>";
+			}
+			$tissueSelect .= ( strcmp( trim( $select ), trim( $tissue ) ) == 0 ) ? "<option selected=\"selected\">$tissue</option>" : "<option>$tissue</option>";
 		}
-		fclose ( $tissuesFile );
+		fclose( $tissuesFile );
 		$tissueSelect .= "</SELECT>";
-
 
 		$button = <<<HTML
 			<INPUT type="submit" name="button" value="Apply" style="cursor:pointer;font-weight:900" >
 HTML;
 
-		$slide ='		
+		$slide = '		
 				<input type="range" id="cutoff_id" name="cutoff" min="4" max="6" value="'.$cutoff.'" step="1" onchange="updateTextInput(this.value);">                                                       
    				<label id="cutoff_label">'.$cutoff.'</label>';
 
@@ -211,13 +209,15 @@ HTML;
 			</table>			
 HTML;
 
-		$wgOut->addHTML($out);
-		if ($generic=="on") $checked="checked";
-		else $checked="";
+		$wgOut->addHTML( $out );
+		if ( $generic == "on" ) { $checked = "checked";
+
+  } else { $checked = "";
+  }
 		$checkbox = '
 								<input name="generic" id="check" type="checkbox" onchange="checkGeneric(this)" '.$checked.'>
-								<label for="check">Show generic pathways</label></form></div>';				
-		$wgOut->addHTML($checkbox);
+								<label for="check">Show generic pathways</label></form></div>';
+		$wgOut->addHTML( $checkbox );
 
 		$out = <<<HTML
 			<div style="display:inline-block;overflow:visible;width:100%;">
@@ -261,59 +261,58 @@ HTML;
 			</div>
 		</div>
 HTML;
-		$wgOut->addHTML($out);
+		$wgOut->addHTML( $out );
 	}
 
-
-	function createTableResults($select, $dataset, $cutoff, $topTen){
+	function createTableResults( $select, $dataset, $cutoff, $topTen ) {
 		global $wgOut;
 
-		$url = array ();
-		$mean = array ();
-		$perc = array ();
-		$median = array ();
-		$nami = array();
-		$path_id = array();
-		$path_rev = array();
-		$ratio = array();
-				
+		$url = [];
+		$mean = [];
+		$perc = [];
+		$median = [];
+		$nami = [];
+		$path_id = [];
+		$path_rev = [];
+		$ratio = [];
+
 		$average = 0;
 		$date = '';
 		$collection = "Curated";
-		$tissue = fopen ( "wpi/data/TissueAnalyzer/$collection/$dataset/$cutoff/Tissue/$select.txt", r );
-		while ( ! feof ( $tissue ) ) {
-			$line = fgets ( $tissue );
-			if (strpos($line, '#') !== false && strpos($line, 'PDT') !== false   ) {
-				$dateTmp = explode ( "\t", $line );
+		$tissue = fopen( "wpi/data/TissueAnalyzer/$collection/$dataset/$cutoff/Tissue/$select.txt", r );
+		while ( ! feof( $tissue ) ) {
+			$line = fgets( $tissue );
+			if ( strpos( $line, '#' ) !== false && strpos( $line, 'PDT' ) !== false ) {
+				$dateTmp = explode( "\t", $line );
 				$date = $dateTmp[1]." PDT";
 			}
-			if (strpos($line, '#') !== false && strpos($line, 'PST') !== false   ) {
-				$dateTmp = explode ( "\t", $line );
+			if ( strpos( $line, '#' ) !== false && strpos( $line, 'PST' ) !== false ) {
+				$dateTmp = explode( "\t", $line );
 				$date = $dateTmp[1]." PST";
 			}
-			$pieces = explode ( "\t", $line );
+			$pieces = explode( "\t", $line );
 			$name = $pieces [0];
-			$id = strstr ( $name, 'WP' );
-			$id = explode ( "_", $id );
-			$path_name = explode ( "_WP", $name );
-			$path_name = str_replace ( "Hs_", '', $path_name[0] );
-			$path_name = str_replace ( "Mm_", '', $path_name );
-			$path_name = str_replace ( "Bt_", '', $path_name );
-			$title = Title::newFromText ( ( string ) $id [0], NS_PATHWAY );
-			$pp = explode ( ".",$pieces[2]);
-			if (isset ( $title )) {
-				array_push ( $url, '<a target="_blank" href="' . $title->getFullURL () . '">' . $id[0] . '</a>' );
-				array_push ( $mean, $pieces[1] );
-				array_push ( $perc, $pp[0] );
-				array_push ( $median, $pieces[3] );
-				array_push ( $nami, $path_name);
-				array_push ( $path_id, $id[0]);
-				array_push ( $path_rev, $id[1]);
-				array_push ( $ratio,$pieces[4]);
+			$id = strstr( $name, 'WP' );
+			$id = explode( "_", $id );
+			$path_name = explode( "_WP", $name );
+			$path_name = str_replace( "Hs_", '', $path_name[0] );
+			$path_name = str_replace( "Mm_", '', $path_name );
+			$path_name = str_replace( "Bt_", '', $path_name );
+			$title = Title::newFromText( (string)$id [0], NS_PATHWAY );
+			$pp = explode( ".", $pieces[2] );
+			if ( isset( $title ) ) {
+				array_push( $url, '<a target="_blank" href="' . $title->getFullURL() . '">' . $id[0] . '</a>' );
+				array_push( $mean, $pieces[1] );
+				array_push( $perc, $pp[0] );
+				array_push( $median, $pieces[3] );
+				array_push( $nami, $path_name );
+				array_push( $path_id, $id[0] );
+				array_push( $path_rev, $id[1] );
+				array_push( $ratio, $pieces[4] );
 			}
 		}
 
-		array_multisort ($median, SORT_NUMERIC, SORT_DESC,
+		array_multisort( $median, SORT_NUMERIC, SORT_DESC,
 					$url, SORT_STRING, SORT_DESC,
 					$mean, SORT_NUMERIC, SORT_DESC,
 					$perc, SORT_NUMERIC, SORT_DESC,
@@ -325,16 +324,16 @@ HTML;
 		$div = "<div style='display:inline-block;overflow:visible;width:100%'>
 						<br>
 						<label> Last build : $date</label>
-						<label id='gradient' class='scale-title' style='float:right;display: none'>Gradient color scale</label><br/>";				
-		$wgOut->addHTML ( $div );
+						<label id='gradient' class='scale-title' style='float:right;display: none'>Gradient color scale</label><br/>";
+		$wgOut->addHTML( $div );
 
 		$nrShow = 20;
 		$expand = "<b>View all rows...</b>";
-		$collapse = "<b>View first ".($nrShow)." rows...</b>";
+		$collapse = "<b>View first ".( $nrShow )." rows...</b>";
 		$button = "<table style='display:inline-block;width:300px;margin: 0.5em 0em 0em 0px'><td width='51%'><div id='viewAll' onClick='".
 				'doToggleTA("tissueTable", this, "' . $expand . '", "' . $collapse . '")' .
 				"' style='cursor:pointer;color:#0000FF'>"."$expand<td width='45%'></table>";
-			
+
 		$html = "<div style='display:block;overflow:visible;width:100%'>
 				<style type='text/css'>
 				.scale-title {
@@ -387,86 +386,84 @@ HTML;
 					<td class='table-blue-headercell' align='center' style='width:10%'>Active genes</td>
 					<td class='table-blue-headercell' align='center' style='width:10%'>Measured genes</td>
 					<td class='table-blue-headercell' align='center'style='width:10%' >Active/Measured %</td>
-					<td class='table-blue-headercell' align='center'style='width:30%' >Average expression over all tissues</td>";	
+					<td class='table-blue-headercell' align='center'style='width:30%' >Average expression over all tissues</td>";
 
-		for($i = 0; $i < count ( $mean ); ++ $i) {
+		for ( $i = 0; $i < count( $mean ); ++ $i ) {
 			$filename = "wpi/data/TissueAnalyzer/$collection/$dataset/$cutoff/Hs_$nami[$i]_$path_id[$i]_$path_rev[$i].txt";
 			$filename2 = "wpi/data/TissueAnalyzer/$collection/$dataset/$cutoff/$nami[$i]_$path_id[$i]_$path_rev[$i].txt";
-			$filename = (file_exists ( $filename )) ? $filename : $filename2;
+			$filename = ( file_exists( $filename ) ) ? $filename : $filename2;
 			$list_genes = "";
 			$active_index = 0;
 			$measure_index = 0;
 			$name = "";
-			if (file_exists ( $filename )) {
-				$file = fopen ( $filename, r );
-				while ( ! feof ( $file ) ) {
-					$line = fgets ( $file );
-					if ($line == false)
+			if ( file_exists( $filename ) ) {
+				$file = fopen( $filename, r );
+				while ( ! feof( $file ) ) {
+					$line = fgets( $file );
+					if ( $line == false ) {
 						break;
-					if (strpos($line, '#') !== false) {
-						$averageTmp = explode ( "\t", $line );
+					}
+					if ( strpos( $line, '#' ) !== false ) {
+						$averageTmp = explode( "\t", $line );
 						$average = $averageTmp[1];
 					}
-					$pieces = explode ( "\t", $line );
+					$pieces = explode( "\t", $line );
 					$name = $pieces[0];
-					if ($name == $select ){
-						$genes = explode ( ",", $pieces [4] );
-						$mesure = explode ( ",", $pieces [5] );
+					if ( $name == $select ) {
+						$genes = explode( ",", $pieces [4] );
+						$mesure = explode( ",", $pieces [5] );
 						$list_genes = "";
 						foreach ( $mesure as $gene ) {
-							$info = explode ( ' ', $gene );
-							if (count ( $info ) > 1) {
-								if (strpos($info[1], '&&') !== FALSE){ // Found it									
-									$labels = explode ( '&&', $info[1] );
+							$info = explode( ' ', $gene );
+							if ( count( $info ) > 1 ) {
+								if ( strpos( $info[1], '&&' ) !== false ) { // Found it
+									$labels = explode( '&&', $info[1] );
 									foreach ( $labels as $geneLabel ) {
 										$list_genes .= "&label[]=".$geneLabel;
 										$measure_index = $measure_index + 1;
-									}									
-								}
-								else{
+									}
+								} else {
 									$list_genes .= "&label[]=".$info[1];
 									$measure_index = $measure_index + 1;
 								}
 							}
 						}
 						foreach ( $genes as $gene ) {
-							$info = explode ( ' ', $gene );
-							if (count ( $info ) > 1) {
-								if (strpos($info[1], '&&') !== FALSE){
-									$labels = explode ( '&&', $info[1] );
+							$info = explode( ' ', $gene );
+							if ( count( $info ) > 1 ) {
+								if ( strpos( $info[1], '&&' ) !== false ) {
+									$labels = explode( '&&', $info[1] );
 									foreach ( $labels as $geneLabel ) {
 										$list_genes .= "&label[]=".$geneLabel;
 										$active_index = $active_index + 1;
-									}									
-								}
-								else{
+									}
+								} else {
 									$list_genes .= "&label[]=".$info[1];
 									$active_index = $active_index + 1;
 								}
 							}
-						}							
+						}
 					}
 				}
 			}
-			$number = explode ( "/",$ratio[$i]);
+			$number = explode( "/", $ratio[$i] );
 
-			$n = intval($number[0]);
-			$m = intval($number[1]);
+			$n = intval( $number[0] );
+			$m = intval( $number[1] );
 
 			// Note color: %23D9A4FF => #D9A4FF
-			if (!$list_genes == ""){				
-				if ($n===$m ){
-					$list_genes .= "&colors=%236A03B2";						
-					for($l = 1; $l < $active_index; ++ $l){
+			if ( !$list_genes == "" ) {
+				if ( $n === $m ) {
+					$list_genes .= "&colors=%236A03B2";
+					for ( $l = 1; $l < $active_index; ++ $l ) {
 						$list_genes .= ",%236A03B2";
 					}
-				}
-				else{
+				} else {
 					$list_genes .= "&colors=%23B0B0B0";
-					for($k = 1; $k < $measure_index; ++ $k){
+					for ( $k = 1; $k < $measure_index; ++ $k ) {
 						$list_genes .= ",%23B0B0B0";
 					}
-					for($l = 0; $l < $active_index; ++ $l){
+					for ( $l = 0; $l < $active_index; ++ $l ) {
 						$list_genes .= ",%236A03B2";
 					}
 				}
@@ -474,45 +471,41 @@ HTML;
 			$r = 0;
 			$g = 0;
 			$b = 0;
-			
+
 			if ( $median[$i] < 1.5 ) {
 				$r = 170;
 				$g = 170;
 				$b = 170;
-			}
-			elseif ( $median[$i] > 10) {
+			} elseif ( $median[$i] > 10 ) {
 				$color = 255;
 				$r = 0;
 				$g = 0;
 				$b = 255;
+			} else {
+				$r = 170 - 2 * ( $median[$i] - 1.5 ) / ( 10 - 1.5 ) * ( 255 - 170 );
+				$g = 170 - 2 * ( $median[$i] - 1.5 ) / ( 10 - 1.5 ) * ( 255 - 170 );
+				$b = 170 + ( $median[$i] - 1.5 ) / ( 10 - 1.5 ) * ( 255 - 170 );
 			}
-			else {
-				$r = 170 - 2 *($median[$i]-1.5)/(10-1.5) * (255-170);
-				$g = 170 - 2 * ($median[$i]-1.5)/(10-1.5) * (255-170);
-				$b = 170 + ($median[$i]-1.5)/(10-1.5) * (255-170);
-			}
-			$rgb = array( $r, $g, $b );
+			$rgb = [ $r, $g, $b ];
 
 			$hex = "#";
-			$hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
-			$hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
-			$hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+			$hex .= str_pad( dechex( $rgb[0] ), 2, "0", STR_PAD_LEFT );
+			$hex .= str_pad( dechex( $rgb[1] ), 2, "0", STR_PAD_LEFT );
+			$hex .= str_pad( dechex( $rgb[2] ), 2, "0", STR_PAD_LEFT );
 
-			if ($i < $nrShow && in_array($nami[$i], $topTen)){
-				$doShow = 'toggleMe';	
+			if ( $i < $nrShow && in_array( $nami[$i], $topTen ) ) {
+				$doShow = 'toggleMe';
 				$styleBackground = "style='background:#C7FCF9;'";
-			}
-			else if ($i < $nrShow ){
+			} elseif ( $i < $nrShow ) {
 				$doShow = '';
 				$styleBackground = '';
-			}
-			else{
+			} else {
 				$doShow = 'toggleMe';
 			}
 
-			$pathway_name = str_replace ( "_", " ", $nami[$i] );
-			$jsonFile = explode (".", $filename );
-			$jsonPath = "/".$jsonFile[0].".json";			
+			$pathway_name = str_replace( "_", " ", $nami[$i] );
+			$jsonFile = explode( ".", $filename );
+			$jsonPath = "/".$jsonFile[0].".json";
 
 			$html .= <<<HTML
 				<tr class='$doShow' $styleBackground id='$nami[$i]'>
@@ -527,20 +520,18 @@ HTML;
 						<a  id="inline" file="$jsonPath" pathway="$pathway_name" measured="$number[1]" tissue="$select" href="#data">$average</a></td>			
 HTML;
 		}
-		fclose($tissue);
-		$html .= '</table>';	
-		$wgOut->addHTML($html);
+		fclose( $tissue );
+		$html .= '</table>';
+		$wgOut->addHTML( $html );
 	}
 
-
-
-	function createViewerDivs($welcomePage, $cutoff){
+	function createViewerDivs( $welcomePage, $cutoff ) {
 		global $wgOut;
 		$styleViewer = '';
-		if (!$welcomePage){
+		if ( !$welcomePage ) {
 				$styleViewer = 'style="display: none;"';
 		}
-									
+
 		$html = '<style type="text/css">
 								.my-legend .legend-title {
 									text-align: left;
@@ -596,19 +587,20 @@ HTML;
 				</iframe></div>
 				<div style="display:none"><div style="height:600px;width:1400px" id="data"></div></div>';
 
-		$wgOut->addHTML($html);
+		$wgOut->addHTML( $html );
 	}
 
 	static function loadMessages() {
 		static $messagesLoaded = false;
 		global $wgMessageCache;
-		if ($messagesLoaded)
+		if ( $messagesLoaded ) {
 			return true;
+		}
 		$messagesLoaded = true;
 
-		require (dirname ( __FILE__ ) . '/TissueAnalyzer.i18n.php');
+		require __DIR__ . '/TissueAnalyzer.i18n.php';
 		foreach ( $allMessages as $lang => $langMessages ) {
-			$wgMessageCache->addMessages ( $langMessages, $lang );
+			$wgMessageCache->addMessages( $langMessages, $lang );
 		}
 		return true;
 	}

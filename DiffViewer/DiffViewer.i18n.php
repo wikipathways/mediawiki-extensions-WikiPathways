@@ -1,5 +1,5 @@
 <?php
 
-$messages['en'] = array(
+$messages['en'] = [
   "diffviewer" => "Pathway Difference Viewer",
-  );
+  ];

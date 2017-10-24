@@ -1,5 +1,5 @@
 <?php
-$messages['en'] = array(
+$messages['en'] = [
 	"curationtags" => "Curation tags",
 	"curationtags-no-tags" => "No default tags specified!  Please set [[CurationTagsDefinition]] with one default.",
 	"curationtags-multiple-tags" => "Multiple default tags specified!  Please set [[CurationTagsDefinition]] with one default.",
@@ -189,4 +189,4 @@ To add a tag, add a <Tag> element in the xml code below. The element may contain
 EOF
 	,
 	"browsepathways-all-tags" => "All pathways"
-);
+];

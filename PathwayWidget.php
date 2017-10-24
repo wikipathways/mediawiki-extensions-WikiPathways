@@ -11,9 +11,9 @@ You can include a pathway viewer in another website using an iframe:
 <iframe src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=WP4" width="500" height="500" style="overflow:hidden;"></iframe>
 
  */
-	
-	require_once('extensions/PathwayViewer/PathwayViewer.php');
-	header("X-XSS-Protection: 0");
+
+	require_once 'extensions/PathwayViewer/PathwayViewer.php';
+	header( "X-XSS-Protection: 0" );
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -46,74 +46,74 @@ You can include a pathway viewer in another website using an iframe:
 	}
 </style>
 <?php
-//Initialize javascript
+// Initialize javascript
 echo '<script type="text/javascript" src="' . $jsJQuery . '"></script>' . "\n";
 
 $imgPath = "$wgServer/$wgScriptPath/skins/common/images/";
 
 $jsSrc = PathwayViewer::getJsDependencies();
-foreach($jsSrc as $js) {
+foreach ( $jsSrc as $js ) {
 	echo '<script type="text/javascript" src="' . $js . '"></script>' . "\n";
 }
 $identifier = $_REQUEST['id'];
-$version = isset($_REQUEST['rev']) ? $_REQUEST['rev'] : 0;
-$label = isset($_REQUEST['label']) ? $_REQUEST['label'] : null;
-$xref = isset($_REQUEST['xref']) ? $_REQUEST['xref'] : null;
-$colors = isset($_REQUEST['colors']) ? $_REQUEST['colors'] : null;
+$version = isset( $_REQUEST['rev'] ) ? $_REQUEST['rev'] : 0;
+$label = isset( $_REQUEST['label'] ) ? $_REQUEST['label'] : null;
+$xref = isset( $_REQUEST['xref'] ) ? $_REQUEST['xref'] : null;
+$colors = isset( $_REQUEST['colors'] ) ? $_REQUEST['colors'] : null;
 
 $highlights = " ";
-if ((!is_null($label) || !is_null($xref)) && !is_null($colors)){
+if ( ( !is_null( $label ) || !is_null( $xref ) ) && !is_null( $colors ) ) {
 $highlights = "[";
-$selectors = array();
-if (!is_null($label)){
-  if (is_array($label)){
-	foreach ($label as $l) {
-	array_push($selectors, "{\"selector\":\"$l\",");
+$selectors = [];
+if ( !is_null( $label ) ) {
+  if ( is_array( $label ) ) {
+	foreach ( $label as $l ) {
+	array_push( $selectors, "{\"selector\":\"$l\"," );
 	}
   } else {
-	array_push($selectors, "{\"selector\":\"$label\",");
+	array_push( $selectors, "{\"selector\":\"$label\"," );
   }
 }
-if (!is_null($xref)){
-  if (is_array($xref)){
-	foreach ($xref as $x) {
-	$xParts = explode(",", $x);
-		array_push($selectors, "{\"selector\":\"xref:id:".$xParts[0].",".$xParts[1]."\",");
+if ( !is_null( $xref ) ) {
+  if ( is_array( $xref ) ) {
+	foreach ( $xref as $x ) {
+	$xParts = explode( ",", $x );
+		array_push( $selectors, "{\"selector\":\"xref:id:".$xParts[0].",".$xParts[1]."\"," );
 	}
   } else {
-	$xrefParts = explode(",", $xref);
-	array_push($selectors, "{\"selector\":\"xref:id:".$xrefParts[0].",".$xrefParts[1]."\",");
+	$xrefParts = explode( ",", $xref );
+	array_push( $selectors, "{\"selector\":\"xref:id:".$xrefParts[0].",".$xrefParts[1]."\"," );
   }
 }
 
-$colorArray = explode(",",$colors);
+$colorArray = explode( ",", $colors );
 $firstColor = $colorArray[0];
-if (count($selectors) != count($colorArray)){ //if color list doesn't match selector list, then just use first color
-  for($i=0; $i <count($selectors); $i++){
+if ( count( $selectors ) != count( $colorArray ) ) { // if color list doesn't match selector list, then just use first color
+  for ( $i = 0; $i < count( $selectors ); $i++ ) {
 	$colorArray[$i] = $firstColor;
   }
 }
 
-//if highlight params received
-for($i=0; $i <count($selectors); $i++){
+// if highlight params received
+for ( $i = 0; $i < count( $selectors ); $i++ ) {
   $highlights .= $selectors[$i]."\"backgroundColor\":\"".$colorArray[$i]."\",\"borderColor\":\"".$colorArray[$i]."\"},";
 }
 $highlights .= "]";
 }
 
-if (!isset($highlights) || empty($highlights) || $highlights == " ") {
+if ( !isset( $highlights ) || empty( $highlights ) || $highlights == " " ) {
 	$highlights = "[]";
 }
 
-$pathway = Pathway::newFromTitle($identifier);
-if($version) {
-		$pathway->setActiveRevision($version);
+$pathway = Pathway::newFromTitle( $identifier );
+if ( $version ) {
+		$pathway->setActiveRevision( $version );
 }
 
-$svg = $pathway->getFileURL(FILETYPE_IMG);
-$png = $pathway->getFileURL(FILETYPE_PNG);
+$svg = $pathway->getFileURL( FILETYPE_IMG );
+$png = $pathway->getFileURL( FILETYPE_PNG );
 echo "<script>kaavioHighlights = " . $highlights . "</script>";
-$gpml = $pathway->getFileURL(FILETYPE_GPML);
+$gpml = $pathway->getFileURL( FILETYPE_GPML );
 ?>
 <title>WikiPathways Pathway Viewer</title>
 </head>

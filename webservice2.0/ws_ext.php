@@ -2,33 +2,31 @@
 
 
 
-function getUserByOrcid($orcid){
-
+function getUserByOrcid( $orcid ) {
 	  $url = 'http://www.wikipathways.org/api.php?action=query&list=search&srwhat=text&srsearch=%22{{User+ORCID|'.$orcid.'}}%22&srnamespace=2&format=json';
-  	  
-	$ch = curl_init();
 
-        // set url
-        curl_setopt($ch, CURLOPT_URL, $url);
+		$ch = curl_init();
 
-        //return the transfer as a string
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		// set url
+		curl_setopt( $ch, CURLOPT_URL, $url );
 
-        // $output contains the output string
-        $output = curl_exec($ch);
+		// return the transfer as a string
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 
-        // close curl resource to free up system resources
-        curl_close($ch); 
+		// $output contains the output string
+		$output = curl_exec( $ch );
 
-	$result = json_decode($output);
+		// close curl resource to free up system resources
+		curl_close( $ch );
 
-	if(sizeof($result->query->search) == 0)
+	$result = json_decode( $output );
+
+	if ( sizeof( $result->query->search ) == 0 ) {
 		return $r["error"] = "No results found";
-	if(sizeof($result->query->search) > 1)
+	}
+	if ( sizeof( $result->query->search ) > 1 ) {
 		return $r["error"] = "Ambiguous result. 2 or more results were found";
-	
+	}
+
 	return $r["success"] = $result->query->search[0]->title;
-
 }
-
-?>

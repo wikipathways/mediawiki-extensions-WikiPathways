@@ -55,7 +55,7 @@
 
  function namespacePermissionsCheckNamespace( $title, $user, $action, $result ) {
 	 if ( ( $ns = $title->getNamespace() ) >= 100 ) {
-		 if ( ! $user->isAllowed("ns{$ns}_{$action}") ) {
+		 if ( ! $user->isAllowed( "ns{$ns}_{$action}" ) ) {
 			 $result = false;
 			 return false;
 		 }
@@ -66,11 +66,10 @@
  /**
  * Add extension information to Special:Version
  */
- $wgExtensionCredits['other'][] = array(
+ $wgExtensionCredits['other'][] = [
 		'name' => 'NamespacePermissions',
 		'version' => '',
 		'author' => 'Petr Andreev',
 		'description' => 'flexible access management for custom namespaces',
 		'url' => 'http://www.mediawiki.org/wiki/Extension:NamespacePermissions'
-		);
-
+		];

@@ -11,29 +11,28 @@ class PullPages extends SpecialPage {
 	function __construct( $empty = null ) {
 		global $wgOut, $wgRequest, $wgUser;
 
-		parent::__construct('PullPages', 'pullpage');
+		parent::__construct( 'PullPages', 'pullpage' );
 	}
 
-	static function initMsg( ) {
+	static function initMsg() {
 		# Need this called in hook early on so messages load... maybe
 		# a bug in old MW?
-		
 	}
 
 	public function execute( $par ) {
 		global $wgUser, $wgRequest, $wgOut;
-		ini_set('memory_limit', '512M'); /* Need a lot of memory for
+		ini_set( 'memory_limit', '512M' ); /* Need a lot of memory for
 										  * this to run */
 
 		$wgOut->setPagetitle( wfMsg( 'pullpages' ) );
 
-		if (  !$this->userCanExecute( $wgUser )  ) {
+		if ( !$this->userCanExecute( $wgUser ) ) {
 			$this->displayRestrictionError();
 			return;
 		}
 
 		$this->showForm();
-		if( $wgRequest->wasPosted() ) {
+		if ( $wgRequest->wasPosted() ) {
 			$this->processPullRequest();
 		}
 	}
@@ -41,26 +40,25 @@ class PullPages extends SpecialPage {
 	public function processPullRequest() {
 		global $wgRequest;
 
-		if( $wgRequest->getVal("sourceWiki", "") != "" &&
-			$wgRequest->getVal("sourcePage", "") != "" ) {
+		if ( $wgRequest->getVal( "sourceWiki", "" ) != "" &&
+			$wgRequest->getVal( "sourcePage", "" ) != "" ) {
+			$this->puller = new PagePuller( $wgRequest->getVal( "sourceWiki" ),
+				$wgRequest->getVal( "sourcePage" ) );
+			$this->puller->setUser( $wgRequest->getVal( "sourceUser" ), $wgRequest->getVal( "sourcePass" ) );
+			$this->puller->useImgAuth( $wgRequest->getVal( "useImgAuth" ) );
 
-			$this->puller = new PagePuller( $wgRequest->getVal("sourceWiki"),
-				$wgRequest->getVal("sourcePage") );
-			$this->puller->setUser( $wgRequest->getVal("sourceUser"), $wgRequest->getVal("sourcePass") );
-			$this->puller->useImgAuth( $wgRequest->getVal("useImgAuth") );
-
-			$this->pullPage = $wgRequest->getVal("sourcePage");
+			$this->pullPage = $wgRequest->getVal( "sourcePage" );
 		} else {
-			$wgOut->addWikiText( wfMsg('pullpage-no-wiki') );
+			$wgOut->addWikiText( wfMsg( 'pullpage-no-wiki' ) );
 		}
 
-		if( $this->puller ) {
+		if ( $this->puller ) {
 			$this->startProgress();
 			$ret = $this->puller->getPageList();
-			if( is_array( $ret ) ) {
-				foreach( $ret as $page ) {
+			if ( is_array( $ret ) ) {
+				foreach ( $ret as $page ) {
 					$this->puller->getPage( $page,
-						array( $this, "showProgress" ) );
+						[ $this, "showProgress" ] );
 				}
 			} else {
 				global $wgOut;
@@ -75,9 +73,9 @@ class PullPages extends SpecialPage {
 		$wgOut->addWikiMsg( 'pullpage-intro' );
 
 		$wgOut->addHtml(
-			Xml::openElement( 'form', array(
+			Xml::openElement( 'form', [
 				'method' => 'post',
-				'action' => $wgRequest->getRequestURL() ) ) .
+				'action' => $wgRequest->getRequestURL() ] ) .
 			'<fieldset>' .
 			Xml::inputLabel( wfMsg( 'pullpage-source-wiki' ),
 				'sourceWiki', 'sourceWiki', 40,
@@ -89,7 +87,7 @@ class PullPages extends SpecialPage {
 				$wgRequest->getVal( "sourceUser" ) ) . '<br>' .
 			Xml::inputLabel( wfMsg( 'pullpage-source-pass' ),
 				'sourcePass', 'sourcePass', 20, "",
-				array('type' => 'password') ) . '<br>' .
+				[ 'type' => 'password' ] ) . '<br>' .
 			Xml::checkLabel( wfMsg( 'pullpage-use-imgauth' ),
 				'useImgAuth', 'useImgAuth',
 				$wgRequest->getVal( "useImgAuth" ) ) . '<br>' .
@@ -107,7 +105,7 @@ class PullPages extends SpecialPage {
 	public function showProgress( $pageName, $status ) {
 		global $wgOut;
 
-		if( $status->isGood() ) {
+		if ( $status->isGood() ) {
 			$wgOut->addWikiText( wfMsg( "pullpage-progress-page-good",
 					$pageName ) );
 		} else {
@@ -116,7 +114,7 @@ class PullPages extends SpecialPage {
 		}
 	}
 
-	public function finishProgress( ) {
+	public function finishProgress() {
 		global $wgOut;
 
 		$wgOut->addWikiText( wfMsg( "pullpage-progress-end", $this->pullPage,

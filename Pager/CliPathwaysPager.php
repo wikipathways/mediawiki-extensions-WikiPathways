@@ -12,7 +12,7 @@ class CliPathwaysPager extends BasePathwaysPager {
 		self::$myBackwards = false;
 		self::$myOrder = null;
 
-		return new self( );
+		return new self();
 	}
 
 	static function initPager() {
@@ -21,7 +21,7 @@ class CliPathwaysPager extends BasePathwaysPager {
 		self::$myBackwards = false;
 		self::$myOrder = null;
 
-		return new self( );
+		return new self();
 	}
 
 	// set these directly for now.

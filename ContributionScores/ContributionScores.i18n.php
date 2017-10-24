@@ -1,14 +1,14 @@
 <?php
-#coding: utf-8
+# coding: utf-8
 /**
  * Internationalisation file for extension ContributionScores.
  *
  * @addtogroup Extensions
 */
 
-$messages = array();
+$messages = [];
 
-$messages['en'] = array(
+$messages['en'] = [
 	'contributionscores' => 'Contribution Scores',
 	'contributionscores-info' => "Scores are calculated as follows:
 *1 point for each unique page edited
@@ -21,12 +21,12 @@ Scores calculated in this manner weight edit diversity over edit volume.  Basica
 	'contributionscores-pages' => 'Pages',
 	'contributionscores-changes' => 'Changes',
 	'contributionscores-username' => 'Username',
-);
+];
 
 /** Arabic (العربية)
  * @author Meno25
  */
-$messages['ar'] = array(
+$messages['ar'] = [
 	'contributionscores'              => 'نتائج المساهمات',
 	'contributionscores-info'         => 'النتائج تحسب كالتالي:
 *1 نقطة لكل صفحة فريدة تحرر
@@ -39,20 +39,20 @@ $messages['ar'] = array(
 	'contributionscores-pages'        => 'الصفحات',
 	'contributionscores-changes'      => 'التغييرات',
 	'contributionscores-username'     => 'اسم المستخدم',
-);
+];
 
 /** Bulgarian (Български)
  * @author DCLXVI
  */
-$messages['bg'] = array(
+$messages['bg'] = [
 	'contributionscores-days'     => 'Последните $1 дни',
 	'contributionscores-score'    => 'Точки',
 	'contributionscores-pages'    => 'Страници',
 	'contributionscores-changes'  => 'Редакции',
 	'contributionscores-username' => 'Потребител',
-);
+];
 
-$messages['de'] = array(
+$messages['de'] = [
 	'contributionscores'              => 'Benutzerbeiträge bewerten',
 	'contributionscores-info'         => "Bewertungsschema:
 *1 Punkt für jede bearbeitete Seite
@@ -65,12 +65,12 @@ Bewertungen auf dieser Grundlage wichten die Vielfalt der Beiträge höher als d
 	'contributionscores-pages'        => 'Seiten',
 	'contributionscores-changes'      => 'Änderungen',
 	'contributionscores-username'     => 'Benutzername',
-);
+];
 
 /** Greek (Ελληνικά)
  * @author Consta
  */
-$messages['el'] = array(
+$messages['el'] = [
 	'contributionscores'          => 'Αποτελέσματα Συνεισφοράς',
 	'contributionscores-top'      => '(Πρώτοι $1)',
 	'contributionscores-days'     => 'Τελευταίες $1 Ημέρες',
@@ -78,9 +78,9 @@ $messages['el'] = array(
 	'contributionscores-pages'    => 'Σελίδες',
 	'contributionscores-changes'  => 'Αλλαγές',
 	'contributionscores-username' => 'Όνομα χρήστη',
-);
+];
 
-$messages['es'] = array(
+$messages['es'] = [
 	'contributionscores' => 'Puntuaciones por contribuir',
 	'contributionscores-info' => "Las puntuaciones son calculadas siguiendo:
 *1 punto por cada página única editada
@@ -89,16 +89,16 @@ Las puntuaciones son calculadas de esta manera considerando la diversidad sobre 
 	'contributionscores-top' => '(Top $1)',
 	'contributionscores-days' => 'Últimos $1 días',
 	'contributionscores-allrevisions' => 'Estadísticas globales'
-);
+];
 
-$messages['ext'] = array(
+$messages['ext'] = [
 	'contributionscores-days' => 'Úrtimus $1 dias',
-);
+];
 
 /** Finnish (Suomi)
  * @author Nike
  */
-$messages['fi'] = array(
+$messages['fi'] = [
 	'contributionscores'              => 'Muokkauspisteet',
 	'contributionscores-info'         => 'Pisteet lasketaan seuraavalla kaavalla:
 * Yksi piste jokaisesta muokatusta sivusta
@@ -112,13 +112,13 @@ Näin laskettuna pisteet painottavat monipuolisuutta määrän sijaan. Käytänn
 	'contributionscores-pages'        => 'Sivuja',
 	'contributionscores-changes'      => 'Muutoksia',
 	'contributionscores-username'     => 'Käyttäjä',
-);
+];
 
 /** French (Français)
  * @author Sherbrooke
  * @author Grondin
  */
-$messages['fr'] = array(
+$messages['fr'] = [
 	'contributionscores'              => 'Pointage des contributions',
 	'contributionscores-info'         => "Les scores sont calculés de la manière suivante :
 * 1 point pour chaque page modifiée ;
@@ -132,12 +132,12 @@ De cette façon, les scores ainsi calculés privilégient la diversité par rapp
 	'contributionscores-pages'        => 'Pages',
 	'contributionscores-changes'      => 'Modifications',
 	'contributionscores-username'     => 'Pseudonyme',
-);
+];
 
 /** Galician (Galego)
  * @author Xosé
  */
-$messages['gl'] = array(
+$messages['gl'] = [
 	'contributionscores'              => 'Puntuación das Contribucións',
 	'contributionscores-info'         => 'As puntuacións calcúlanse como segue:
 *1 punto por cada páxina única editada
@@ -150,12 +150,12 @@ As puntuacións calculadas deste xeito favorecen a diversidade de edicións sobr
 	'contributionscores-pages'        => 'Páxinas',
 	'contributionscores-changes'      => 'Cambios',
 	'contributionscores-username'     => 'Nome de usuario',
-);
+];
 
 /** Croatian (Hrvatski)
  * @author SpeedyGonsales
  */
-$messages['hr'] = array(
+$messages['hr'] = [
 	'contributionscores'              => 'Najbolji suradnici',
 	'contributionscores-info'         => 'Rezultat se dobiva kao suma slijedećih stavki:
 *1 bod za svaku stranicu koju ste uređivali
@@ -169,9 +169,9 @@ Rezultat dobiven na ovaj način daje veću težinu broju uređivanja različitih
 	'contributionscores-pages'        => 'Stranica',
 	'contributionscores-changes'      => 'Uređivanja',
 	'contributionscores-username'     => 'Ime suradnika',
-);
+];
 
-$messages['hsb'] = array(
+$messages['hsb'] = [
 	'contributionscores' => 'Wuhódnoćenje přinoškow',
 	'contributionscores-info' => 'Ličba dypkow so takle wobličuje:
 *1 dypk za kóždy wobdźěłanu jednotliwu stronu
@@ -184,13 +184,13 @@ Ličba dypkow wuličena na tute wašnje pohódnoća wělakorosć změno wysě ha
 	'contributionscores-pages' => 'Strony',
 	'contributionscores-changes' => 'Změny',
 	'contributionscores-username' => 'Wužiwarske mjeno',
-);
+];
 
 /** Italian (Italiano)
  * @author Gianfranco
  * @author BrokenArrow
  */
-$messages['it'] = array(
+$messages['it'] = [
 	'contributionscores'              => 'Punteggi contributi',
 	'contributionscores-info'         => 'I punteggi vengono calcolati in questo modo: 
 *1 punto per ciascuna pagina distinta modificata 
@@ -199,9 +199,9 @@ Questo metodo di calcolo dei punteggi tiene in maggior conto la diversità delle
 	'contributionscores-top'          => '(Ultimi $1)',
 	'contributionscores-days'         => 'Ultimi $1 giorni',
 	'contributionscores-allrevisions' => 'Tutte le revisioni',
-);
+];
 
-$messages['kk-arab'] = array(
+$messages['kk-arab'] = [
 	'contributionscores' => 'ٷلەس بەرۋ ەسەپتەرٸ',
 	'contributionscores-info' => "ەسەپتەر كەلەسٸ دەي سانالادى:
 *1 ۇپاي ٵربٸر تٷزەتٸلگەن بٸرەگەي بەت ٷشٸن
@@ -214,8 +214,8 @@ $messages['kk-arab'] = array(
 	'contributionscores-pages' => 'بەتتەر',
 	'contributionscores-changes' => 'ٶزگەرٸستەر',
 	'contributionscores-username' => 'قاتىسۋشى اتى',
-);
-$messages['kk-cyrl'] = array(
+];
+$messages['kk-cyrl'] = [
 	'contributionscores' => 'Үлес беру есептері',
 	'contributionscores-info' => "Есептер келесі дей саналады:
 *1 ұпай әрбір түзетілген бірегей бет үшін
@@ -228,8 +228,8 @@ $messages['kk-cyrl'] = array(
 	'contributionscores-pages' => 'Беттер',
 	'contributionscores-changes' => 'Өзгерістер',
 	'contributionscores-username' => 'Қатысушы аты',
-);
-$messages['kk-latn'] = array(
+];
+$messages['kk-latn'] = [
 	'contributionscores' => 'Üles berw esepteri',
 	'contributionscores-info' => "Esepter kelesi deý sanaladı:
 *1 upaý ärbir tüzetilgen biregeý bet üşin
@@ -242,31 +242,31 @@ Osı täsilmen sanalğan esepter tüzetw awqımındağı öñdew ärkelkiligini�
 	'contributionscores-pages' => 'Better',
 	'contributionscores-changes' => 'Özgerister',
 	'contributionscores-username' => 'Qatıswşı atı',
-);
+];
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
  */
-$messages['lb'] = array(
+$messages['lb'] = [
 	'contributionscores-top'          => '(Top $1)',
 	'contributionscores-days'         => '{{PLURAL:$1|Leschten Dag|Lescht $1 Deeg}}',
 	'contributionscores-allrevisions' => 'All Versiounen',
 	'contributionscores-pages'        => 'Säiten',
 	'contributionscores-changes'      => 'Ännerungen',
 	'contributionscores-username'     => 'Benotzernumm',
-);
+];
 
 /** Low German (Plattdüütsch)
  * @author Slomox
  */
-$messages['nds'] = array(
+$messages['nds'] = [
 	'contributionscores-pages'    => 'Sieden',
 	'contributionscores-username' => 'Brukernaam',
-);
+];
 
 /** Dutch (Nederlands)
  * @author Siebrand
  */
-$messages['nl'] = array(
+$messages['nl'] = [
 	'contributionscores'              => 'Bijdragenscores',
 	'contributionscores-info'         => "Scores worden als volgt berekend:
 *1 punt voor iedere bewerkte pagina
@@ -279,12 +279,12 @@ In scores die op deze wijze berekend worden weegt divers bewerkingsgedrag zwaard
 	'contributionscores-pages'        => "Pagina's",
 	'contributionscores-changes'      => 'Bewerkingen',
 	'contributionscores-username'     => 'Gebruiker',
-);
+];
 
 /** Norwegian (‪Norsk (bokmål)‬)
  * @author Jon Harald Søby
  */
-$messages['no'] = array(
+$messages['no'] = [
 	'contributionscores'              => 'Bidragspoeng',
 	'contributionscores-info'         => 'Bidragspoeng regnes ut på følgende måte:
 * 1 poeng for hver unike side som er redigert
@@ -297,12 +297,12 @@ Poeng som regnes ut på denne måte veier redigeringsmangfold høyere enn redige
 	'contributionscores-pages'        => 'Sider',
 	'contributionscores-changes'      => 'Endringer',
 	'contributionscores-username'     => 'Brukernavn',
-);
+];
 
 /** Occitan (Occitan)
  * @author Cedric31
  */
-$messages['oc'] = array(
+$messages['oc'] = [
 	'contributionscores'              => 'Puntatge de las contribucions',
 	'contributionscores-info'         => "Lo puntatge se calcula coma seguís : * 1 punt per cada pagina modificada ; * raiç quadrada de (nombre de modificacions) - (nombre de paginas diferentas) * 2. D'aqueste biais, lo puntatge calculat preferís la diversitat a la quantitat. Escrich d'un autre biais, aqueste puntatge s'interèssa principalament a mostrar lo nombre de modificacions de paginas diferentas, puèi la quantitat totala de modificacions.",
 	'contributionscores-top'          => '(Melhor $1)',
@@ -312,13 +312,13 @@ $messages['oc'] = array(
 	'contributionscores-pages'        => 'Paginas',
 	'contributionscores-changes'      => 'Modificacions',
 	'contributionscores-username'     => "Nom d'utilizaire",
-);
+];
 
 /** Polish (Polski)
  * @author Derbeth
  * @author Sp5uhe
  */
-$messages['pl'] = array(
+$messages['pl'] = [
 	'contributionscores'              => 'Punktów za edycje',
 	'contributionscores-info'         => 'Punkty za edycje naliczane są następującą metodą:
 *1 punkt za każdą edytowaną unikalną stronę
@@ -327,12 +327,12 @@ Taki sposób naliczania pozwala wyważyć różnorodność edycji względem ilo�
 	'contributionscores-top'          => '(Czołowych $1)',
 	'contributionscores-days'         => 'Ostatnie $1 dni',
 	'contributionscores-allrevisions' => 'Wszystkie edycje',
-);
+];
 
 /** Piemontèis (Piemontèis)
  * @author Bèrto 'd Sèra
  */
-$messages['pms'] = array(
+$messages['pms'] = [
 	'contributionscores'              => 'Classìfica dla contribussion',
 	'contributionscores-info'         => "La classìfica as càlcola parej: 
 *1 pont për minca pàgina modificà 
@@ -341,24 +341,24 @@ Le classìfiche donca as peulo ten-se ën pèisand an manera diferenta ël nùme
 	'contributionscores-top'          => '(Ij $1 mej)',
 	'contributionscores-days'         => 'Ùltim $1 dì',
 	'contributionscores-allrevisions' => 'Tute le revision',
-);
+];
 
-$messages['pt'] = array(
+$messages['pt'] = [
 	'contributionscores-username' => 'Nome de utilizador',
-);
+];
 
 /** Russian (Русский)
  * @author Kalan
  */
-$messages['ru'] = array(
+$messages['ru'] = [
 	'contributionscores-days'         => 'Последни{{plural:$1|й $1 день|е $1 дня|е $1 дней}}',
 	'contributionscores-allrevisions' => 'Все правки',
-);
+];
 
 /** Slovak (Slovenčina)
  * @author Helix84
  */
-$messages['sk'] = array(
+$messages['sk'] = [
 	'contributionscores'              => 'Skóre príspevkov',
 	'contributionscores-info'         => 'Skóre sa počíta nasledovne:
 *1 bod za každú jedinečnú stránku, ktorú používateľ upravoval
@@ -371,12 +371,12 @@ Skóre vypočítané týmto spôsobom vážia diverzitu úprav viac ako objem ú
 	'contributionscores-pages'        => 'Stránky',
 	'contributionscores-changes'      => 'Zmeny',
 	'contributionscores-username'     => 'Používateľské meno',
-);
+];
 
 /** Seeltersk (Seeltersk)
  * @author Pyt
  */
-$messages['stq'] = array(
+$messages['stq'] = [
 	'contributionscores'              => 'Benutserbiedraage ouschätsje',
 	'contributionscores-info'         => 'Ouschätsschema:
 *1 Punkt foar älke beoarbaidede Siede
@@ -389,12 +389,12 @@ Ouschätsengen ap disse Gruundloage weege ju Fuulfoold fon do Biedraage swarrer 
 	'contributionscores-pages'        => 'Sieden',
 	'contributionscores-changes'      => 'Annerengen',
 	'contributionscores-username'     => 'Benutsernoome',
-);
+];
 
 /** Swedish (Svenska)
  * @author Lejonel
  */
-$messages['sv'] = array(
+$messages['sv'] = [
 	'contributionscores'              => 'Bidragspoäng',
 	'contributionscores-info'         => 'Poängen beräknas på följande vis:
 * 1 poäng för varje unik sida som redigerats
@@ -407,19 +407,19 @@ När poängen beräknas på detta sätt, så väger bidrag spridda över många 
 	'contributionscores-pages'        => 'Sidor',
 	'contributionscores-changes'      => 'Ändringar',
 	'contributionscores-username'     => 'Användarnamn',
-);
+];
 
 /** Volapük (Volapük)
  * @author Malafaya
  */
-$messages['vo'] = array(
+$messages['vo'] = [
 	'contributionscores-days'     => 'Dels Lätik $1',
 	'contributionscores-pages'    => 'Pads',
 	'contributionscores-changes'  => 'Votükams',
 	'contributionscores-username' => 'Gebananem',
-);
+];
 
-$messages['yue'] = array(
+$messages['yue'] = [
 	'contributionscores' => '貢獻分數',
 	'contributionscores-info' => '分數會用下面嘅計法去計:
 *每一個唯一一版編輯過嘅有1分
@@ -432,9 +432,9 @@ $messages['yue'] = array(
 	'contributionscores-pages' => '版',
 	'contributionscores-changes' => '更改',
 	'contributionscores-username' => '用戶名',
-);
+];
 
-$messages['zh-hans'] = array(
+$messages['zh-hans'] = [
 	'contributionscores' => '贡献分数',
 	'contributionscores-info' => '分数会用以下的的计分法去计算:
 *每一个唯一页面编辑过的有1分
@@ -447,9 +447,9 @@ $messages['zh-hans'] = array(
 	'contributionscores-pages' => '页面',
 	'contributionscores-changes' => '更改',
 	'contributionscores-username' => '用户名',
-);
+];
 
-$messages['zh-hant'] = array(
+$messages['zh-hant'] = [
 	'contributionscores' => '貢獻分數',
 	'contributionscores-info' => '分數會用以下的的計分法去計算:
 *每一個唯一頁面編輯過的有1分
@@ -462,7 +462,7 @@ $messages['zh-hant'] = array(
 	'contributionscores-pages' => '頁面',
 	'contributionscores-changes' => '更改',
 	'contributionscores-username' => '用戶名',
-);
+];
 
 $messages['kk'] = $messages['kk-cyrl'];
 $messages['kk-cn'] = $messages['kk-arab'];

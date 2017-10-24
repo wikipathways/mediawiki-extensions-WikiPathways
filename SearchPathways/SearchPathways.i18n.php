@@ -1,6 +1,6 @@
 <?php
-$messages = array(
-	'en' => array(
+$messages = [
+	'en' => [
 		'searchpathways' => 'Find pathways',
-	)
-);
+	]
+];

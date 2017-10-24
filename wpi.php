@@ -4,19 +4,19 @@
 /**
  * Utility function to import the required javascript for the xref panel
  */
-function createPathwayObject($pwTitle, $oldid) {
-	$pathway = Pathway::newFromTitle($pwTitle);
-	if($oldId) {
-		$pathway->setActiveRevision($oldId);
+function createPathwayObject( $pwTitle, $oldid ) {
+	$pathway = Pathway::newFromTitle( $pwTitle );
+	if ( $oldId ) {
+		$pathway->setActiveRevision( $oldId );
 	}
 	return $pathway;
 }
 
-function delete($title) {
+function delete( $title ) {
 	global $wgUser, $wgOut;
-	$pathway = Pathway::newFromTitle($_GET['pwTitle']);
-	if($wgUser->isAllowed('delete')) {
-		$pathway = Pathway::newFromTitle($_GET['pwTitle']);
+	$pathway = Pathway::newFromTitle( $_GET['pwTitle'] );
+	if ( $wgUser->isAllowed( 'delete' ) ) {
+		$pathway = Pathway::newFromTitle( $_GET['pwTitle'] );
 		$pathway->delete();
 		echo "<h1>Deleted</h1>";
 		echo "<p>Pathway $title was deleted, return to <a href='" . SITE_URL . "'>wikipathways</a>";
@@ -28,138 +28,142 @@ function delete($title) {
 	exit;
 }
 
-function revert($pwTitle, $oldId) {
-	$pathway = Pathway::newFromTitle($pwTitle);
-	$pathway->revert($oldId);
-	//Redirect to old page
+function revert( $pwTitle, $oldId ) {
+	$pathway = Pathway::newFromTitle( $pwTitle );
+	$pathway->revert( $oldId );
+	// Redirect to old page
 	$url = $pathway->getTitleObject()->getFullURL();
-	header("Location: $url");
+	header( "Location: $url" );
 	exit;
 }
 
-function launchGenMappConverter($pathway) {
+function launchGenMappConverter( $pathway ) {
 	global $wgUser;
 
-	$webstart = file_get_contents(WPI_SCRIPT_PATH . "/applet/genmapp.jnlp");
-	$pwUrl = $pathway->getFileURL(FILETYPE_GPML);
-	$pwName = substr($pathway->getFileName(''), 0, -1);
-	$arg = "<argument>" . htmlspecialchars($pwUrl) . "</argument>";
-	$arg .= "<argument>" . htmlspecialchars($pwName) . "</argument>";
-	$webstart = str_replace("<!--ARG-->", $arg, $webstart);
-	$webstart = str_replace("CODE_BASE", WPI_URL . "/applet/", $webstart);
-	sendWebstart($webstart, $pathway->name(), "genmapp.jnlp");//This exits script
+	$webstart = file_get_contents( WPI_SCRIPT_PATH . "/applet/genmapp.jnlp" );
+	$pwUrl = $pathway->getFileURL( FILETYPE_GPML );
+	$pwName = substr( $pathway->getFileName( '' ), 0, -1 );
+	$arg = "<argument>" . htmlspecialchars( $pwUrl ) . "</argument>";
+	$arg .= "<argument>" . htmlspecialchars( $pwName ) . "</argument>";
+	$webstart = str_replace( "<!--ARG-->", $arg, $webstart );
+	$webstart = str_replace( "CODE_BASE", WPI_URL . "/applet/", $webstart );
+	sendWebstart( $webstart, $pathway->name(), "genmapp.jnlp" );// This exits script
 }
 
-function launchCytoscape($pathway) {
+function launchCytoscape( $pathway ) {
 	global $wgUser;
 
-	$webstart = file_get_contents(WPI_SCRIPT_PATH . "/bin/cytoscape/cy1.jnlp");
-	$arg = createJnlpArg("-N", $pathway->getFileURL(FILETYPE_GPML));
-	$webstart = str_replace(" <!--ARG-->", $arg, $webstart);
-	$webstart = str_replace("CODE_BASE", WPI_URL . "/bin/cytoscape/", $webstart);
-	sendWebstart($webstart, $pathway->name(), "cytoscape.jnlp");//This exits script
+	$webstart = file_get_contents( WPI_SCRIPT_PATH . "/bin/cytoscape/cy1.jnlp" );
+	$arg = createJnlpArg( "-N", $pathway->getFileURL( FILETYPE_GPML ) );
+	$webstart = str_replace( " <!--ARG-->", $arg, $webstart );
+	$webstart = str_replace( "CODE_BASE", WPI_URL . "/bin/cytoscape/", $webstart );
+	sendWebstart( $webstart, $pathway->name(), "cytoscape.jnlp" );// This exits script
 }
 
-function sendWebstart($webstart, $tmpname, $filename = "wikipathways.jnlp") {
+function sendWebstart( $webstart, $tmpname, $filename = "wikipathways.jnlp" ) {
 	ob_start();
 	ob_clean();
-	//return webstart file directly
-	header("Content-type: application/x-java-jnlp-file");
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Content-Disposition: attachment; filename=\"{$filename}\"");
+	// return webstart file directly
+	header( "Content-type: application/x-java-jnlp-file" );
+	header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+	header( "Content-Disposition: attachment; filename=\"{$filename}\"" );
 	echo $webstart;
 	exit;
 }
 
-function getJnlpURL($webstart, $tmpname) {
-	$wsFile = tempnam(getcwd() . "/tmp",$tmpname);
-	writeFile($wsFile, $webstart);
-	return 'http://' . $_SERVER['HTTP_HOST'] . '/wpi/tmp/' . basename($wsFile);
+function getJnlpURL( $webstart, $tmpname ) {
+	$wsFile = tempnam( getcwd() . "/tmp", $tmpname );
+	writeFile( $wsFile, $webstart );
+	return 'http://' . $_SERVER['HTTP_HOST'] . '/wpi/tmp/' . basename( $wsFile );
 }
 
-function createJnlpArg($flag, $value) {
-	//return "<argument>" . $flag . ' "' . $value . '"' . "</argument>\n";
-	if(!$flag || !$value) return '';
-	return "<argument>" . htmlspecialchars($flag) . "</argument>\n<argument>" . htmlspecialchars($value) . "</argument>\n";
+function createJnlpArg( $flag, $value ) {
+	// return "<argument>" . $flag . ' "' . $value . '"' . "</argument>\n";
+	if ( !$flag || !$value ) { return '';
+	}
+	return "<argument>" . htmlspecialchars( $flag ) . "</argument>\n<argument>" . htmlspecialchars( $value ) . "</argument>\n";
 }
 
-function downloadFile($fileType, $pwTitle) {
-	$pathway = Pathway::newFromTitle($pwTitle);
-	if(!$pathway->isReadable()) {
-		throw new Exception("You don't have permissions to view this pathway");
+function downloadFile( $fileType, $pwTitle ) {
+	$pathway = Pathway::newFromTitle( $pwTitle );
+	if ( !$pathway->isReadable() ) {
+		throw new Exception( "You don't have permissions to view this pathway" );
 	}
 
-	if($fileType === 'mapp') {
-		launchGenMappConverter($pathway);
+	if ( $fileType === 'mapp' ) {
+		launchGenMappConverter( $pathway );
 	}
 	ob_start();
-	if($oldid = $_REQUEST['oldid']) {
-		$pathway->setActiveRevision($oldid);
+	if ( $oldid = $_REQUEST['oldid'] ) {
+		$pathway->setActiveRevision( $oldid );
 	}
-	//Register file type for caching
-	Pathway::registerFileType($fileType);
+	// Register file type for caching
+	Pathway::registerFileType( $fileType );
 
-	$file = $pathway->getFileLocation($fileType);
-	$fn = $pathway->getFileName($fileType);
+	$file = $pathway->getFileLocation( $fileType );
+	$fn = $pathway->getFileName( $fileType );
 
-	$mime = MimeTypes::getMimeType($fileType);
-	if(!$mime) $mime = "text/plain";
+	$mime = MimeTypes::getMimeType( $fileType );
+	if ( !$mime ) { $mime = "text/plain";
+	}
 
 	ob_clean();
-	header("Content-type: $mime");
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Content-Disposition: attachment; filename=\"$fn\"");
-	//header("Content-Length: " . filesize($file));
-	set_time_limit(0);
-	@readfile($file);
+	header( "Content-type: $mime" );
+	header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+	header( "Content-Disposition: attachment; filename=\"$fn\"" );
+	// header("Content-Length: " . filesize($file));
+	set_time_limit( 0 );
+	@readfile( $file );
 	exit();
 }
 
 function getClientOs() {
-	$regex = array(
+	$regex = [
 		'windows' => '([^dar]win[dows]*)[\s]?([0-9a-z]*)[\w\s]?([a-z0-9.]*)',
 		'mac' => '(68[k0]{1,3})|(ppc mac os x)|([p\S]{1,5}pc)|(darwin)',
-		'linux' => 'x11|inux');
+		'linux' => 'x11|inux' ];
 	$ua = $_SERVER['HTTP_USER_AGENT'];
-	foreach (array_keys($regex) as $os) {
-		if(eregi($regex[$os], $ua)) return $os;
+	foreach ( array_keys( $regex ) as $os ) {
+		if ( eregi( $regex[$os], $ua ) ) { return $os;
+		}
 	}
 }
 
-$spName2Code = array('Human' => 'Hs', 'Rat' => 'Rn', 'Mouse' => 'Mm');//TODO: complete
+$spName2Code = [ 'Human' => 'Hs', 'Rat' => 'Rn', 'Mouse' => 'Mm' ];// TODO: complete
 
-function toGlobalLink($localLink) {
-	if($wgScriptPath && $wgScriptPath != '') {
+function toGlobalLink( $localLink ) {
+	if ( $wgScriptPath && $wgScriptPath != '' ) {
 		$wgScriptPath = "$wgScriptPath/";
 	}
-	return urlencode("http://" . $_SERVER['HTTP_HOST'] . "$wgScriptPath$localLink");
+	return urlencode( "http://" . $_SERVER['HTTP_HOST'] . "$wgScriptPath$localLink" );
 }
 
-function writeFile($filename, $data) {
-	throw new \Exception("Find who called me");
-	$dir = dirname($filename);
-	if(!file_exists($dir)) {
+function writeFile( $filename, $data ) {
+	throw new \Exception( "Find who called me" );
+	$dir = dirname( $filename );
+	if ( !file_exists( $dir ) ) {
 		wfDebug( "Making $dir for $filename.\n" );
-		if( !wfMkdirParents( $dir ) ) {
+		if ( !wfMkdirParents( $dir ) ) {
 			throw new Exception( "Couldn't make directory for pathway!" );
 		}
 	}
-	$handle = fopen($filename, 'w');
-	if(!$handle) {
-		throw new Exception ("Couldn't open file $filename");
+	$handle = fopen( $filename, 'w' );
+	if ( !$handle ) {
+		throw new Exception( "Couldn't open file $filename" );
 	}
-	if(fwrite($handle, $data) === FALSE) {
-		throw new Exception ("Couldn't write file $filename");
+	if ( fwrite( $handle, $data ) === false ) {
+		throw new Exception( "Couldn't write file $filename" );
 	}
-	if(fclose($handle) === FALSE) {
-		throw new Exception ("Couln't close file $filename");
+	if ( fclose( $handle ) === false ) {
+		throw new Exception( "Couln't close file $filename" );
 	}
 }
 
-function tag($name, $text, $attributes = array()) {
+function tag( $name, $text, $attributes = [] ) {
 	$attr = "";
-	foreach(array_keys($attributes) as $key) {
-		if($value = $attributes[$key])$attr .= $key . '="' . $value . '" ';
+	foreach ( array_keys( $attributes ) as $key ) {
+		if ( $value = $attributes[$key] ) { $attr .= $key . '="' . $value . '" ';
+		}
 	}
 	return "<$name $attr>$text</$name>";
 }
@@ -175,7 +179,7 @@ function tag($name, $text, $attributes = array()) {
 function wfJavaExec( $cmd, &$retval=null ) {
 	global $IP, $wgMaxShellMemory, $wgMaxShellFileSize;
 
-	if( wfIniGetBool( 'safe_mode' ) ) {
+	if ( wfIniGetBool( 'safe_mode' ) ) {
 		wfDebug( "wfShellExec can't run in safe_mode, PHP's exec functions are too broken.\n" );
 		$retval = 1;
 		return "Unable to run external programs in safe mode.";
@@ -185,7 +189,7 @@ function wfJavaExec( $cmd, &$retval=null ) {
 		$time = intval( ini_get( 'max_execution_time' ) );
 		$filesize = intval( $wgMaxShellFileSize );
 
-		if ( $time > 0) {
+		if ( $time > 0 ) {
 			$script = "$IP/bin/ulimit4-nomemory.sh";
 			if ( is_executable( $script ) ) {
 				$cmd = escapeshellarg( $script ) . " $time $filesize " . escapeshellarg( $cmd );
@@ -204,5 +208,4 @@ function wfJavaExec( $cmd, &$retval=null ) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	return $output;
-
 }

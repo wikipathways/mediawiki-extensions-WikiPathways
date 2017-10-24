@@ -1,7 +1,7 @@
 <?php
-$messages = array(
-		'en' => array(
+$messages = [
+		'en' => [
 				'deletepathway' => 'Delete pathway',
 				'deletepathway_descr' => "Delete pathway [[PATHWAY]]:",
-		)
-);
+		]
+];

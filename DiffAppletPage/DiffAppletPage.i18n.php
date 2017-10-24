@@ -1,6 +1,6 @@
 <?php
-$allMessages = array(
-  'en' => array(
-    'diffappletpage' => 'Pathway Difference Viewer (applet)'
-  )
-);
+$allMessages = [
+  'en' => [
+	'diffappletpage' => 'Pathway Difference Viewer (applet)'
+  ]
+];

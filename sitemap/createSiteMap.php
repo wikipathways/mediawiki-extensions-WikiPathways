@@ -15,15 +15,15 @@
 # -----------------------------------------------------
 
 $dir = getcwd();
-chdir("/var/www/wikipathways/wpi");
+chdir( "/var/www/wikipathways/wpi" );
 
-chdir($dir);
+chdir( $dir );
 
 # -----------------------------------------------------
 # Send XML header, tell agents this is XML.
 # -----------------------------------------------------
 
-header("Content-Type: application/xml; charset=UTF-8");
+header( "Content-Type: application/xml; charset=UTF-8" );
 
 # -----------------------------------------------------
 # Send xml-prolog
@@ -35,17 +35,17 @@ echo '<'.'?xml version="1.0" encoding="utf-8" ?'.">\n";
 # Start connection
 # -----------------------------------------------------
 
-$connWikiDB = mysql_pconnect($wgDBserver, $wgDBuser, $wgDBpassword)
-	or trigger_error(mysql_error(),E_USER_ERROR);
-mysql_select_db($wgDBname, $connWikiDB);
+$connWikiDB = mysql_pconnect( $wgDBserver, $wgDBuser, $wgDBpassword )
+	or trigger_error( mysql_error(), E_USER_ERROR );
+mysql_select_db( $wgDBname, $connWikiDB );
 
 # -----------------------------------------------------
 # Build query
 # Skipping redirects and MediaWiki namespace
 # -----------------------------------------------------
 
-$namespaces = array(NS_PATHWAY => 1, NS_HELP => 0.8, NS_MAIN => 0.5, NS_PATHWAY_TALK => 0.3);
-$namespaceString = implode(', ', array_keys($namespaces));
+$namespaces = [ NS_PATHWAY => 1, NS_HELP => 0.8, NS_MAIN => 0.5, NS_PATHWAY_TALK => 0.3 ];
+$namespaceString = implode( ', ', array_keys( $namespaces ) );
 $query_rsPages = "SELECT page_namespace, page_title, page_touched ".
 	"FROM ".$wgDBprefix."page ".
 	"WHERE (page_is_redirect = 0 AND page_namespace IN ($namespaceString)) ".
@@ -55,32 +55,32 @@ $query_rsPages = "SELECT page_namespace, page_title, page_touched ".
 # Fetch the data from the DB
 # -----------------------------------------------------
 
-$rsPages = mysql_query($query_rsPages, $connWikiDB) or die(mysql_error());
+$rsPages = mysql_query( $query_rsPages, $connWikiDB ) or die( mysql_error() );
 # Fetch the array of pages
-$row_rsPages = mysql_fetch_assoc($rsPages);
-$totalRows_rsPages = mysql_num_rows($rsPages);
+$row_rsPages = mysql_fetch_assoc( $rsPages );
+$totalRows_rsPages = mysql_num_rows( $rsPages );
 
 # -----------------------------------------------------
 # Start output
 # -----------------------------------------------------
-error_reporting(E_ALL);
+error_reporting( E_ALL );
 ?>
 <!-- MediaWiki - Google Sitemaps - v0.3 -->
 <!-- <?php echo $totalRows_rsPages ?> wikipages found. -->
-<!-- Created on <?php echo fnTimestampToIso(time()); ?> -->
+<!-- Created on <?php echo fnTimestampToIso( time() ); ?> -->
 <urlset xmlns="http://www.google.com/schemas/sitemap/0.84">
 <?php
 
 do {
 	$nPriority = 0.1;
 	$ns = $row_rsPages['page_namespace'];
-	$title = Title::makeTitle($ns, $row_rsPages['page_title']);
+	$title = Title::makeTitle( $ns, $row_rsPages['page_title'] );
 
-	//Use latest modification of both GPML and Pathway pages
-	if($ns == NS_PATHWAY) {
-		$pathway = Pathway::newFromTitle($title);
+	// Use latest modification of both GPML and Pathway pages
+	if ( $ns == NS_PATHWAY ) {
+		$pathway = Pathway::newFromTitle( $title );
 		$mod = $pathway->getGpmlModificationTime();
-		$row_rsPages['page_touched'] = max($mod, $row_rsPages['page_touched']);
+		$row_rsPages['page_touched'] = max( $mod, $row_rsPages['page_touched'] );
 	}
 
 	$sPageName = $title->getFullUrl();
@@ -93,25 +93,25 @@ do {
 ?>
 	<url>
 		<loc><?php echo fnXmlEncode( $sPageName ) ?></loc>
-		<lastmod><?php echo fnTimestampToIso($row_rsPages['page_touched']); ?></lastmod>
+		<lastmod><?php echo fnTimestampToIso( $row_rsPages['page_touched'] ); ?></lastmod>
 		<changefreq>daily</changefreq>
 		<priority><?php echo $nPriority ?></priority>
 	</url>
-<?php } while ($row_rsPages = mysql_fetch_assoc($rsPages)); ?>
+<?php } while ( $row_rsPages = mysql_fetch_assoc( $rsPages ) ); ?>
 </urlset>
 <?php
 # -----------------------------------------------------
 # Clear Connection
 # -----------------------------------------------------
 
-mysql_free_result($rsPages);
+mysql_free_result( $rsPages );
 
 # -----------------------------------------------------
 # General functions
 # -----------------------------------------------------
 
 // Convert timestamp to ISO format
-function fnTimestampToIso($ts) {
+function fnTimestampToIso( $ts ) {
 	# $ts is a MediaWiki Timestamp (TS_MW)
 	# ISO-standard timestamp (YYYY-MM-DDTHH:MM:SS+00:00)
 

@@ -16,9 +16,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU General Public License 2.0 or later
  */
 
-$messages = array();
+$messages = [];
 
-$messages['en'] = array(
+$messages['en'] = [
 	# general messages
 	'interwiki'                => 'View and edit interwiki data',
 	'interwiki-title-norights' => 'View interwiki data',
@@ -66,12 +66,12 @@ Possibly it does not exist.',
 	'interwiki_logpagetext'    => 'This is a log of changes to the [[Special:Interwiki|interwiki table]].',
 	'interwiki_defaultreason'  => 'no reason given',
 	'interwiki_logentry'       => '', # do not translate this message
-);
+];
 
 /** Afrikaans (Afrikaans)
  * @author Arnobarnard
  */
-$messages['af'] = array(
+$messages['af'] = [
 	'interwiki'                => 'Bekyk en wysig interwiki data',
 	'interwiki-title-norights' => 'Bekyk interwiki data',
 	'interwiki-desc'           => "Voeg 'n [[Special:Interwiki|spesiale bladsy]] by om die interwiki tabel te bekyk en wysig",
@@ -81,19 +81,19 @@ $messages['af'] = array(
 	'interwiki_deleting'       => 'U is besig om voorvoegsel "$1" te verwyder.',
 	'interwiki_logpagename'    => 'Interwiki tabel staaf',
 	'interwiki_defaultreason'  => 'geen rede gegee',
-);
+];
 
 /** Aragonese (Aragonés)
  * @author Juanpabl
  */
-$messages['an'] = array(
+$messages['an'] = [
 	'interwiki_reasonfield' => 'Razón',
-);
+];
 
 /** Arabic (العربية)
  * @author Meno25
  */
-$messages['ar'] = array(
+$messages['ar'] = [
 	'interwiki'               => 'عرض وتعديل بيانات الإنترويكي',
 	'interwiki-desc'          => 'يضيف [[Special:Interwiki|صفحة خاصة]] لرؤية وتعديل جدول الإنترويكي',
 	'interwiki_prefix'        => 'بادئة',
@@ -116,12 +116,12 @@ $messages['ar'] = array(
 	'interwiki_log_deleted'   => 'أزال البادئة "$2" من جدول الإنترويكي',
 	'interwiki_logpagetext'   => 'هذا سجل بالتغييرات في [[Special:Interwiki|جدول الإنترويكي]].',
 	'interwiki_defaultreason' => 'لا سبب معطى',
-);
+];
 
 /** Kotava (Kotava)
  * @author Wikimistusik
  */
-$messages['avk'] = array(
+$messages['avk'] = [
 	'interwiki'                => "Wira va 'interwiki' orig isu betara",
 	'interwiki-title-norights' => "Wira va 'interwiki' orig",
 	'interwiki-desc'           => "Batcoba, ta wira va 'interwiki' origak isu betara, va [[Special:Interwiki|aptafu bu]] loplekur",
@@ -155,12 +155,12 @@ Rotir koeon me krulder.',
 	'interwiki_log_deleted'    => '"$2" abdueosta plekuyuna div \'interwiki\' origak',
 	'interwiki_logpagetext'    => "Batcoba tir 'log' dem betaks va [[Special:Interwiki|'interwiki' origak]].",
 	'interwiki_defaultreason'  => 'Meka bazena lazava',
-);
+];
 
 /** Bulgarian (Български)
  * @author DCLXVI
  */
-$messages['bg'] = array(
+$messages['bg'] = [
 	'interwiki'                => 'Преглед и управление на междууикитата',
 	'interwiki-title-norights' => 'Преглед на данните за междууикита',
 	'interwiki-desc'           => 'Добавя [[Special:Interwiki|специална страница]] за преглед и управление на таблицата с междууикита',
@@ -184,34 +184,34 @@ $messages['bg'] = array(
 	'interwiki_log_deleted'    => 'Премахна представката „$2“ от таблицата с междууикитата',
 	'interwiki_logpagetext'    => 'Тази страница съдържа дневник на промените в [[Special:Interwiki|таблицата с междууикита]].',
 	'interwiki_defaultreason'  => 'не е посочена причина',
-);
+];
 
 /** Breton (Brezhoneg)
  * @author Fulup
  */
-$messages['br'] = array(
+$messages['br'] = [
 	'interwiki_addbutton' => 'Ouzhpennañ',
-);
+];
 
 /** Welsh (Cymraeg)
  * @author Lloffiwr
  */
-$messages['cy'] = array(
+$messages['cy'] = [
 	'interwiki_defaultreason' => 'dim rheswm wedi ei roi',
-);
+];
 
 /** Danish (Dansk)
  * @author Jon Harald Søby
  */
-$messages['da'] = array(
+$messages['da'] = [
 	'interwiki_reasonfield' => 'Begrundelse',
-);
+];
 
 /** German (Deutsch)
  * @author MF-Warburg
  * @author Raimond Spekking
  */
-$messages['de'] = array(
+$messages['de'] = [
 	'interwiki'               => 'Interwiki-Daten betrachten und bearbeiten',
 	'interwiki-desc'          => '[[Special:Interwiki|Spezialseite]] zur Pflege der Interwiki-Tabelle',
 	'interwiki_prefix'        => 'Präfix',
@@ -232,21 +232,21 @@ $messages['de'] = array(
 	'interwiki_log_deleted'   => 'hat „$2“ aus der Interwiki-Tabelle entfernt',
 	'interwiki_logpagetext'   => 'In diesem Logbuch werden Änderungen an der [[Special:Interwiki|Interwiki-Tabelle]] protokolliert.',
 	'interwiki_defaultreason' => 'kein Grund angegeben',
-);
+];
 
 /** Greek (Ελληνικά)
  * @author Consta
  */
-$messages['el'] = array(
+$messages['el'] = [
 	'interwiki_prefix'        => 'Πρόθεμα',
 	'interwiki_reasonfield'   => 'Λόγος',
 	'interwiki_defaultreason' => 'Δεν δίνετε λόγος',
-);
+];
 
 /** Esperanto (Esperanto)
  * @author Yekrats
  */
-$messages['eo'] = array(
+$messages['eo'] = [
 	'interwiki'                => 'Rigardu kaj redaktu intervikiajn datenojn',
 	'interwiki-title-norights' => 'Rigardu intervikiajn datenojn',
 	'interwiki-desc'           => 'Aldonas [[Special:Interwiki|specialan paĝon]] por rigardi kaj redakti la intervikian tabelon',
@@ -280,21 +280,21 @@ Verŝajne ĝi ne ekzistas.',
 	'interwiki_log_deleted'    => 'Forigita prefikso "$2" de la intervikia tabelo',
 	'interwiki_logpagetext'    => 'Jen loglibro de ŝanĝoj al la [[Special:Interwiki|intervikia tabelo]].',
 	'interwiki_defaultreason'  => 'nenia kialo skribata',
-);
+];
 
 /** Spanish (Español)
  * @author Piolinfax
  */
-$messages['es'] = array(
+$messages['es'] = [
 	'interwiki_defaultreason' => 'no se da ninguna razón',
-);
+];
 
 /** Finnish (Suomi)
  * @author Jack Phoenix
  * @author Nike
  * @author Crt
  */
-$messages['fi'] = array(
+$messages['fi'] = [
 	'interwiki'                => 'Katso ja muokkaa wikien välisiä linkkejä',
 	'interwiki-title-norights' => 'Selaa interwiki-tietueita',
 	'interwiki-desc'           => 'Lisää [[Special:Interwiki|toimintosivun]], jonka avulla voi katsoa ja muokata interwiki-taulua',
@@ -323,7 +323,7 @@ Ehkäpä sitä ei ole interwiki-taulussa tai se on poistettu.',
 	'interwiki_log_deleted'    => 'Poisti etuliitteen ”$2” interwiki-taulusta',
 	'interwiki_logpagetext'    => 'Tämä on loki muutoksista [[Special:Interwiki|interwiki-tauluun]].',
 	'interwiki_defaultreason'  => 'ei annettua syytä',
-);
+];
 
 /** French (Français)
  * @author Grondin
@@ -331,7 +331,7 @@ Ehkäpä sitä ei ole interwiki-taulussa tai se on poistettu.',
  * @author Sherbrooke
  * @author Urhixidur
  */
-$messages['fr'] = array(
+$messages['fr'] = [
 	'interwiki'                => 'Voir et manipuler les données interwiki',
 	'interwiki-title-norights' => 'Voir les données interwiki',
 	'interwiki-desc'           => 'Ajoute une [[Special:Interwiki|page spéciale]] pour voir et éditer la table interwiki',
@@ -359,21 +359,21 @@ $messages['fr'] = array(
 	'interwiki_log_deleted'    => 'a supprimé le préfixe « $2 » de la table interwiki',
 	'interwiki_logpagetext'    => 'Ceci est le journal des changements dans la [[Special:Interwiki|table interwiki]].',
 	'interwiki_defaultreason'  => 'Aucun motif donné',
-);
+];
 
 /** Franco-Provençal (Arpetan)
  * @author ChrisPtDe
  */
-$messages['frp'] = array(
+$messages['frp'] = [
 	'interwiki_defaulturl' => 'http://www.ègzemplo.com/$1',
-);
+];
 
 /** Galician (Galego)
  * @author Toliño
  * @author Alma
  * @author Xosé
  */
-$messages['gl'] = array(
+$messages['gl'] = [
 	'interwiki'                => 'Ver e manipular datos interwiki',
 	'interwiki-title-norights' => 'Ver os datos do interwiki',
 	'interwiki-desc'           => 'Engade unha [[Special:Interwiki|páxina especial]] para ver e editar a táboa interwiki',
@@ -401,32 +401,32 @@ $messages['gl'] = array(
 	'interwiki_log_deleted'    => 'Eliminouse o prefixo "$2" da táboa interwiki',
 	'interwiki_logpagetext'    => 'Este é un rexistro dos cambios a [[Special:Interwiki|táboa interwiki]].',
 	'interwiki_defaultreason'  => 'ningunha razón foi dada',
-);
+];
 
 /** Gujarati (ગુજરાતી) */
-$messages['gu'] = array(
+$messages['gu'] = [
 	'interwiki_reasonfield' => 'કારણ',
-);
+];
 
 /** Manx (Gaelg)
  * @author MacTire02
  */
-$messages['gv'] = array(
+$messages['gv'] = [
 	'interwiki_reasonfield' => 'Fa',
-);
+];
 
 /** Hawaiian (Hawai`i)
  * @author SPQRobin
  */
-$messages['haw'] = array(
+$messages['haw'] = [
 	'interwiki_reasonfield'   => 'Ke kumu',
 	'interwiki_defaultreason' => '‘a‘ohe kumu',
-);
+];
 
 /** Hindi (हिन्दी)
  * @author Kaustubh
  */
-$messages['hi'] = array(
+$messages['hi'] = [
 	'interwiki'                => 'आंतरविकि डाटा देखें एवं बदलें',
 	'interwiki-title-norights' => 'आंतरविकि डाटा देखें',
 	'interwiki-desc'           => 'आंतरविकि तालिका देखनेके लिये और बदलने के लिये एक [[Special:Interwiki|विशेष पॄष्ठ]]',
@@ -456,20 +456,20 @@ $messages['hi'] = array(
 	'interwiki_log_deleted'    => '"$2" उपपद आंतरविकि तालिकासे हटाया',
 	'interwiki_logpagetext'    => '[[Special:Interwiki|आंतरविकि तालिकामें]] हुए बदलावोंकी यह सूची है।',
 	'interwiki_defaultreason'  => 'कारण दिया नहीं',
-);
+];
 
 /** Hiligaynon (Ilonggo)
  * @author Jose77
  */
-$messages['hil'] = array(
+$messages['hil'] = [
 	'interwiki_reasonfield' => 'Rason',
-);
+];
 
 /** Croatian (Hrvatski)
  * @author Dalibor Bosits
  * @author SpeedyGonsales
  */
-$messages['hr'] = array(
+$messages['hr'] = [
 	'interwiki'                => 'Vidi i uredi međuwiki podatke',
 	'interwiki-title-norights' => 'Gledanje interwiki tablice',
 	'interwiki-desc'           => 'Dodaje [[Special:Interwiki|posebnu stranicu]] za gledanje i uređivanje interwiki tablice',
@@ -500,12 +500,12 @@ Postoji [[Special:Log/interwiki|evidencija promjena]] za interwiki tablicu.',
 	'interwiki_log_deleted'    => 'uklonjen prefiks "$2" iz interwiki tablice',
 	'interwiki_logpagetext'    => 'Ovo su evidencije promjena na [[Special:Interwiki|interwiki tablici]].',
 	'interwiki_defaultreason'  => 'nema razloga',
-);
+];
 
 /** Upper Sorbian (Hornjoserbsce)
  * @author Michawiki
  */
-$messages['hsb'] = array(
+$messages['hsb'] = [
 	'interwiki'               => 'Interwiki-daty wobhladać a změnić',
 	'interwiki-desc'          => 'Přidawa [[Special:Interwiki|specialnu stronu]] za wobhladowanje a wobdźěłowanje interwiki-tabele',
 	'interwiki_prefix'        => 'Prefiks',
@@ -527,13 +527,13 @@ $messages['hsb'] = array(
 	'interwiki_log_deleted'   => 'je prefiks "$2" z interwiki-tabele wotstronił',
 	'interwiki_logpagetext'   => 'To je protokol změnow na [[Special:Interwiki|interwiki-tabeli]].',
 	'interwiki_defaultreason' => 'žana přičina podata',
-);
+];
 
 /** Haitian (Kreyòl ayisyen)
  * @author Jvm
  * @author Masterches
  */
-$messages['ht'] = array(
+$messages['ht'] = [
 	'interwiki'                => 'Wè epi edite enfòmasyon entèwiki yo',
 	'interwiki-title-norights' => 'Wè enfòmasyon interwiki',
 	'interwiki-desc'           => 'Ajoute yon [[Special:Interwiki|paj espesial]] pou wè ak edite tab interwiki-a',
@@ -567,12 +567,12 @@ Posibleman li pa ekziste.',
 	'interwiki_log_deleted'    => 'prefix ki te retire "$2" nan tab interwiki-a',
 	'interwiki_logpagetext'    => 'Sa se yon jounal chanjman nan [[Special:Interwiki|tab interwiki-a]].',
 	'interwiki_defaultreason'  => 'oken rezon pa t’ bay',
-);
+];
 
 /** Hungarian (Magyar)
  * @author Dani
  */
-$messages['hu'] = array(
+$messages['hu'] = [
 	'interwiki'               => 'Interwiki adatok megtekintése és szerkesztése',
 	'interwiki_prefix'        => 'Előtag',
 	'interwiki_reasonfield'   => 'Ok',
@@ -592,21 +592,21 @@ $messages['hu'] = array(
 	'interwiki_log_deleted'   => '„$2” előtag eltávolítva az interwiki táblából',
 	'interwiki_logpagetext'   => 'Ez az [[Special:Interwiki|interwiki táblában]] történt változások naplója.',
 	'interwiki_defaultreason' => 'nincs ok megadva',
-);
+];
 
 /** Icelandic (Íslenska)
  * @author S.Örvarr.S
  */
-$messages['is'] = array(
+$messages['is'] = [
 	'interwiki_reasonfield'   => 'Ástæða',
 	'interwiki_defaultreason' => 'engin ástæða gefin',
-);
+];
 
 /** Italian (Italiano)
  * @author BrokenArrow
  * @author Cruccone
  */
-$messages['it'] = array(
+$messages['it'] = [
 	'interwiki'                => 'Visualizza e modifica i dati interwiki',
 	'interwiki-title-norights' => 'Visualizza i dati interwiki',
 	'interwiki-desc'           => 'Aggiunge una [[Speciale:Interwiki|pagina speciale]] per visualizzare e modificare la tabella degli interwiki',
@@ -640,12 +640,12 @@ Il prefisso potrebbe essere inesistente.',
 	'interwiki_log_deleted'    => 'ha rimosso il prefisso "$2" dalla tabella degli interwiki',
 	'interwiki_logpagetext'    => 'Registro dei cambiamenti apportati alla [[Special:Interwiki|tabella degli interwiki]].',
 	'interwiki_defaultreason'  => 'nessuna motivazione indicata',
-);
+];
 
 /** Japanese (日本語)
  * @author Mzm5zbC3
  */
-$messages['ja'] = array(
+$messages['ja'] = [
 	'interwiki'               => 'インターウィキ一覧の表示と編集',
 	'interwiki-desc'          => 'インターウィキ一覧の表示と追加・編集・削除を行う[[Special:Interwiki|特別ページ]]。',
 	'interwiki_prefix'        => 'プリフィックス',
@@ -655,12 +655,12 @@ $messages['ja'] = array(
 	'interwiki_edittext'      => 'インターウィキの編集',
 	'interwiki_logpagename'   => 'インターウィキ編集記録',
 	'interwiki_defaultreason' => '理由が記述されていません',
-);
+];
 
 /** Javanese (Basa Jawa)
  * @author Meursault2004
  */
-$messages['jv'] = array(
+$messages['jv'] = [
 	'interwiki'                => 'Ndeleng lan nyunting data interwiki',
 	'interwiki-title-norights' => 'Ndeleng data interwiki',
 	'interwiki-desc'           => 'Nambahaké sawijining [[Special:Interwiki|kaca astaméwa]] kanggo ndeleng lan nyunting tabèl interwiki',
@@ -694,13 +694,13 @@ Mbok-menawa iki ora ana.',
 	'interwiki_log_deleted'    => 'ngilangi sisipan awal (préfiks) "$2" saka tabèl interwiki',
 	'interwiki_logpagetext'    => 'Kaca iki log owah-owahan kanggo [[Special:Interwiki|tabèl interwiki]].',
 	'interwiki_defaultreason'  => 'ora mènèhi alesan',
-);
+];
 
 /** Khmer (ភាសាខ្មែរ)
  * @author Chhorran
  * @author Lovekhmer
  */
-$messages['km'] = array(
+$messages['km'] = [
 	'interwiki'               => 'មើល និង កែប្រែ ទិន្នន័យ អន្តរវិគី',
 	'interwiki_prefix'        => 'បុព្វបទ',
 	'interwiki_reasonfield'   => 'ហេតុផល',
@@ -712,12 +712,12 @@ $messages['km'] = array(
 	'interwiki_log_added'     => 'បានបន្ថែម "$2" ($3) (trans: $4) (local: $5) ក្នុង តារាង អន្តរវិគី ៖',
 	'interwiki_logpagetext'   => 'នេះជា កំណត់ហេតុ នៃបំលាស់ប្តូរ ក្នុង [[Special:Interwiki|តារាង អន្តរវិគី]]។',
 	'interwiki_defaultreason' => 'គ្មានហេតុផល ត្រូវបានផ្តល់អោយ',
-);
+];
 
 /** Korean (한국어)
  * @author ToePeu
  */
-$messages['ko'] = array(
+$messages['ko'] = [
 	'interwiki'                => '인터위키 목록 보기/고치기',
 	'interwiki-title-norights' => '인터위키 보기',
 	'interwiki-desc'           => '인터위키 표를 보거나 고칠 수 있는 [[Special:Interwiki|특수문서]]를 추가',
@@ -745,13 +745,13 @@ $messages['ko'] = array(
 	'interwiki_log_deleted'    => '접두어 "$2"을(를) 인터위키 목록에서 지웠습니다.',
 	'interwiki_logpagetext'    => '[[Special:Interwiki|인터위키]] 목록의 바뀐 내역입니다.',
 	'interwiki_defaultreason'  => '이유가 제시되지 않았습니다.',
-);
+];
 
 /** Latin (Latina)
  * @author UV
  * @author SPQRobin
  */
-$messages['la'] = array(
+$messages['la'] = [
 	'interwiki'               => 'Videre et recensere data intervica',
 	'interwiki_prefix'        => 'Praefixum',
 	'interwiki_reasonfield'   => 'Causa',
@@ -770,12 +770,12 @@ $messages['la'] = array(
 	'interwiki_log_deleted'   => 'removit praefixum "$2" ex tabula intervica',
 	'interwiki_logpagetext'   => 'Hic est index mutationum [[Special:Interwiki|tabulae intervicae]].',
 	'interwiki_defaultreason' => 'nulla causa data',
-);
+];
 
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
  */
-$messages['lb'] = array(
+$messages['lb'] = [
 	'interwiki'                => 'Interwiki-Date kucken a veränneren',
 	'interwiki-title-norights' => 'Interwiki-Date kucken',
 	'interwiki-desc'           => "Setzt eng [[Special:Interwiki|Spezialsäit]] derbäi fir d'Interwiki-Tabell ze gesin an z'änneren",
@@ -788,21 +788,21 @@ $messages['lb'] = array(
 	'interwiki_logpagename'    => 'Lëscht mat der Interwikitabell',
 	'interwiki_logpagetext'    => 'Dëst ass eng Lëscht mat den Ännerunge vun der [[Special:Interwiki|Interwikitabell]].',
 	'interwiki_defaultreason'  => 'kee Grond uginn',
-);
+];
 
 /** Malayalam (മലയാളം)
  * @author Shijualex
  */
-$messages['ml'] = array(
+$messages['ml'] = [
 	'interwiki_reasonfield'   => 'കാരണം',
 	'interwiki_addbutton'     => 'ചേര്‍ക്കുക',
 	'interwiki_defaultreason' => 'കാരണമൊന്നും സൂചിപ്പിച്ചിട്ടില്ല',
-);
+];
 
 /** Marathi (मराठी)
  * @author Kaustubh
  */
-$messages['mr'] = array(
+$messages['mr'] = [
 	'interwiki'                => 'आंतरविकि डाटा पहा व संपादा',
 	'interwiki-title-norights' => 'अंतरविकि डाटा पहा',
 	'interwiki-desc'           => 'आंतरविकि सारणी पाहण्यासाठी व संपादन्यासाठी एक [[Special:Interwiki|विशेष पान]] वाढविते',
@@ -832,25 +832,25 @@ $messages['mr'] = array(
 	'interwiki_log_deleted'    => '"$2" उपपद आंतरविकिसारणी मधून वगळले',
 	'interwiki_logpagetext'    => '[[Special:Interwiki|आंतरविकि सारणीत]] झालेल्या बदलांची ही सूची आहे.',
 	'interwiki_defaultreason'  => 'कारण दिलेले नाही',
-);
+];
 
 /** Low German (Plattdüütsch)
  * @author Slomox
  */
-$messages['nds'] = array(
+$messages['nds'] = [
 	'interwiki_prefix'        => 'Präfix',
 	'interwiki_reasonfield'   => 'Grund',
 	'interwiki_delquestion'   => '„$1“ warrt rutsmeten',
 	'interwiki_addtext'       => 'Interwiki-Präfix tofögen',
 	'interwiki_addbutton'     => 'Tofögen',
 	'interwiki_defaultreason' => 'keen Grund angeven',
-);
+];
 
 /** Dutch (Nederlands)
  * @author SPQRobin
  * @author Siebrand
  */
-$messages['nl'] = array(
+$messages['nl'] = [
 	'interwiki'                => 'Interwikigegevens bekijken en wijzigen',
 	'interwiki-title-norights' => 'Interwikigegevens bekijken',
 	'interwiki-desc'           => 'Voegt een [[Special:Interwiki|speciale pagina]] toe om de interwikitabel te bekijken en bewerken',
@@ -880,24 +880,24 @@ Er is een [[Special:Log/interwiki|logboek van wijzigingen]] aan de interwikitabe
 	'interwiki_log_deleted'    => 'Verwijderde voorvoegsel "$2" van de interwikitabel',
 	'interwiki_logpagetext'    => 'Dit is een logboek van wijzigingen aan de [[Special:Interwiki|interwikitabel]].',
 	'interwiki_defaultreason'  => 'geen reden gegeven',
-);
+];
 
 /** Norwegian Nynorsk (‪Norsk (nynorsk)‬)
  * @author Eirik
  * @author Jon Harald Søby
  */
-$messages['nn'] = array(
+$messages['nn'] = [
 	'interwiki'                => 'Vis og endre interwikidata',
 	'interwiki-title-norights' => 'Vis interwikidata',
 	'interwiki_prefix'         => 'Prefiks',
 	'interwiki_reasonfield'    => 'Årsak',
 	'interwiki_defaultreason'  => 'inga grunngjeving',
-);
+];
 
 /** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
  * @author Jon Harald Søby
  */
-$messages['no'] = array(
+$messages['no'] = [
 	'interwiki'                => 'Vis og manipuler interwikidata',
 	'interwiki-title-norights' => 'Vis interwikidata',
 	'interwiki-desc'           => 'Legger til en [[Special:Interwiki|spesialside]] som gjør at man kan se og redigere interwiki-tabellen.',
@@ -926,23 +926,23 @@ $messages['no'] = array(
 	'interwiki_log_deleted'    => 'Fjernet prefikset «$2» fra interwikitabellen',
 	'interwiki_logpagetext'    => 'Dette er en logg over endringer i [[Special:Interwiki|interwikitabellen]].',
 	'interwiki_defaultreason'  => 'ingen grunn gitt',
-);
+];
 
 /** Northern Sotho (Sesotho sa Leboa)
  * @author Mohau
  */
-$messages['nso'] = array(
+$messages['nso'] = [
 	'interwiki_reasonfield'   => 'Lebaka',
 	'interwiki_delquestion'   => 'Phumula "$1"',
 	'interwiki_addbutton'     => 'Lokela',
 	'interwiki_defaulturl'    => 'http://www.mohlala.com/$1',
 	'interwiki_defaultreason' => 'gago lebaka leo lefilwego',
-);
+];
 
 /** Occitan (Occitan)
  * @author Cedric31
  */
-$messages['oc'] = array(
+$messages['oc'] = [
 	'interwiki'                => 'Veire e editar las donadas interwiki',
 	'interwiki-title-norights' => 'Veire las donadas interwiki',
 	'interwiki-desc'           => 'Ajusta una [[Special:Interwiki|pagina especiala]] per veire e editar la taula interwiki',
@@ -970,13 +970,13 @@ $messages['oc'] = array(
 	'interwiki_log_deleted'    => 'Prefix « $2 » suprimit de la taula interwiki',
 	'interwiki_logpagetext'    => 'Aquò es lo jornal dels cambiaments dins la [[Special:Interwiki|taula interwiki]].',
 	'interwiki_defaultreason'  => 'Cap de motiu balhat',
-);
+];
 
 /** Polish (Polski)
  * @author Sp5uhe
  * @author McMonster
  */
-$messages['pl'] = array(
+$messages['pl'] = [
 	'interwiki'                => 'Zobacz i edytuj dane interwiki',
 	'interwiki-title-norights' => 'Zobacz dane interwiki',
 	'interwiki-desc'           => 'Dodaje [[Special:Interwiki|stronę specjalną]] służącą do przeglądania i redakcji tablicy interwiki.',
@@ -1008,25 +1008,25 @@ Prawdopodobnie nie ma go w tablicy – możliwe, że został usunięty.',
 	'interwiki_log_deleted'    => 'usunął przedrostek „$2” z tablicy interwiki',
 	'interwiki_logpagetext'    => 'Poniżej znajduje się rejestr zmian wykonanych w [[Special:Interwiki|tablicy interwiki]].',
 	'interwiki_defaultreason'  => 'nie podano powodu',
-);
+];
 
 /** Pashto (پښتو)
  * @author Ahmed-Najib-Biabani-Ibrahimkhel
  */
-$messages['ps'] = array(
+$messages['ps'] = [
 	'interwiki_prefix'        => 'مختاړی',
 	'interwiki_reasonfield'   => 'سبب',
 	'interwiki_delquestion'   => '"$1" د ړنګولو په حال کې دی...',
 	'interwiki_deleting'      => 'تاسو د "$1" مختاړی ړنګوی.',
 	'interwiki_addbutton'     => 'ورګډول',
 	'interwiki_defaultreason' => 'هېڅ کوم سبب نه دی ورکړ شوی',
-);
+];
 
 /** Portuguese (Português)
  * @author Malafaya
  * @author 555
  */
-$messages['pt'] = array(
+$messages['pt'] = [
 	'interwiki'                => 'Ver e manipular dados de interwikis',
 	'interwiki-title-norights' => 'Ver dados interwiki',
 	'interwiki-desc'           => 'Adiciona uma [[{{ns:Special}}:Interwiki|página especial]] para visualizar e editar a tabela de interwikis',
@@ -1054,13 +1054,13 @@ $messages['pt'] = array(
 	'interwiki_log_deleted'    => 'removido o prefixo "$2" da tabela de interwikis',
 	'interwiki_logpagetext'    => 'Este é um registo das alterações à [[{{ns:special}}:Interwiki|tabela de interwikis]].',
 	'interwiki_defaultreason'  => 'sem motivo especificado',
-);
+];
 
 /** Russian (Русский)
  * @author .:Ajvol:.
  * @author Illusion
  */
-$messages['ru'] = array(
+$messages['ru'] = [
 	'interwiki'                => 'Просмотр и изменение настроек интервики',
 	'interwiki-title-norights' => 'Просмотреть данные об интервики',
 	'interwiki-desc'           => 'Добавляет [[Special:Interwiki|служебную страницу]] для просмотра и редактирования таблицы префиксов интервики.',
@@ -1089,12 +1089,12 @@ $messages['ru'] = array(
 	'interwiki_log_deleted'    => 'Приставка «$2» удалена из таблицы интервики',
 	'interwiki_logpagetext'    => 'Это журнал изменений [[Special:Interwiki|таблицы интервики]].',
 	'interwiki_defaultreason'  => 'причина не указана',
-);
+];
 
 /** Sassaresu (Sassaresu)
  * @author Felis
  */
-$messages['sdc'] = array(
+$messages['sdc'] = [
 	'interwiki'               => 'Vidè e mudìfiggà li dati interwiki',
 	'interwiki_prefix'        => 'Prefissu',
 	'interwiki_reasonfield'   => 'Rasgioni',
@@ -1104,12 +1104,12 @@ $messages['sdc'] = array(
 	'interwiki_addbutton'     => 'Aggiungi',
 	'interwiki_logpagename'   => 'Rigisthru di la table interwiki',
 	'interwiki_defaultreason' => 'nisciuna mutibazioni indicadda',
-);
+];
 
 /** Slovak (Slovenčina)
  * @author Helix84
  */
-$messages['sk'] = array(
+$messages['sk'] = [
 	'interwiki'                => 'Zobraziť a upravovať údaje interwiki',
 	'interwiki-title-norights' => 'Zobraziť údaje interwiki',
 	'interwiki-desc'           => 'Pridáva [[Special:Interwiki|špeciálnu stránku]] na zobrazovanie a upravovanie tabuľky interwiki',
@@ -1137,21 +1137,21 @@ $messages['sk'] = array(
 	'interwiki_log_deleted'    => 'Odstránené „$2“ z tabuľky interwiki',
 	'interwiki_logpagetext'    => 'Toto je záznam zmien [[Special:Interwiki|tabuľky interwiki]].',
 	'interwiki_defaultreason'  => 'nebol uvedený dôvod',
-);
+];
 
 /** Serbian Cyrillic ekavian (ћирилица)
  * @author Sasa Stefanovic
  */
-$messages['sr-ec'] = array(
+$messages['sr-ec'] = [
 	'interwiki_reasonfield' => 'Разлог',
 	'interwiki_delquestion' => 'Бришем „$1”',
 	'interwiki_addbutton'   => 'Додај',
-);
+];
 
 /** Seeltersk (Seeltersk)
  * @author Pyt
  */
-$messages['stq'] = array(
+$messages['stq'] = [
 	'interwiki'               => 'Interwiki-Doaten bekiekje un beoarbaidje',
 	'interwiki_prefix'        => 'Präfix',
 	'interwiki_reasonfield'   => 'Gruund',
@@ -1171,13 +1171,13 @@ $messages['stq'] = array(
 	'interwiki_log_deleted'   => 'häd „$2“ uut ju Interwiki-Tabelle wächhoald',
 	'interwiki_logpagetext'   => 'In dit Logbouk wäide Annerengen an ju [[Special:Interwiki|Interwiki-Tabelle]] protokollierd.',
 	'interwiki_defaultreason' => 'naan Gruund ounroat',
-);
+];
 
 /** Swedish (Svenska)
  * @author Lejonel
  * @author M.M.S.
  */
-$messages['sv'] = array(
+$messages['sv'] = [
 	'interwiki'                => 'Visa och redigera interwiki-data',
 	'interwiki-title-norights' => 'Visa interwiki-data',
 	'interwiki-desc'           => 'Lägger till en [[Special:Interwiki|specialsida]] för att visa och ändra interwikitabellen',
@@ -1208,20 +1208,20 @@ Det är möjligt att prefixet redan finns i tabellen.',
 	'interwiki_log_deleted'    => 'tog bort prefixet "$2" från interwikitabellen',
 	'interwiki_logpagetext'    => 'Detta är en logg över ändringar i [[Special:Interwiki|interwikitabellen]].',
 	'interwiki_defaultreason'  => 'ingen anledning given',
-);
+];
 
 /** Silesian (ślůnski)
  * @author Herr Kriss
  */
-$messages['szl'] = array(
+$messages['szl'] = [
 	'interwiki_reasonfield' => 'Čymu',
 	'interwiki_addbutton'   => 'Dodej',
-);
+];
 
 /** Telugu (తెలుగు)
  * @author Veeven
  */
-$messages['te'] = array(
+$messages['te'] = [
 	'interwiki'               => 'అంతర్వికీ భోగట్టాని చూడండి మరియు మార్చండి',
 	'interwiki_prefix'        => 'ఉపసర్గ',
 	'interwiki_reasonfield'   => 'కారణం',
@@ -1236,47 +1236,47 @@ $messages['te'] = array(
 	'interwiki_logpagename'   => 'అంతర్వికీ పట్టిక దినచర్య',
 	'interwiki_logpagetext'   => 'ఇది [[Special:Interwiki|అంతర్వికీ పట్టిక]]కి జరిగిన మార్పుల దినచర్య.',
 	'interwiki_defaultreason' => 'కారణం ఇవ్వలేదు',
-);
+];
 
 /** Tetum (Tetun)
  * @author MF-Warburg
  */
-$messages['tet'] = array(
+$messages['tet'] = [
 	'interwiki_delquestion' => 'Halakon $1',
-);
+];
 
 /** Tajik (Cyrillic) (Тоҷикӣ/tojikī (Cyrillic))
  * @author Ibrahim
  */
-$messages['tg-cyrl'] = array(
+$messages['tg-cyrl'] = [
 	'interwiki_reasonfield'   => 'Сабаб',
 	'interwiki_delquestion'   => 'Дар ҳоли ҳазфи "$1"',
 	'interwiki_addbutton'     => 'Илова',
 	'interwiki_defaultreason' => 'далеле мушаххас нашудааст',
-);
+];
 
 /** Thai (ไทย)
  * @author Passawuth
  */
-$messages['th'] = array(
+$messages['th'] = [
 	'interwiki_reasonfield' => 'เหตุผล',
 	'interwiki_delquestion' => 'ลบ "$1"',
 	'interwiki_addbutton'   => 'เพิ่ม',
-);
+];
 
 /** Ukrainian (Українська)
  * @author Ahonc
  */
-$messages['uk'] = array(
+$messages['uk'] = [
 	'interwiki_prefix'      => 'Префікс',
 	'interwiki_reasonfield' => 'Причина',
-);
+];
 
 /** Vietnamese (Tiếng Việt)
  * @author Vinhtantran
  * @author Minh Nguyen
  */
-$messages['vi'] = array(
+$messages['vi'] = [
 	'interwiki'                => 'Xem và sửa đổi dữ liệu về liên kết liên wiki',
 	'interwiki-title-norights' => 'Xem dữ liệu liên wiki',
 	'interwiki-desc'           => 'Thêm một [[Special:Interwiki|trang đặc biệt]] để xem sửa đổi bảng liên wiki',
@@ -1307,19 +1307,19 @@ Có thể nó đã tồn tại trong bảng liên wiki rồi.',
 	'interwiki_log_deleted'    => 'đã xóa tiền tố “$2” khỏi bảng liên wiki',
 	'interwiki_logpagetext'    => 'Đây là nhật trình các thay đổi trong [[Special:Interwiki|bảng liên wiki]].',
 	'interwiki_defaultreason'  => 'không đưa ra lý do',
-);
+];
 
 /** Volapük (Volapük)
  * @author Malafaya
  */
-$messages['vo'] = array(
+$messages['vo'] = [
 	'interwiki_reasonfield' => 'Kod',
-);
+];
 
 /** Traditional Chinese (‪中文(繁體)‬)
  * @author Alexsh
  */
-$messages['zh-hant'] = array(
+$messages['zh-hant'] = [
 	'interwiki'             => '跨語言連結表',
 	'interwiki-desc'        => '新增[[Special:Interwiki|特殊頁面]]以檢視或編輯跨語言連結表',
 	'interwiki_prefix'      => '連結字串',
@@ -1333,5 +1333,4 @@ $messages['zh-hant'] = array(
 	'interwiki_deleted'     => '已成功從連結表中刪除連結字串"$1"',
 	'interwiki_delfailed'   => '無法從連結表刪除連結字串"$1"',
 	'interwiki_addtext'     => '新增跨語連結字串',
-);
-
+];

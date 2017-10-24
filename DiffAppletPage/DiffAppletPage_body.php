@@ -1,9 +1,8 @@
 <?php
 
 
-class DiffAppletPage extends SpecialPage
-{
-	function __construct( ) {
+class DiffAppletPage extends SpecialPage {
+	function __construct() {
 		parent::__construct( "DiffAppletPage" );
 		self::loadMessages();
 	}
@@ -16,8 +15,8 @@ class DiffAppletPage extends SpecialPage
 			$revOld = $wgRequest->getVal( 'old' );
 			$revNew = $wgRequest->getVal( 'new' );
 			$pwTitle = $wgRequest->getVal( 'pwTitle' );
-			$pathway = Pathway::newFromTitle($pwTitle);
-		} catch(Exception $e) {
+			$pathway = Pathway::newFromTitle( $pwTitle );
+		} catch ( Exception $e ) {
 			$wgOut->addHTML(
 				'<H2>Error</H2><P>The given title is not a pathway page!</P>'
 			);
@@ -31,37 +30,38 @@ class DiffAppletPage extends SpecialPage
 <TD>{$pwName}, revision {$revNew}
 </TBODY></TABLE>
 TABLE;
-		$wgOut->addHTML($headerTable);
-		$wgOut->addHTML(self::createDiffApplet($pathway, $revOld, $revNew));
+		$wgOut->addHTML( $headerTable );
+		$wgOut->addHTML( self::createDiffApplet( $pathway, $revOld, $revNew ) );
 	}
 
 	static function loadMessages() {
 		static $messagesLoaded = false;
 		global $wgMessageCache;
-		if ( $messagesLoaded ) return true;
+		if ( $messagesLoaded ) { return true;
+		}
 		$messagesLoaded = true;
 
-		require( dirname( __FILE__ ) . '/DiffAppletPage.i18n.php' );
+		require __DIR__ . '/DiffAppletPage.i18n.php';
 		foreach ( $allMessages as $lang => $langMessages ) {
 			$wgMessageCache->addMessages( $langMessages, $lang );
 		}
 		return true;
 	}
 
-	static function createDiffApplet($pathway, $revOld, $revNew) {
-		$pathway->setActiveRevision($revOld);
-		$file1 = $pathway->getFileURL(FILETYPE_GPML);
+	static function createDiffApplet( $pathway, $revOld, $revNew ) {
+		$pathway->setActiveRevision( $revOld );
+		$file1 = $pathway->getFileURL( FILETYPE_GPML );
 
-		$pathway->setActiveRevision($revNew);
-		$file2 = $pathway->getFileURL(FILETYPE_GPML);
+		$pathway->setActiveRevision( $revNew );
+		$file2 = $pathway->getFileURL( FILETYPE_GPML );
 
 		$base = EditApplet::getAppletBase();
 		$archive_string = '';
 		$jardir = WPI_SCRIPT_PATH . '/applet';
-		$cache_archive = explode(' ', file_get_contents("$jardir/cache_archive"));
-		foreach($cache_archive as $jar) {
+		$cache_archive = explode( ' ', file_get_contents( "$jardir/cache_archive" ) );
+		foreach ( $cache_archive as $jar ) {
 			# check for file existence
-			filemtime("$jardir/$jar");
+			filemtime( "$jardir/$jar" );
 			$archive_string .= $jar . ', ';
 		}
 

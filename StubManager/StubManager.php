@@ -5,7 +5,7 @@
  * @version 1.3.2
  * @Id $Id: StubManager.php 1200 2008-10-10 02:13:37Z jeanlou.dupont $
  */
-//<source lang=php>
+// <source lang=php>
 class StubManager {
 	// This version number must match that of
 	// the corresponding PEAR package.
@@ -35,27 +35,27 @@ class StubManager {
 	const STATE_ATTENTION = 2;
 	const STATE_DISABLED  = 3;
 
-	static $state_icons = array(
+	static $state_icons = [
 		self::STATE_OK			=> 'icon_ok.png',
 		self::STATE_ERROR		=> 'icon_error.png',
 		self::STATE_ATTENTION	=> 'icon_attention.png',
 		self::STATE_DISABLED	=> 'icon_disabled.png',
-	);
+	];
 
-	static $state_messages = array(
+	static $state_messages = [
 		self::STATE_OK			=> 'ok',
 		self::STATE_ERROR		=> 'error',
 		self::STATE_ATTENTION	=> 'attention required',
 		self::STATE_DISABLED	=> 'disabled',
-	);
+	];
 
 	/**
 	 * Contains the list of registered extensions
 	 * @private
 	 */
-	static $stubList = array();
+	static $stubList = [];
 
-	static $paramsList = array(	'class',		// mandatory
+	static $paramsList = [ 'class',		// mandatory
 								'classfilename',// mandatory
 								'i18nfilename',
 								'hooks',
@@ -65,35 +65,40 @@ class StubManager {
 								'mws',
 								'nss',
 								'enss'
-								);
+								];
 
 	/**
 	 * Create Stub
 	 * Facility for extensions
 	 */
 	public static function createStub2( $params ) {
-
-		if (!is_array( $params ))
-			{ echo __METHOD__.' $params not an array.'; return; }
+		if ( !is_array( $params ) ) {
+ echo __METHOD__.' $params not an array.';
+return;
+  }
 
 		// need to make sure we've got the mandatory parameters covered.
-		if (!isset( $params['class'] ))
-			{ echo __METHOD__.' missing "class" parameter.'; return; }
+		if ( !isset( $params['class'] ) ) {
+ echo __METHOD__.' missing "class" parameter.';
+return;
+  }
 
-		if (!isset( $params['classfilename'] ))
-			{ echo __METHOD__.' missing "classfilename" parameter.'; return; }
+		if ( !isset( $params['classfilename'] ) ) {
+ echo __METHOD__.' missing "classfilename" parameter.';
+return;
+  }
 
 		// pick up all the parameters that StubManager knows about directly;
 		// the others will be passed to the 'Stub' class.
-		foreach( self::$paramsList as $paramKey )
-			if (isset( $params[$paramKey] ))
-			{
+		foreach ( self::$paramsList as $paramKey ) {
+			if ( isset( $params[$paramKey] ) ) {
 				$liste[$paramKey] = $params[$paramKey];
 				unset( $params[$paramKey] );
 			}
-			else
-				$liste[$paramKey] = null;
-
+ else {
+$liste[$paramKey] = null;
+	}
+		}
 
 		// create a stub object.
 		$cListe['object'] = new Stub( $liste['class'],
@@ -127,15 +132,14 @@ class StubManager {
 	 * $hooks:			array of hooks
 	 * $logging:		if logging support is required
 	 */
-	public static function createStub(	$class, $filename, $i18nfilename = null,
+	public static function createStub( $class, $filename, $i18nfilename = null,
 										$hooks,
 										$logging = false,
 										$tags = null,		// parser 'tag' e.g. <php>
 										$mgs  = null,		// parser function e.g. {{#addscriptcss}}
 										$mws  = null,		// parser magic word e.g. {{CURRENTTIME}}
 										$nss  = null		// namespaces as trigger
-									)	{
-
+									) {
 		// need to wait for the proper timing
 		// to initialize things around.
 		self::setupInit();
@@ -143,7 +147,7 @@ class StubManager {
 		global $wgAutoloadClasses;
 		$wgAutoloadClasses[$class] = $filename;
 
-		self::$stubList[] = array(	'class'			=> $class,
+		self::$stubList[] = [ 'class'			=> $class,
 									'object' 		=> new Stub( $class, $hooks, $tags, $mgs, $mws, $nss ),
 									'classfilename' => $filename,
 									'i18nfilename'	=> $i18nfilename,
@@ -152,7 +156,7 @@ class StubManager {
 									'tags'			=> $tags,
 									'mgs'			=> $mgs,
 									'mws'			=> $mws,
-									);
+									];
 	}
 	/**
 	 * Register the state of an extension
@@ -161,10 +165,12 @@ class StubManager {
 	 * @param $classe string
 	 * @param $state boolean
 	 */
-	public static function registerState( $classe, $state )	 {
-		foreach( self::$stubList as &$stub )
-			if ( @$stub['class'] == $classe )
+	public static function registerState( $classe, $state ) {
+		foreach ( self::$stubList as &$stub ) {
+			if ( @$stub['class'] == $classe ) {
 				$stub[ 'state' ] = $state;
+			}
+		}
 	}
 	/**
 	 * Returns the current state of an extension
@@ -173,10 +179,13 @@ class StubManager {
 	 * @param $classe string
 	 */
 	public static function getState( $classe ) {
-		foreach( self::$stubList as &$stub )
-			if ( @$stub['class'] == $classe )
-				if ( isset( $stub['state'] ))
+		foreach ( self::$stubList as &$stub ) {
+			if ( @$stub['class'] == $classe ) {
+				if ( isset( $stub['state'] ) ) {
 					return $stub[ 'state' ];
+				}
+			}
+		}
 
 		return null;
 	}
@@ -187,8 +196,9 @@ class StubManager {
 	 * @param $state constant
 	 */
 	public static function getStateIcon( $state ) {
-		if ( in_array( $state, self::$state_icons ))
+		if ( in_array( $state, self::$state_icons ) ) {
 			return self::$state_icons[ $state ];
+		}
 		return null;
 	}
 	/**
@@ -197,8 +207,9 @@ class StubManager {
 	 * @param $state constant
 	 */
 	public static function getStateMessage( $state ) {
-		if ( in_array( $state, self::$state_messages ))
+		if ( in_array( $state, self::$state_messages ) ) {
 			return self::$state_messages[ $state ];
+		}
 		return null;
 	}
 	/**
@@ -209,24 +220,30 @@ class StubManager {
 	 * @param $value Object
 	 */
 	public static function configureExtension( $classe, $parameter, $value ) {
-		foreach( self::$stubList as &$stub )
-			if (isset( $stub['class'] ))
-				if ( $stub['class'] == $classe )
-					if (isset( $stub[$parameter] ))
-					{
-						if (is_array($stub[ $parameter]) )
+		foreach ( self::$stubList as &$stub ) {
+			if ( isset( $stub['class'] ) ) {
+				if ( $stub['class'] == $classe ) {
+					if ( isset( $stub[$parameter] ) ) {
+						if ( is_array( $stub[ $parameter] ) ) {
 							$stub[$parameter][] = $value;
-						else
-							$stub[ $parameter ] = $value;
+			   } else { $stub[ $parameter ] = $value;
+			   }
 					}
-					else
-						$stub[ $parameter ] = $value;
+ else {
+$stub[ $parameter ] = $value;
+	}
+				}
+			}
+		}
 	}
 	public static function isExtensionRegistered( $classe ) {
-		foreach( self::$stubList as &$stub )
-			if (isset( $stub['class'] ))
-				if ( $stub['class'] == $classe )
+		foreach ( self::$stubList as &$stub ) {
+			if ( isset( $stub['class'] ) ) {
+				if ( $stub['class'] == $classe ) {
 					return true;
+				}
+			}
+		}
 
 		return false;
 	}
@@ -248,12 +265,13 @@ class StubManager {
 	 */
 	private static function setupInit() {
 		static $initHooked = false;
-		if ($initHooked)
+		if ( $initHooked ) {
 			return;
+		}
 		$initHooked = true;
 
 		global $wgExtensionFunctions;
-		$wgExtensionFunctions[] = array( new self, 'setup' );
+		$wgExtensionFunctions[] = [ new self, 'setup' ];
 	}
 	public static function setup() {
 		self::setupMessages();
@@ -262,19 +280,18 @@ class StubManager {
 		self::callSetupMethods();
 	}
 	private static function callSetupMethods() {
-		foreach( self::$stubList as $index => $e )
-		{
+		foreach ( self::$stubList as $index => $e ) {
 			$obj = $e['object'];
 			$obj->setup();
 		}
 	}
-	private static function setupLogging( )	{
+	private static function setupLogging() {
 		global $wgLogTypes, $wgLogNames, $wgLogHeaders, $wgLogActions;
 
-		foreach( self::$stubList as $index => $e )
-		{
-			if ( !$e['logging'] )
+		foreach ( self::$stubList as $index => $e ) {
+			if ( !$e['logging'] ) {
 				continue;
+			}
 
 			$class = $e['class'];
 			$log = $GLOBALS[ 'log'.$class ];
@@ -284,48 +301,52 @@ class StubManager {
 			$wgLogHeaders[$log] = $log.'logpagetext';
 
 			$actions = null;
-			if (isset( $GLOBALS[ 'act'.$class ]))
+			if ( isset( $GLOBALS[ 'act'.$class ] ) ) {
 				$actions = $GLOBALS[ 'act'.$class ];
-			if (!empty( $actions ))
-				foreach( $actions as $action )
+			}
+			if ( !empty( $actions ) ) {
+				foreach ( $actions as $action ) {
 					$wgLogActions[$log.'/'.$action] = $log.'-'.$action.'-entry';
+				}
+			}
 		}
 	}
-	private static function setupMessages( ) {
+	private static function setupMessages() {
 		global $wgMessageCache;
 
-		foreach( self::$stubList as $index => $e )
-		{
+		foreach ( self::$stubList as $index => $e ) {
 			$i18nfilename = $e['i18nfilename'];
-			if (!empty($i18nfilename))
-				require_once( $i18nfilename );
-			else
-				continue;
+			if ( !empty( $i18nfilename ) ) {
+				require_once $i18nfilename;
+   } else { continue;
+   }
 
 			$msg = $GLOBALS[ 'msg'.$e['class'] ];
 
-			if (!empty( $msg ))
-				foreach( $msg as $key => $value )
+			if ( !empty( $msg ) ) {
+				foreach ( $msg as $key => $value ) {
 					$wgMessageCache->addMessages( $msg[$key], $key );
+				}
+			}
 		}
 	}
 	/**
 	 * Special:Page hook setup
 	 */
 	private static function setupCreditsHook() {
-
 		static $updateCreditsHooked = false;
-		if ($updateCreditsHooked)
+		if ( $updateCreditsHooked ) {
 			return;
+		}
 		$updateCreditsHooked = true;
 
 		global $wgHooks;
 		$wgHooks['SpecialVersionExtensionTypes'][] = __CLASS__.'::hUpdateExtensionCredits';
 
 		// load all the extensions so they get a change to show their credits
-		#foreach( self::$stubList as $index => $e )
-			#echo $e['classfilename'].' ';
-		#	require_once( $e['classfilename'] );
+		# foreach( self::$stubList as $index => $e )
+			# echo $e['classfilename'].' ';
+		# require_once( $e['classfilename'] );
 	}
 	/**
 	 * Lists all the extension registered through StubManager
@@ -333,8 +354,7 @@ class StubManager {
 	 * @param $sp Object
 	 * @param $ext Object
 	 */
-	static public function hUpdateExtensionCredits( &$sp, &$ext ) {
-
+	public static function hUpdateExtensionCredits( &$sp, &$ext ) {
 		global $wgExtensionCredits;
 
 		$result = null;
@@ -348,60 +368,65 @@ class StubManager {
 		// Template available?
 		$tpl_present = false;
 		$title_tpl = Title::newFromText( self::$_templateName );
-		if ( is_object( $title_tpl ))
-		{
+		if ( is_object( $title_tpl ) ) {
 			$article_tpl = new Article( $title_tpl );
 			$tpl_present = $article_tpl->getId() != 0;
 		}
 
 		$tpl_link = null;
-		if ( $_isSysop && !$tpl_present )
+		if ( $_isSysop && !$tpl_present ) {
 			$tpl_link = "Customization template: [[".self::$_templateName."]]. ";
+		}
 
 		// style formatting
 		$first = true;
 
-		if (!empty( self::$stubList ))
-			foreach( self::$stubList as $index => $obj )
-			{
-				if ( !$first )
+		if ( !empty( self::$stubList ) ) {
+			foreach ( self::$stubList as $index => $obj ) {
+				if ( !$first ) {
 					$result .= ',  ';
+				}
 
-				if ( $index % 4 == 0 && !$first )
+				if ( $index % 4 == 0 && !$first ) {
 					$result .= "<br/>";
+				}
 
 				$state = self::getState( @$obj['class'] );
 				$state_present = !is_null( $state );
 
 				// extension state set && template present?
 				// build the information
-				if ($state_present && $tpl_present)
+				if ( $state_present && $tpl_present ) {
 					$result .= "{{". self::$_templateName . "|$state}}";
+				}
 
 				$result .= '['.self::MWbaseURI.'/Extension:'.$obj['class'].' '.$obj['class']."]";
 
-				if ( $first === true )
+				if ( $first === true ) {
 					$first = false;
+				}
 			}
+		}
 
-		$result=trim($result);
+		$result = trim( $result );
 
-		foreach ( $wgExtensionCredits[self::thisType] as $index => &$el )
-			if (@isset($el['name']))
-				if ($el['name']==self::thisName)
-				{
+		foreach ( $wgExtensionCredits[self::thisType] as $index => &$el ) {
+			if ( @isset( $el['name'] ) ) {
+				if ( $el['name'] == self::thisName ) {
 					$desc = $el['description'];
 					$desc = str_replace( '$1', $tpl_link, $desc );
 					$el['description'] = $desc . $result.'.';
 				}
+			}
+		}
 
 		return true;
 	}
 	static function getRevisionId( $svnId=null ) {
-
 		// fixed annoying warning about undefined offset.
-		if ( $svnId === null || $svnId == ('$'.'Id'.'$' /* fool SVN */) )
+		if ( $svnId === null || $svnId == ( '$'.'Id'.'$' /* fool SVN */ ) ) {
 			return null;
+		}
 
 		// e.g. $Id: StubManager.php 1200 2008-10-10 02:13:37Z jeanlou.dupont $
 		$data = explode( ' ', $svnId );
@@ -410,8 +435,9 @@ class StubManager {
 	/**
 	 * @deprecated
 	 */
-	static function getFullUrl( $filename )
-	{ return 'http://www.bizzwiki.org/index.php?title=Filesystem:'.self::getRelativePath( $filename );	}
+	static function getFullUrl( $filename ) {
+	 return 'http://www.bizzwiki.org/index.php?title=Filesystem:'.self::getRelativePath( $filename );
+ }
 
 	static function getRelativePath( $filename ) {
 		global $IP;
@@ -421,126 +447,135 @@ class StubManager {
 	/**
 	 * @deprecated
 	 */
-	public static function processArgList( $liste, $getridoffirstparam=false )
+	public static function processArgList( $liste, $getridoffirstparam=false ) {
 	/*
 	 * The resulting list contains:
 	 * - The parameters extracted by 'key=value' whereby (key => value) entries in the list
 	 * - The parameters extracted by 'index' whereby ( index = > value) entries in the list
 	 */
-	{
-		if ($getridoffirstparam)
+		if ( $getridoffirstparam ) {
 			array_shift( $liste );
+		}
 
 		// the parser sometimes includes a boggie
 		// null parameter. get rid of it.
-		if (count($liste) >0 )
-			if (empty( $liste[count($liste)-1] ))
-				unset( $liste[count($liste)-1] );
+		if ( count( $liste ) > 0 ) {
+			if ( empty( $liste[count( $liste ) - 1] ) ) {
+				unset( $liste[count( $liste ) - 1] );
+			}
+		}
 
-		$result = array();
-		foreach ($liste as $index => $el )
-		{
-			$t = explode("=", $el);
-			if (!isset($t[1]))
+		$result = [];
+		foreach ( $liste as $index => $el ) {
+			$t = explode( "=", $el );
+			if ( !isset( $t[1] ) ) {
 				continue;
+			}
 			$result[ "{$t[0]}" ] = trim( $t[1] );
 			unset( $liste[$index] );
 		}
-		if (empty($result))
+		if ( empty( $result ) ) {
 			return $liste;
+		}
 
 		return array_merge( $result, $liste );
 	}
-	public static function getParam( &$alist, $key, $index, $default )
+	public static function getParam( &$alist, $key, $index, $default ) {
 	/*
 	 *  Gets a parameter by 'key' if present
 	 *  or fallback on getting the value by 'index' and
 	 *  ultimately fallback on default if both previous attempts fail.
 	 */
-	{
-		if (array_key_exists($key, $alist) )
+		if ( array_key_exists( $key, $alist ) ) {
 			return $alist[$key];
-		elseif (array_key_exists($index, $alist) && $index!==null )
+  } elseif ( array_key_exists( $index, $alist ) && $index !== null ) {
 			return $alist[$index];
-		else
-			return $default;
+  } else { return $default;
+  }
 	}
-	public static function initParams( &$alist, &$templateElements, $removeNotInTemplate = true )
-	{
+	public static function initParams( &$alist, &$templateElements, $removeNotInTemplate = true ) {
 		// v1.92 feature.
-		if ($removeNotInTemplate)
-			foreach( $templateElements as $index => &$el )
-				if ( !isset($alist[ $el['key'] ]) )
+		if ( $removeNotInTemplate ) {
+			foreach ( $templateElements as $index => &$el ) {
+				if ( !isset( $alist[ $el['key'] ] ) ) {
 					unset( $alist[$el['key']] );
+				}
+			}
+		}
 
-		foreach( $templateElements as $index => &$el )
+		foreach ( $templateElements as $index => &$el ) {
 			$alist[$el['key']] = self::getParam( $alist, $el['key'], $el['index'], $el['default'] );
+		}
 	}
 	/**
 	 * @deprecated
 	 */
-	public function formatParams( &$alist , &$template )
+	public function formatParams( &$alist , &$template ) {
 	// look at yuiPanel extension for usage example.
 	// $alist = { 'key' => 'value' ... }
-	{
-		foreach ( $alist as $key => $value )
+		foreach ( $alist as $key => $value ) {
 			// format the entry.
 			self::formatParam( $key, $value, $template );
+		}
 	}
 	/**
 	 * @deprecated
 	 */
-	private static function formatParam( &$key, &$value, &$template )
-	{
+	private static function formatParam( &$key, &$value, &$template ) {
 		$format = self::getFormat( $key, $template );
-		if ($format !== null )
-		{
-			switch ($format)
-			{
-				case 'bool':   $value = (bool) $value; break;
-				case 'int':    $value = (int) $value; break;
+		if ( $format !== null ) {
+			switch ( $format ) {
+				case 'bool':   $value = (bool)$value;
+
+break;
+				case 'int':    $value = (int)$value;
+
+break;
 				default:
-				case 'string': $value = (string) $value; break;
+				case 'string': $value = (string)$value;
+
+break;
 			}
 		}
 	}
-	public static function getFormat( &$key, &$template )
-	{
+	public static function getFormat( &$key, &$template ) {
 		$format = null;
-		foreach( $template as $index => &$el )
-			if ( $el['key'] == $key )
-				$format  = $el['format'];
+		foreach ( $template as $index => &$el ) {
+			if ( $el['key'] == $key ) {
+				$format = $el['format'];
+			}
+		}
 
 		return $format;
 	}
-	public static function checkPageEditRestriction( &$title )
+	public static function checkPageEditRestriction( &$title ) {
 	// v1.1 feature
 	// where $title is a Mediawiki Title class object instance
-	{
 		$proceed = false;
 
-		$state = $title->getRestrictions('edit');
-		foreach ($state as $index => $group )
-			if ( $group == 'sysop' )
+		$state = $title->getRestrictions( 'edit' );
+		foreach ( $state as $index => $group ) {
+			if ( $group == 'sysop' ) {
 				$proceed = true;
+			}
+		}
 
 		return $proceed;
 	}
-	public static function getArticle( $article_title )
-	{
+	public static function getArticle( $article_title ) {
 		$title = Title::newFromText( $article_title );
 
 		// Can't load page if title is invalid.
-		if ($title == null)	return null;
-		$article = new Article($title);
+		if ( $title == null ) {	return null;
+		}
+		$article = new Article( $title );
 
 		return $article;
 	}
 
-	static function isSysop( $user = null ) // v1.5 feature
-	{
-		if ($user == null)
-		{
+	static function isSysop( $user = null ) {
+ // v1.5 feature
+		if ( $user == null ) {
 			global $wgUser;
 			$user = $wgUser;
 		}
@@ -549,17 +584,13 @@ class StubManager {
 
 } // end class
 
-
-
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // STUB class
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-class Stub
-{
+class Stub {
 	static $hook_prefix	= 'h';
 	static $tag_prefix	= 'tag_';
 	static $mw_prefix	= 'MW_';
@@ -584,8 +615,7 @@ class Stub
 								&$mws = null,
 								$nss = null,
 								$enss = null,
-								$params = null )
-	{
+								$params = null ) {
 		$this->setupHooks( $hooks );
 		$this->tags = $tags;
 		$this->mgs  = $mgs;
@@ -594,8 +624,9 @@ class Stub
 		$this->enss = $enss;
 		$this->params  = $params;
 
-		if ( !empty( $mgs) || !empty( $mws) )
+		if ( !empty( $mgs ) || !empty( $mws ) ) {
 			$this->setupLanguageGetMagicHook();
+		}
 
 		// don't create the object just yet!
 		$this->classe = $class;
@@ -604,17 +635,16 @@ class Stub
 	/**
 		called in the same timing as $wgExtensionFunctions array is processed
 	 */
-	public function setup()
-	{
+	public function setup() {
 		$this->setupTags( $this->tags );
 		$this->setupMGs( $this->mgs );
 		$this->setupMWs( $this->mws );
 	}
 
-	private function setupHooks( /*&*/$hooks )
-	{
-		if (empty( $hooks ))
+	private function setupHooks( /*&*/$hooks ) {
+		if ( empty( $hooks ) ) {
 			return;
+		}
 
 		// get rid of the hook prefix if the user forgot about it.
 /*
@@ -624,84 +654,91 @@ class Stub
 */
 
 		global $wgHooks;
-		foreach( $hooks as $hook )
-			$wgHooks[ $hook ][] = array( &$this, self::$hook_prefix.$hook );
+		foreach ( $hooks as $hook ) {
+			$wgHooks[ $hook ][] = [ &$this, self::$hook_prefix.$hook ];
+		}
 	}
-	private function setupTags( /*&*/ $tags )
-	{
-		if (empty( $tags ))
+	private function setupTags( /*&*/ $tags ) {
+		if ( empty( $tags ) ) {
 			return;
+		}
 
 		global $wgParser;
-		foreach($tags as $index => $key)
-			$wgParser->setHook( "$key", array( $this, self::$tag_prefix.$key ) );
+		foreach ( $tags as $index => $key ) {
+			$wgParser->setHook( "$key", [ $this, self::$tag_prefix.$key ] );
+		}
 	}
-	private function setupMGs( /*&*/ $mgs )
-	{
-		if (empty( $mgs ))
+	private function setupMGs( /*&*/ $mgs ) {
+		if ( empty( $mgs ) ) {
 			return;
+		}
 
 		global $wgParser;
-		foreach($mgs as $index => $key)
-			$wgParser->setFunctionHook( "$key", array( $this, self::$mg_prefix.$key ) );
+		foreach ( $mgs as $index => $key ) {
+			$wgParser->setFunctionHook( "$key", [ $this, self::$mg_prefix.$key ] );
+		}
 	}
-	private function setupMWs( /*&*/ $mws )
-	{
-		if (empty( $mws ))
+	private function setupMWs( /*&*/ $mws ) {
+		if ( empty( $mws ) ) {
 			return;
+		}
 
 		global $wgParser;
-		foreach($mws as $index => $key)
-			$wgParser->setFunctionHook( "$key", array( $this, self::$mw_prefix.$key ) );
+		foreach ( $mws as $index => $key ) {
+			$wgParser->setFunctionHook( "$key", [ $this, self::$mw_prefix.$key ] );
+		}
 	}
-	private function setupLanguageGetMagicHook()
-	{
+	private function setupLanguageGetMagicHook() {
 		global $wgHooks;
-		$wgHooks['LanguageGetMagic'            ][] = array( $this, 'hookLanguageGetMagic'             );
-		$wgHooks['MagicWordMagicWords'         ][] = array( $this, 'hookMagicWordMagicWords'          );
-		$wgHooks['MagicWordwgVariableIDs'      ][] = array( $this, 'hookMagicWordwgVariableIDs'       );
-		$wgHooks['ParserGetVariableValueSwitch'][] = array( $this, 'hookParserGetVariableValueSwitch' );
+		$wgHooks['LanguageGetMagic'            ][] = [ $this, 'hookLanguageGetMagic' ];
+		$wgHooks['MagicWordMagicWords'         ][] = [ $this, 'hookMagicWordMagicWords' ];
+		$wgHooks['MagicWordwgVariableIDs'      ][] = [ $this, 'hookMagicWordwgVariableIDs' ];
+		$wgHooks['ParserGetVariableValueSwitch'][] = [ $this, 'hookParserGetVariableValueSwitch' ];
 	}
-	public function hookLanguageGetMagic( &$magicwords, $langCode )
-	{
+	public function hookLanguageGetMagic( &$magicwords, $langCode ) {
 		// parser functions.
-		if (!empty( $this->mgs ))
-			foreach($this->mgs as $index => $key )
-				$magicwords [$key] = array( 0, $key );
+		if ( !empty( $this->mgs ) ) {
+			foreach ( $this->mgs as $index => $key ) {
+				$magicwords [$key] = [ 0, $key ];
+			}
+		}
 
 		// magic words.
-		if (!empty( $this->mws ))
-			foreach($this->mws as $index => $key )
-				$magicwords [ defined($key) ? constant($key):$key ] = array( 0, $key );
+		if ( !empty( $this->mws ) ) {
+			foreach ( $this->mws as $index => $key ) {
+				$magicwords [ defined( $key ) ? constant( $key ) : $key ] = [ 0, $key ];
+			}
+		}
 
 		return true;
 	}
-	public function hookMagicWordMagicWords( &$mw )
-	{
-		if (!empty( $this->mws ))
-			foreach ( $this->mws as $index => $key )
+	public function hookMagicWordMagicWords( &$mw ) {
+		if ( !empty( $this->mws ) ) {
+			foreach ( $this->mws as $index => $key ) {
 				$mw[] = $key;
+			}
+		}
 
 		return true;
 	}
-	public function hookMagicWordwgVariableIDs( &$mw )
-	{
-		if (!empty( $this->mws ))
-			foreach ( $this->mws as $index => $key )
-				$mw[] = constant( $key  );
+	public function hookMagicWordwgVariableIDs( &$mw ) {
+		if ( !empty( $this->mws ) ) {
+			foreach ( $this->mws as $index => $key ) {
+				$mw[] = constant( $key );
+			}
+		}
 
 		return true;
 	}
-	public function hookParserGetVariableValueSwitch( &$parser, &$varCache, &$id, &$ret )
-	{
-		if (empty( $this->mws ))
+	public function hookParserGetVariableValueSwitch( &$parser, &$varCache, &$id, &$ret ) {
+		if ( empty( $this->mws ) ) {
 			return true;
+		}
 
 		// when called through {{magic word here}}
 		// will call the method "MW_magic_word"
-		if ( in_array( $id, $this->mws ) )
-		{
-			$method= self::$mw_prefix.$id;
+		if ( in_array( $id, $this->mws ) ) {
+			$method = self::$mw_prefix.$id;
 			$this->$method( $parser, $varCache, $ret );
 		}
 		return true;
@@ -713,21 +750,25 @@ class Stub
 
 		Exclude namespace first
 	 */
-	private function checkNss( &$method, &$args )
-	{
+	private function checkNss( &$method, &$args ) {
 		global $wgTitle;
-		if (!is_object( $wgTitle ))
+		if ( !is_object( $wgTitle ) ) {
 			return true;
+		}
 
-		if ( !empty( $this->enss ))
-			if ( in_array( $wgTitle->getNamespace(), $this->enss ) )
+		if ( !empty( $this->enss ) ) {
+			if ( in_array( $wgTitle->getNamespace(), $this->enss ) ) {
 				return false; // stop processing
+			}
+		}
 
-		if ( !empty($this->nss) )	// if none provided, act as normal
-			if ( !in_array( $wgTitle->getNamespace(), $this->nss ) )
+		if ( !empty( $this->nss ) ) {	// if none provided, act as normal
+			if ( !in_array( $wgTitle->getNamespace(), $this->nss ) ) {
 				return false; // stop processing
+			}
+		}
 
-		#echo ' classe:'.$this->classe.' method:'.$method."\n";
+		# echo ' classe:'.$this->classe.' method:'.$method."\n";
 
 		// means continue processing.
 		return true;
@@ -738,15 +779,15 @@ class Stub
 	 * and instantiate the necessary object... only once.
 	 */
 	function __call( $method, $args ) {
-
 		// Check triggers
-		if (!$this->checkNss( $method, $args ))
+		if ( !$this->checkNss( $method, $args ) ) {
 			return true;
+		}
 
-		if ( $this->obj === null )
+		if ( $this->obj === null ) {
 			$obj = $this->obj = new $this->classe( $this->params );  // un-stub
-		else
-			$obj = $this->obj;
+  } else { $obj = $this->obj;
+  }
 
 		/*
 		switch ( count($args) )
@@ -780,20 +821,17 @@ class Stub
 		}
 		throw new MWException( __CLASS__.": too many arguments to method called in ".__METHOD__ );
 		*/
-		return call_user_func_array( array( $obj, $method), $args );
+		return call_user_func_array( [ $obj, $method ], $args );
 	}
 
 } // end class Stub
 
-
-
 // Perform auto-discovery of [[Extension:ExtensionManager]]
 // --------------------------------------------------------
-StubManager::$edir = realpath( dirname( dirname(__FILE__) ) );
-if (file_exists( StubManager::$edir.'/ExtensionManager/ExtensionManager.php'))
+StubManager::$edir = realpath( dirname( __DIR__ ) );
+if ( file_exists( StubManager::$edir.'/ExtensionManager/ExtensionManager.php' ) ) {
 	include StubManager::$edir.'/ExtensionManager/ExtensionManager.php';
-
-
+}
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ExtHelper Class
@@ -811,20 +849,22 @@ class ExtHelper {
 	 * Uses the ''l'' parameter from the reference list.
 	 */
 	public static function buildList( &$liste, &$ref_liste ) {
-		if (empty( $liste ))
+		if ( empty( $liste ) ) {
 			return null;
+		}
 
 		$result = '';
 		// only pick the key:value pairs that have been
 		// explictly marked using the 'l' key in the
 		// reference list.
-		foreach( $liste as $key => &$value )
-		{
+		foreach ( $liste as $key => &$value ) {
 			$key = trim( $key );
 			$val = trim( $value );
-			if ( isset( $ref_liste[ $key ] ) )
-				if ( $ref_liste[ $key ]['l'] === true )
+			if ( isset( $ref_liste[ $key ] ) ) {
+				if ( $ref_liste[ $key ]['l'] === true ) {
 					$result .= " $key='$val'";
+				}
+			}
 		}
 		return $result;
 	}
@@ -833,26 +873,35 @@ class ExtHelper {
 	 * Just keeps the parameters defined in the reference list.
 	 */
 	public static function doListSanitization( &$liste, &$ref_liste ) {
-		if (empty( $liste ))
-			return array();
+		if ( empty( $liste ) ) {
+			return [];
+		}
 
 		// first, let's make sure we only have valid parameters
-		$new_liste = array();
-		foreach( $liste as $key => &$value )
-			if (isset( $ref_liste[ $key ] ))
+		$new_liste = [];
+		foreach ( $liste as $key => &$value ) {
+			if ( isset( $ref_liste[ $key ] ) ) {
 				$new_liste[ $key ] = $value;
+			}
+		}
 
 		// then make sure we have all mandatory parameters
-		foreach( $ref_liste as $key => &$instructions )
-			if ( $instructions['m'] === true )
-				if ( !isset( $liste[ $key ] ))
+		foreach ( $ref_liste as $key => &$instructions ) {
+			if ( $instructions['m'] === true ) {
+				if ( !isset( $liste[ $key ] ) ) {
 					return $key;
+				}
+			}
+		}
 
 		// finally, initialize to default values the missing parameters
-		foreach( $ref_liste as $key => &$instructions )
-			if ( $instructions['d'] !== null )
-				if ( !isset( $new_liste[ $key ] ))
+		foreach ( $ref_liste as $key => &$instructions ) {
+			if ( $instructions['d'] !== null ) {
+				if ( !isset( $new_liste[ $key ] ) ) {
 					$new_liste[ $key ] = $instructions['d'];
+				}
+			}
+		}
 
 		return $new_liste;
 	}
@@ -861,32 +910,33 @@ class ExtHelper {
 	 * Only valid parameters should end-up here.
 	 */
 	public static function doSanitization( &$liste, &$ref_liste ) {
-		if (empty( $liste ))
+		if ( empty( $liste ) ) {
 			return null;
+		}
 
-		foreach( $liste as $key => &$value )
-		{
+		foreach ( $liste as $key => &$value ) {
 			// Remove leading & trailing double-quotes
-			if (isset( $ref_liste[ $key ]['dq'] ))
-					if ( $ref_liste[ $key ]['dq'] === true )
-					{
+			if ( isset( $ref_liste[ $key ]['dq'] ) ) {
+					if ( $ref_liste[ $key ]['dq'] === true ) {
 						$value = ltrim( $value, "\" \t\n\r\0\x0B" );
 						$value = rtrim( $value, "\" \t\n\r\0\x0B" );
 					}
+			}
 
 			// Remove leading & trailing single-quotes
-			if (isset( $ref_liste[ $key ]['sq'] ))
-					if ( $ref_liste[ $key ]['sq'] === true )
-					{
+			if ( isset( $ref_liste[ $key ]['sq'] ) ) {
+					if ( $ref_liste[ $key ]['sq'] === true ) {
 						$value = ltrim( $value, "\' \t\n\r\0\x0B" );
 						$value = rtrim( $value, "\' \t\n\r\0\x0B" );
 					}
-
+			}
 
 			// HTML sanitization
-			if (isset( $ref_liste[ $key ]['s'] ))
-				if ( $ref_liste[ $key ]['s'] === true )
+			if ( isset( $ref_liste[ $key ]['s'] ) ) {
+				if ( $ref_liste[ $key ]['s'] === true ) {
 					$value = htmlspecialchars( $value );
+				}
+			}
 		}
 	}
 	/**
@@ -896,23 +946,24 @@ class ExtHelper {
 	 * @return string restricted key name
 	 * @return bool false if no restricted parameter found
 	 */
-	public static function checkListForRestrictions( &$liste, &$ref_liste )	{
-		if (empty( $liste ))
+	public static function checkListForRestrictions( &$liste, &$ref_liste ) {
+		if ( empty( $liste ) ) {
 			return null;
+		}
 
-		foreach( $liste as $key => &$value )
-		{
+		foreach ( $liste as $key => &$value ) {
 			// HTML sanitization
-			if (isset( $ref_liste[ $key ]['r'] ))
-				if ( $ref_liste[ $key ]['r'] === true )
+			if ( isset( $ref_liste[ $key ]['r'] ) ) {
+				if ( $ref_liste[ $key ]['r'] === true ) {
 					return $key;
+				}
+			}
 
 		}
 
 		return false;
 	}
 }// end class ExtHelpers
-
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // ExtImages Class
@@ -930,28 +981,30 @@ class ExtImages {
 	 * @param $icon string
 	 * @param $params mixed: array[optional] / string for title
 	 */
-	public function getIconImgTag( $icon, $params = array() ) {
+	public function getIconImgTag( $icon, $params = [] ) {
 		$path = self::$_baseURL . $icon;
 
 		$paramsList = null;
 
-		if ( is_array( $params ) )
-			foreach( $params as $key => $value )
+		if ( is_array( $params ) ) {
+			foreach ( $params as $key => $value ) {
 				$paramsList .= "$key='$value'";
-		elseif ( is_string( $params ) && (!empty( $params )) )
+   }
+  } elseif ( is_string( $params ) && ( !empty( $params ) ) ) {
 			$paramsList = "title='$params'";
+  }
 
 		return "<img src='$path' $paramsList />";
 	}
 
 } // end class ExtIcons
 
-$wgExtensionCredits[StubManager::thisType][] = array(
+$wgExtensionCredits[StubManager::thisType][] = [
 	'name'    		=> StubManager::thisName,
 	'version' 		=> StubManager::version,
 	'author'  		=> 'Jean-Lou Dupont',
 	'description'	=> 'Provides stubbing facility for extensions handling rare events. $1Extensions registered:<br/>',
 	'url'			=> 'http://mediawiki.org/wiki/Extension:StubManager',
-);
+];
 
-//</source>
+// </source>

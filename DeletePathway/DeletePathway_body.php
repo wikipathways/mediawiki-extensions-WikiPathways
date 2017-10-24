@@ -1,50 +1,49 @@
 <?php
 class DeletePathway extends SpecialPage {
 	function __construct( $empty = null ) {
-		parent::__construct("DeletePathway");
-		
+		parent::__construct( "DeletePathway" );
 	}
 
-	function execute($par) {
+	function execute( $par ) {
 		global $wgOut, $wgUser, $wgLang;
 		$this->setHeaders();
 
 		$id = isset( $_REQUEST['id'] ) ? $_REQUEST['id'] : null;
 
-		if( $id === null ) {
-			$wgOut->addHTML("Must supply an id!");
+		if ( $id === null ) {
+			$wgOut->addHTML( "Must supply an id!" );
 			return;
 		}
 
 		try {
-			$pathway = new Pathway($id);
-		} catch(Exception $e) {
-			$wgOut->addHTML("Error: unable to find pathway $id");
+			$pathway = new Pathway( $id );
+		} catch ( Exception $e ) {
+			$wgOut->addHTML( "Error: unable to find pathway $id" );
 			return;
 		}
 
 		$reason = isset( $_REQUEST['reason'] ) ? $_REQUEST['reason'] : null;
 
-		if( $reason === null ) {
-			$wgOut->addHTML("No reason given!");
+		if ( $reason === null ) {
+			$wgOut->addHTML( "No reason given!" );
 			return;
 		}
 
 		$doit = isset( $_REQUEST['doit'] ) ? $_REQUEST['doit'] : null;
 
-		if($doit) {
-			$pathway->delete($reason);
-			header("Location: {$pathway->getTitleObject()->getFullUrl()}");
+		if ( $doit ) {
+			$pathway->delete( $reason );
+			header( "Location: {$pathway->getTitleObject()->getFullUrl()}" );
 			exit;
 		} else {
-			//Show a form
+			// Show a form
 			$descr = wfMsgForContent( 'deletepathway_descr' );
-			$descr = str_replace("[[PATHWAY]]" ,
+			$descr = str_replace( "[[PATHWAY]]",
 				"<B><A href='{$pathway->getTitleObject()->getFullURL()}'>" .
 				"{$pathway->getName()} ({$pathway->getSpecies()})</A></B>",
 				$descr
 			);
-			$wgOut->addHTML("<P>" . $descr . "</P>");
+			$wgOut->addHTML( "<P>" . $descr . "</P>" );
 			$url = SITE_URL . '/index.php';
 
 			$form = <<<HTML
@@ -58,7 +57,7 @@ class DeletePathway extends SpecialPage {
 	</TBODY></TABLE>
 </FORM>
 HTML;
-			$wgOut->addHTML($form);
+			$wgOut->addHTML( $form );
 		}
 	}
 }

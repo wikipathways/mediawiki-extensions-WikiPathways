@@ -7,7 +7,7 @@
 	"scripts": {
 		"lint": "parallel-lint --exclude vendor",
 		"phpcs": "phpcs -p -s",
-		"fix": "phpcbf",
+		"fix": "phpcbf --standard=/home/mah/work/code/mediawiki/codesniffer/MediaWiki",
 		"pre-install-cmd": "ComposerHookHandler::onPreInstall",
 		"pre-update-cmd": "ComposerHookHandler::onPreUpdate",
 		"test": [

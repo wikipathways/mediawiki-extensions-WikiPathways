@@ -8,20 +8,20 @@ class LegacySpecialPage extends SpecialPage {
 		parent::__construct( $oldName );
 		$this->legacyDestination = Title::newFromText( $newName, NS_SPECIAL );
 		$this->mListed = false;
-
 	}
 
 	function execute( $par ) {
 		global $wgRequest;
 
-		if( !( $this->legacyDestination instanceOf Title ) ) {
+		if ( !( $this->legacyDestination instanceof Title ) ) {
 			throw new MWException( "legacy-no-destination" );
 		}
 
-		if( isset( $wgRequest->data['title'] ) ) unset( $wgRequest->data['title'] );
+		if ( isset( $wgRequest->data['title'] ) ) { unset( $wgRequest->data['title'] );
+		}
 
-		$query = array();
-		foreach( $wgRequest->data as $k => $v) {
+		$query = [];
+		foreach ( $wgRequest->data as $k => $v ) {
 			$query[] = urlencode( $k ) . '=' . urlencode( $v );
 		}
 

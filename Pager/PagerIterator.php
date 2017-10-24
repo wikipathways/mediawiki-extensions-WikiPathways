@@ -28,7 +28,7 @@ class PagerIterator implements Iterator {
 	protected $current;
 
 	function __construct( $pagerClass ) {
-		if( !class_exists( $pagerClass ) ) {
+		if ( !class_exists( $pagerClass ) ) {
 			throw new Exception( "Given pager class ($pagerClass) doesn't exist!" );
 		}
 		$this->pagerClass = $pagerClass;
@@ -40,47 +40,48 @@ class PagerIterator implements Iterator {
 	}
 
 	function valid() {
-		if( $this->nextQueryOffset === null )
+		if ( $this->nextQueryOffset === null ) {
 			$this->next();
+		}
 
 		return $this->current !== null;
 	}
 
 	function current() {
-		if( $this->current )
+		if ( $this->current ) {
 			return $this->pager->getValue( $this->current );
+		}
 		return null;
 	}
 
 	function key() {
-		if( $this->current )
+		if ( $this->current ) {
 			return $this->pager->getKey( $this->current );
+		}
 		return null;
 	}
 
 	function next() {
-
-		if( $this->nextQueryOffset === false &&
+		if ( $this->nextQueryOffset === false &&
 			$this->offset == $this->rowsInQuery - 1 ) {
 			$this->current = null;
 			return false;
-		} elseif( $this->nextQueryOffset !== false &&
+		} elseif ( $this->nextQueryOffset !== false &&
 			$this->offset >= $this->rowsInQuery ) {
-
-			if( $this->pager ) {
-				$this->pager = $this->pager->nextPager($this->nextQueryOffset );
-				if( !$this->pager ) {
+			if ( $this->pager ) {
+				$this->pager = $this->pager->nextPager( $this->nextQueryOffset );
+				if ( !$this->pager ) {
 					return $this->pager;
 				}
 			} else {
 				$class = $this->pagerClass;
-				$this->pager = eval("return $class::initPager();");
+				$this->pager = eval( "return $class::initPager();" );
 			}
 			$this->offset = 0;
 			$this->pager->doQuery();
 
 			$res = $this->pager->mResult;
-			if( $res->numRows() > $this->pager->mLimit ) {
+			if ( $res->numRows() > $this->pager->mLimit ) {
 				$res->seek( $res->numRows() - 1 );
 				$this->nextQueryOffset = $this->pager->getValue( $res->fetchObject() );
 			} else {

@@ -1,9 +1,9 @@
 <?php
-require_once("QueryPage.php");
+require_once "QueryPage.php";
 
 class NewPathwaysPage extends SpecialPage {
 	function NewPathwaysPage() {
-		SpecialPage::SpecialPage("NewPathwaysPage");
+		SpecialPage::SpecialPage( "NewPathwaysPage" );
 		self::loadMessages();
 	}
 
@@ -22,10 +22,11 @@ class NewPathwaysPage extends SpecialPage {
 	static function loadMessages() {
 		static $messagesLoaded = false;
 		global $wgMessageCache;
-		if ( $messagesLoaded ) return true;
+		if ( $messagesLoaded ) { return true;
+		}
 		$messagesLoaded = true;
 
-		require( dirname( __FILE__ ) . '/NewPathwaysPage.i18n.php' );
+		require __DIR__ . '/NewPathwaysPage.i18n.php';
 		foreach ( $allMessages as $lang => $langMessages ) {
 			$wgMessageCache->addMessages( $langMessages, $lang );
 		}
@@ -43,12 +44,14 @@ class RCQueryPage extends QueryPage {
 		# page_counter is not indexed
 		return true;
 	}
-	function isSyndicated() { return false; }
+	function isSyndicated() {
+ return false;
+ }
 
 	function getSQL() {
 		$dbr =& wfGetDB( DB_SLAVE );
-		$page = $dbr->tableName( 'page');
-		$recentchanges = $dbr->tableName( 'recentchanges');
+		$page = $dbr->tableName( 'page' );
+		$recentchanges = $dbr->tableName( 'recentchanges' );
 
 		return
 			"SELECT DISTINCT 'Newpathwaypages' as type,
@@ -68,17 +71,16 @@ class RCQueryPage extends QueryPage {
 		global $wgLang, $wgContLang, $wgUser;
 		$titleName = $result->title;
 		try {
-			$pathway = Pathway::newFromTitle($result->title);
-			if(!$pathway->isReadable() || $pathway->isDeleted()) {
-				return ''; //Don't display this title when user is not allowed to read
+			$pathway = Pathway::newFromTitle( $result->title );
+			if ( !$pathway->isReadable() || $pathway->isDeleted() ) {
+				return ''; // Don't display this title when user is not allowed to read
 			}
 			$titleName = $pathway->getSpecies().":".$pathway->getName();
-		} catch(Exception $e) {}
-		$title = Title::makeTitle( $result->namespace, $titleName );
+		} catch ( Exception $e ) {
+  }		$title = Title::makeTitle( $result->namespace, $titleName );
 		$id = Title::makeTitle( $result->namespace, $result->title );
 		$link = $skin->makeKnownLinkObj( $id, htmlspecialchars( $wgContLang->convert( $title->getBaseText() ) ) );
-		$nv = "<b>". $wgLang->date($result->value) . "</b> by <b>" . $wgUser->getSkin()->userlink($result->user_id, $result->utext) ."</b>";
-		return wfSpecialList($link, $nv);
+		$nv = "<b>". $wgLang->date( $result->value ) . "</b> by <b>" . $wgUser->getSkin()->userlink( $result->user_id, $result->utext ) ."</b>";
+		return wfSpecialList( $link, $nv );
 	}
 }
-

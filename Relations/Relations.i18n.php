@@ -1,7 +1,6 @@
 <?php
-$allMessages = array(
-        'en' => array( 
-                'relations' => 'Wikipathways Relations Viewer'
-        )
-);
-?>
+$allMessages = [
+		'en' => [
+				'relations' => 'Wikipathways Relations Viewer'
+		]
+];

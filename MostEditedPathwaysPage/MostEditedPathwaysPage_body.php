@@ -1,11 +1,9 @@
 <?php
-require_once("QueryPage.php");
+require_once "QueryPage.php";
 
-
-class MostEditedPathwaysPage extends SpecialPage
-{
+class MostEditedPathwaysPage extends SpecialPage {
 	function MostEditedPathwaysPage() {
-		SpecialPage::SpecialPage("MostEditedPathwaysPage");
+		SpecialPage::SpecialPage( "MostEditedPathwaysPage" );
 		self::loadMessages();
 	}
 
@@ -15,8 +13,8 @@ class MostEditedPathwaysPage extends SpecialPage
 		$this->setHeaders();
 
 		list( $limit, $offset ) = wfCheckLimits();
-		//Most edited pathway articles
-		$ppp = new PathwayQueryPage(NS_PATHWAY);
+		// Most edited pathway articles
+		$ppp = new PathwayQueryPage( NS_PATHWAY );
 
 		$ppp->doQuery( $offset, $limit );
 
@@ -26,10 +24,11 @@ class MostEditedPathwaysPage extends SpecialPage
 	static function loadMessages() {
 		static $messagesLoaded = false;
 		global $wgMessageCache;
-		if ( $messagesLoaded ) return true;
+		if ( $messagesLoaded ) { return true;
+		}
 		$messagesLoaded = true;
 
-		require( dirname( __FILE__ ) . '/MostEditedPathwaysPage.i18n.php' );
+		require __DIR__ . '/MostEditedPathwaysPage.i18n.php';
 		foreach ( $allMessages as $lang => $langMessages ) {
 			$wgMessageCache->addMessages( $langMessages, $lang );
 		}
@@ -41,9 +40,9 @@ class MostEditedPathwaysPage extends SpecialPage
 class PathwayQueryPage extends QueryPage {
 	private $namespace;
 
-	function __construct($namespace) {
+	function __construct( $namespace ) {
 		$this->namespace = $namespace;
-		$this->taggedIds = CurationTag::getPagesForTag('Curation:Tutorial');
+		$this->taggedIds = CurationTag::getPagesForTag( 'Curation:Tutorial' );
 	}
 
 	function getName() {
@@ -54,7 +53,9 @@ class PathwayQueryPage extends QueryPage {
 		# page_counter is not indexed
 		return true;
 	}
-	function isSyndicated() { return false; }
+	function isSyndicated() {
+ return false;
+ }
 
 	function getSQL() {
 		$dbr =& wfGetDB( DB_SLAVE );
@@ -78,15 +79,16 @@ class PathwayQueryPage extends QueryPage {
 
 	function formatResult( $skin, $result ) {
 		global $wgLang, $wgContLang;
-		if (in_array($result->id, $this->taggedIds)){
+		if ( in_array( $result->id, $this->taggedIds ) ) {
 			return null;
 		}
-		$pathway = Pathway::newFromTitle($result->title);
-		if(!$pathway->isReadable()) return null; //Skip private pathways
+		$pathway = Pathway::newFromTitle( $result->title );
+		if ( !$pathway->isReadable() ) { return null; // Skip private pathways
+		}
 		$title = Title::makeTitle( $result->namespace, $pathway->getSpecies().":".$pathway->getName() );
 		$id = Title::makeTitle( $result->namespace, $result->title );
-		$text = $wgContLang->convert("$result->value revisions");
-		$plink = $skin->makeKnownLinkObj( $id, htmlspecialchars( $wgContLang->convert($title->getBaseText())) );
+		$text = $wgContLang->convert( "$result->value revisions" );
+		$plink = $skin->makeKnownLinkObj( $id, htmlspecialchars( $wgContLang->convert( $title->getBaseText() ) ) );
 
 		/* Not link to history for now, later on link to our own pathway history
 		   $nl = wfMsgExt( 'nrevisions', array( 'parsemag', 'escape'),
@@ -94,6 +96,6 @@ class PathwayQueryPage extends QueryPage {
 		   $nlink = $skin->makeKnownLinkObj( $nt, $nl, 'action=history' );
 		*/
 
-		return wfSpecialList($plink, $text);
+		return wfSpecialList( $plink, $text );
 	}
 }

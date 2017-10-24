@@ -1,21 +1,20 @@
 <?php
 
-chdir(dirname(realpath(__FILE__)) . "/../");
+chdir( dirname( realpath( __FILE__ ) ) . "/../" );
 
-require_once('WSFault.php');
-require_once('search.php');
-require_once('extensions/otag/OntologyFunctions.php');
-chdir($dir);
+require_once 'WSFault.php';
+require_once 'search.php';
+require_once 'extensions/otag/OntologyFunctions.php';
+chdir( $dir );
 
-error_reporting( E_ALL & ~E_NOTICE);
-
+error_reporting( E_ALL & ~E_NOTICE );
 
 /**
  * Get a list of all available organisms.
  * @return array of string $organisms Array with the names of all supported organisms
   **/
 function listOrganisms() {
-	return array("organisms" => Pathway::getAvailableSpecies());
+	return [ "organisms" => Pathway::getAvailableSpecies() ];
 }
 
 /**
@@ -23,17 +22,17 @@ function listOrganisms() {
  * @param string $organism The organism to filter by (optional)
  * @return array of object WSPathwayInfo $pathways Array of pathway info objects
  **/
-function listPathways($organism=false) {
+function listPathways( $organism=false ) {
 	try {
-		$pathways = Pathway::getAllPathways($organism);
-		$objects = array();
-		foreach($pathways as $p) {
-			$objects[] = new WSPathwayInfo($p);
+		$pathways = Pathway::getAllPathways( $organism );
+		$objects = [];
+		foreach ( $pathways as $p ) {
+			$objects[] = new WSPathwayInfo( $p );
 		}
-		return array("pathways" => $objects);
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+		return [ "pathways" => $objects ];
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -43,18 +42,20 @@ function listPathways($organism=false) {
  * @param int $revision The revision number of the pathway (use 0 for most recent)
  * @return object WSPathway $pathway The pathway
  **/
-function getPathway($pwId, $revision = 0) {
+function getPathway( $pwId, $revision = 0 ) {
 	try {
-		$pathway = new Pathway($pwId);
-		if($revision) $pathway->setActiveRevision($revision);
-		$pwi = new WSPathway($pathway);
-		if(!isset($_REQUEST["format"]) || $_REQUEST["format"] === "XML" )
-			$pwi->gpml = base64_encode($pwi->gpml);
-		//return array("pathway" => base64_encode($pwi));
-		return array("pathway" => $pwi);
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+		$pathway = new Pathway( $pwId );
+		if ( $revision ) { $pathway->setActiveRevision( $revision );
+		}
+		$pwi = new WSPathway( $pathway );
+		if ( !isset( $_REQUEST["format"] ) || $_REQUEST["format"] === "XML" ) {
+			$pwi->gpml = base64_encode( $pwi->gpml );
+		}
+		// return array("pathway" => base64_encode($pwi));
+		return [ "pathway" => $pwi ];
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -64,14 +65,14 @@ function getPathway($pwId, $revision = 0) {
  * @param string $pwId The pathway identifier
  * @return object WSPathwayInfo $pathwayInfo The pathway info
  **/
-function getPathwayInfo($pwId) {
+function getPathwayInfo( $pwId ) {
 	try {
-		$pathway = new Pathway($pwId);
-		$pwi = new WSPathwayInfo($pathway);
-		return array("pathwayInfo" => $pwi);
-	} catch(Exception $e) {
-		wfDebug(__METHOD__ . " (ERROR): $e\n");
-		throw new WSFault("Receiver", $e);
+		$pathway = new Pathway( $pwId );
+		$pwi = new WSPathwayInfo( $pathway );
+		return [ "pathwayInfo" => $pwi ];
+	} catch ( Exception $e ) {
+		wfDebug( __METHOD__ . " (ERROR): $e\n" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -82,20 +83,20 @@ function getPathwayInfo($pwId) {
  * time will be included.
  * @return object WSPathwayHistory $history The pathway history
  **/
-function getPathwayHistory($pwId, $timestamp) {
+function getPathwayHistory( $pwId, $timestamp ) {
 	try {
-		$pathway = new Pathway($pwId);
+		$pathway = new Pathway( $pwId );
 		$id = $pathway->getTitleObject()->getArticleId();
 		$dbr =& wfGetDB( DB_SLAVE );
 		$res = $dbr->select(
 			"revision",
-			array("rev_id", "rev_user_text", "rev_timestamp", "rev_comment"),
-			array('rev_page' => $id, 'rev_timestamp >= ' . $dbr->addQuotes($timestamp))
+			[ "rev_id", "rev_user_text", "rev_timestamp", "rev_comment" ],
+			[ 'rev_page' => $id, 'rev_timestamp >= ' . $dbr->addQuotes( $timestamp ) ]
 		);
 
-		$hist = new WSPathwayHistory($pathway);
+		$hist = new WSPathwayHistory( $pathway );
 
-		while($row = $dbr->fetchObject( $res )) {
+		while ( $row = $dbr->fetchObject( $res ) ) {
 			$hr = new WSHistoryRow();
 			$hr->revision = $row->rev_id;
 			$hr->comment = $row->rev_comment;
@@ -106,10 +107,10 @@ function getPathwayHistory($pwId, $timestamp) {
 
 		$dbr->freeResult( $res );
 
-		return array('history' => $hist);
-	} catch(Exception $e) {
-		wfDebug(__METHOD__ . " (ERROR): $e\n");
-		throw new WSFault("Receiver", $e);
+		return [ 'history' => $hist ];
+	} catch ( Exception $e ) {
+		wfDebug( __METHOD__ . " (ERROR): $e\n" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -121,52 +122,52 @@ function getPathwayHistory($pwId, $timestamp) {
  * @param int $revision The revision the GPML code is based on
  * @param string $auth The authentication key
  * @param string $username The username
- * @return boolean $success Whether the update was successful
+ * @return bool $success Whether the update was successful
  **/
-function updatePathway($pwId, $description, $gpml, $revision, $auth, $username) {
+function updatePathway( $pwId, $description, $gpml, $revision, $auth, $username ) {
 	global $wgUser;
 
-	$gpml =  decodeGpml($gpml); // checks if its base64
+	$gpml = decodeGpml( $gpml ); // checks if its base64
 
-	$file = fopen('/home/wikipathways/log-update.txt', 'a');     
+	$file = fopen( '/home/wikipathways/log-update.txt', 'a' );
 	$resp = -1;
 
 	try {
-		if($auth) {
-			//Authenticate first, if token is provided
-			authenticate($username, $auth, true);
-			fwrite($file, "authenticate\n");
+		if ( $auth ) {
+			// Authenticate first, if token is provided
+			authenticate( $username, $auth, true );
+			fwrite( $file, "authenticate\n" );
 		}
-		$pathway = new Pathway($pwId);
-		//Only update if the given revision is the newest
-		//Or if this is a new pathway
+		$pathway = new Pathway( $pwId );
+		// Only update if the given revision is the newest
+		// Or if this is a new pathway
 
-		if(!$pathway->exists() || $revision == $pathway->getLatestRevision()) {
-			fwrite($file,"update pathway\n");
-			$pathway->updatePathway($gpml, $description);
+		if ( !$pathway->exists() || $revision == $pathway->getLatestRevision() ) {
+			fwrite( $file, "update pathway\n" );
+			$pathway->updatePathway( $gpml, $description );
 			$resp = $pathway->getLatestRevision();
 		} else {
-			fwrite($file,"error - revision out of date\n");
-			throw new WSFault("Sender",
+			fwrite( $file, "error - revision out of date\n" );
+			throw new WSFault( "Sender",
 				"Revision out of date: your GPML code originates from " .
 				"an old revision. This means somebody else modified the pathway " .
 				"since you downloaded it. Please apply your changes on the newest version"
 			);
 		}
-	} catch(Exception $e) {
-		fwrite($file,"exception - " . $e . "\n");
-		if($e instanceof WSFault) {
-			//throw $e;
-			return array($e->getMessage());
+	} catch ( Exception $e ) {
+		fwrite( $file, "exception - " . $e . "\n" );
+		if ( $e instanceof WSFault ) {
+			// throw $e;
+			return [ $e->getMessage() ];
 		} else {
-			return array($e->getMessage());
-			//throw new WSFault("Receiver", $e);
-			wfDebug("ERROR: $e");
+			return [ $e->getMessage() ];
+			// throw new WSFault("Receiver", $e);
+			wfDebug( "ERROR: $e" );
 		}
 	}
-	fwrite($file, "ending\n");
-	fclose($file);
-	return array("success" => $resp);
+	fwrite( $file, "ending\n" );
+	fclose( $file );
+	return [ "success" => $resp ];
 }
 
 /**
@@ -178,39 +179,39 @@ function updatePathway($pwId, $description, $gpml, $revision, $auth, $username) 
  * @param object WSAuth $auth The authentication info
  * @return boolean $success Whether the update was successful
  **/
-//function updatePathway($pwId, $description, $gpml, $revision, $auth = NULL) {
-//	global $wgUser;
+// function updatePathway($pwId, $description, $gpml, $revision, $auth = NULL) {
+// global $wgUser;
 //
-//	try {
-//		//Authenticate first, if token is provided
-//		if($auth) {
-//			authenticate($auth['user'], $auth['key'], true);
-//		}
+// try {
+// //Authenticate first, if token is provided
+// if($auth) {
+// authenticate($auth['user'], $auth['key'], true);
+// }
 //
-//		$pathway = new Pathway($pwId);
-//		//Only update if the given revision is the newest
-//		//Or if this is a new pathway
-//		if(!$pathway->exists() || $revision == $pathway->getLatestRevision()) {
-//			$pathway->updatePathway($gpml, $description);
-//			$resp = $pathway->getLatestRevision();
-//		} else {
-//			throw new WSFault("Sender",
-//				"Revision out of date: your GPML code originates from " .
-//				"an old revision. This means somebody else modified the pathway " .
-//				"since you downloaded it. Please apply your changes on the newest version"
-//			);
-//		}
-//	} catch(Exception $e) {
-//		if($e instanceof WSFault) {
-//			throw $e;
-//		} else {
-//			throw new WSFault("Receiver", $e);
-//			wfDebug("ERROR: $e");
-//		}
-//	}
-//	ob_clean();
-//	return array("success" => true);
-//}
+// $pathway = new Pathway($pwId);
+// //Only update if the given revision is the newest
+// //Or if this is a new pathway
+// if(!$pathway->exists() || $revision == $pathway->getLatestRevision()) {
+// $pathway->updatePathway($gpml, $description);
+// $resp = $pathway->getLatestRevision();
+// } else {
+// throw new WSFault("Sender",
+// "Revision out of date: your GPML code originates from " .
+// "an old revision. This means somebody else modified the pathway " .
+// "since you downloaded it. Please apply your changes on the newest version"
+// );
+// }
+// } catch(Exception $e) {
+// if($e instanceof WSFault) {
+// throw $e;
+// } else {
+// throw new WSFault("Receiver", $e);
+// wfDebug("ERROR: $e");
+// }
+// }
+// ob_clean();
+// return array("success" => true);
+// }
 
 /**
  * Cteate a new pathway on the wiki
@@ -219,29 +220,29 @@ function updatePathway($pwId, $description, $gpml, $revision, $auth, $username) 
  * @param string $username The user name
  * @return object WSPathwayInfo $pathwayInfo The pathway info of the created pathway
  **/
-function createPathway($gpml, $auth, $username) {
-	//added by Nuno to handle calls from rest
-	//if(!is_array()){
-	//	$auth = split("-",$auth);
-	//	$auth["user"] = $auth[0];
-	//	$auth["key"] = $auth[1];
-	//}
+function createPathway( $gpml, $auth, $username ) {
+	// added by Nuno to handle calls from rest
+	// if(!is_array()){
+	// $auth = split("-",$auth);
+	// $auth["user"] = $auth[0];
+	// $auth["key"] = $auth[1];
+	// }
 
-	//var_dump($gpml);
+	// var_dump($gpml);
 
-	$gpml = decodeGpml($gpml);
+	$gpml = decodeGpml( $gpml );
 
 	try {
-		//Authenticate first, if token is provided
-		if($auth) {
-			authenticate($username, $auth, true);
+		// Authenticate first, if token is provided
+		if ( $auth ) {
+			authenticate( $username, $auth, true );
 		}
 
-		$pathway = Pathway::createNewPathway($gpml, "New pathway");
-		return array("pathwayInfo" => new WSPathwayInfo($pathway));
-	} catch(Exception $e) {
-		throw new WSFault("Receiver", $e);
-		wfDebug("WSFAULT: $e");
+		$pathway = Pathway::createNewPathway( $gpml, "New pathway" );
+		return [ "pathwayInfo" => new WSPathwayInfo( $pathway ) ];
+	} catch ( Exception $e ) {
+		throw new WSFault( "Receiver", $e );
+		wfDebug( "WSFAULT: $e" );
 	}
 }
 
@@ -253,45 +254,45 @@ function createPathway($gpml, $auth, $username) {
  * @param string $pass The password
  * @return string $auth The authentication code
  **/
-function login($name, $pass){
+function login( $name, $pass ) {
 	global $wgUser, $wgAuth;
 
-        if($wgUser->isLoggedIn()){
-                 return array("auth" => $wgUser->mToken);
-        }
+		if ( $wgUser->isLoggedIn() ) {
+				 return [ "auth" => $wgUser->mToken ];
+		}
 
-        $user = User::newFromName( $name );
-        if( is_null($user) || $user->getID() == 0) {
-                //throw new Exception("Invalid user name");
-                throw new WSFault("Sender", "Invalid user name");
-        }
-        $user->load();
-        if ($user->checkPassword( $pass )) {
-                $wgAuth->updateUser($user);
-                $wgUser = $user;
-                return array("auth" => $user->mToken);
-        } else {
-                //throw new Exception("Wrong password");
-                throw new WSFault("Sender", "Wrong password");
-        }
+		$user = User::newFromName( $name );
+		if ( is_null( $user ) || $user->getID() == 0 ) {
+				// throw new Exception("Invalid user name");
+				throw new WSFault( "Sender", "Invalid user name" );
+		}
+		$user->load();
+		if ( $user->checkPassword( $pass ) ) {
+				$wgAuth->updateUser( $user );
+				$wgUser = $user;
+				return [ "auth" => $user->mToken ];
+		} else {
+				// throw new Exception("Wrong password");
+				throw new WSFault( "Sender", "Wrong password" );
+		}
 }
 
-function loginold($name, $pass) {
+function loginold( $name, $pass ) {
 	global $wgUser, $wgAuth;
 
 	$user = User::newFromName( $name );
-	if( is_null($user) || $user->getID() == 0) {
-		//throw new Exception("Invalid user name");
-		throw new WSFault("Sender", "Invalid user name");
+	if ( is_null( $user ) || $user->getID() == 0 ) {
+		// throw new Exception("Invalid user name");
+		throw new WSFault( "Sender", "Invalid user name" );
 	}
 	$user->load();
-	if ($user->checkPassword( $pass )) {
-		$wgAuth->updateUser($user);
+	if ( $user->checkPassword( $pass ) ) {
+		$wgAuth->updateUser( $user );
 		$wgUser = $user;
-		return array("auth" => $user->mToken);
+		return [ "auth" => $user->mToken ];
 	} else {
-		//throw new Exception("Wrong password");
-		throw new WSFault("Sender", "Wrong password");
+		// throw new Exception("Wrong password");
+		throw new WSFault( "Sender", "Wrong password" );
 	}
 }
 
@@ -303,27 +304,26 @@ function loginold($name, $pass) {
  * @param int $revision The revision number of the pathway (use 0 for most recent)
  * @return base64Binary $data The converted file data (base64 encoded)
  **/
-function getPathwayAs($fileType, $pwId, $revision = 0) {
+function getPathwayAs( $fileType, $pwId, $revision = 0 ) {
 	try {
-		$p = new Pathway($pwId);
-		$p->setActiveRevision($revision);
-		$data = file_get_contents($p->getFileLocation($fileType));
-	} catch(Exception $e) {
-		throw new WSFault("Receiver", "Unable to get pathway: " . $e);
+		$p = new Pathway( $pwId );
+		$p->setActiveRevision( $revision );
+		$data = file_get_contents( $p->getFileLocation( $fileType ) );
+	} catch ( Exception $e ) {
+		throw new WSFault( "Receiver", "Unable to get pathway: " . $e );
 	}
 
+	// if($fileType==="jpg" ||  $fileType==="pdf" ||  $fileType==="png")
+	// return $data;
+	// else
+	// var_dump($_REQUEST);
+	if ( !isset( $_REQUEST["format"] ) || strtolower( $_REQUEST["format"] ) === "xml" || $_REQUEST["format"] === "json" ) {
+			return [ "data" => base64_encode( $data ) ];
 
-	//if($fileType==="jpg" ||  $fileType==="pdf" ||  $fileType==="png")
-	//	return $data;
-	//else
-	//var_dump($_REQUEST);
-	if(!isset($_REQUEST["format"]) || strtolower($_REQUEST["format"]) === "xml"  || $_REQUEST["format"]==="json")
-			return array("data" => base64_encode($data));
-	else
-		return  array("data"=>$data);
-//			return array("data" => "aa".$p->getFileLocation($fileType));
+ } else { return [ "data" => $data ];
+ }
+// return array("data" => "aa".$p->getFileLocation($fileType));
 }
-
 
 /**
  * Get the recently changed pathways. Note: the recent changes table
@@ -332,17 +332,15 @@ function getPathwayAs($fileType, $pwId, $revision = 0) {
  * @param string $timestamp Get the changes after this time
  * @return array of object WSPathwayInfo $pathways A list of the changed pathways
  **/
-function getRecentChanges($timestamp)
-{
-	//check safety of $timestamp, must be exactly 14 digits and nothing else.
-	if (!preg_match ("/^\d{14}$/", $timestamp))
-	{
-		throw new WSFault("Sender", "Invalid timestamp " . htmlentities ($timestamp));
+function getRecentChanges( $timestamp ) {
+	// check safety of $timestamp, must be exactly 14 digits and nothing else.
+	if ( !preg_match( "/^\d{14}$/", $timestamp ) ) {
+		throw new WSFault( "Sender", "Invalid timestamp " . htmlentities( $timestamp ) );
 	}
 
 	$dbr =& wfGetDB( DB_SLAVE );
-	$forceclause = $dbr->useIndexClause("rc_timestamp");
-	$recentchanges = $dbr->tableName( 'recentchanges');
+	$forceclause = $dbr->useIndexClause( "rc_timestamp" );
+	$recentchanges = $dbr->tableName( 'recentchanges' );
 
 	$sql = "SELECT
 				rc_namespace,
@@ -357,25 +355,24 @@ function getRecentChanges($timestamp)
 			ORDER BY rc_timestamp DESC
 		";
 
-	//~ wfDebug ("SQL: $sql");
+	// ~ wfDebug ("SQL: $sql");
 
 	$res = $dbr->query( $sql, "getRecentChanges" );
 
-	$objects = array();
-	while ($row = $dbr->fetchRow ($res))
-	{
+	$objects = [];
+	while ( $row = $dbr->fetchRow( $res ) ) {
 		try {
 				$ts = $row['rc_title'];
-			$p = Pathway::newFromTitle($ts);
-			if(!$p->getTitleObject()->isRedirect() && $p->isReadable()) {
-				$objects[] = new WSPathwayInfo($p);
+			$p = Pathway::newFromTitle( $ts );
+			if ( !$p->getTitleObject()->isRedirect() && $p->isReadable() ) {
+				$objects[] = new WSPathwayInfo( $p );
 			}
-		} catch(Exception $e) {
-			wfDebug("Unable to create pathway object for recent changes: $e");
+		} catch ( Exception $e ) {
+			wfDebug( "Unable to create pathway object for recent changes: $e" );
 		}
 
 	}
-	return array("pathways" => $objects);
+	return [ "pathways" => $objects ];
 }
 
 /**
@@ -385,17 +382,17 @@ function getRecentChanges($timestamp)
  * blank to search on all species
  * @return array of object WSSearchResult $result Array of WSSearchResult objects
  **/
-function findPathwaysByText($query, $species = '') {
+function findPathwaysByText( $query, $species = '' ) {
 	try {
-		$objects = array();
-		$results = PathwayIndex::searchByText($query, $species);
-		foreach($results as $r) {
-			$objects[] = new WSSearchResult($r, array());
+		$objects = [];
+		$results = PathwayIndex::searchByText( $query, $species );
+		foreach ( $results as $r ) {
+			$objects[] = new WSSearchResult( $r, [] );
 		}
-		return array("result" => $objects);
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+		return [ "result" => $objects ];
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -406,34 +403,34 @@ function findPathwaysByText($query, $species = '') {
  * blank to search on all databases
  * @return array of object WSSearchResult $result Array of WSSearchResult objects
  **/
-function findPathwaysByXref($ids, $codes = '') {
+function findPathwaysByXref( $ids, $codes = '' ) {
 	try {
-		if($codes) {
-			if(count($codes) == 1) { //One code for all ids
-				$codes = array_fill(0, count($ids), $codes[0]);
-			} else if(count($codes) != count($ids)) {
-				throw new WSFault("Sender", "Number of supplied ids does not match number of system codes");
+		if ( $codes ) {
+			if ( count( $codes ) == 1 ) { // One code for all ids
+				$codes = array_fill( 0, count( $ids ), $codes[0] );
+			} elseif ( count( $codes ) != count( $ids ) ) {
+				throw new WSFault( "Sender", "Number of supplied ids does not match number of system codes" );
 			}
 		} else {
-			$codes = array_fill(0, count($ids), '');
+			$codes = array_fill( 0, count( $ids ), '' );
 		}
-		$xrefs = array();
-		$xrefsStr = array();
-		for($i = 0; $i < count($ids); $i += 1) {
-			$x = new XRef($ids[$i], $codes[$i]);
+		$xrefs = [];
+		$xrefsStr = [];
+		for ( $i = 0; $i < count( $ids ); $i += 1 ) {
+			$x = new XRef( $ids[$i], $codes[$i] );
 			$xrefs[] = $x;
 			$xrefsStr[] = (string)$x;
 		}
-		$objects = array();
-		$results = PathwayIndex::searchByXref($xrefs, true);
-		foreach($results as $r) {
-			$wsr = new WSSearchResult($r);
+		$objects = [];
+		$results = PathwayIndex::searchByXref( $xrefs, true );
+		foreach ( $results as $r ) {
+			$wsr = new WSSearchResult( $r );
 			$objects[] = $wsr;
 		}
-		return array("result" => $objects);
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+		return [ "result" => $objects ];
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -442,26 +439,26 @@ function findPathwaysByXref($ids, $codes = '') {
  * @param string $query The query, can be a pubmed id, author name or title keyword.
  * @return array of object WSSearchResult $result Array of WSSearchResult objects
  */
-function findPathwaysByLiterature($query) {
+function findPathwaysByLiterature( $query ) {
 	try {
-		$results = PathwayIndex::searchByLiterature($query);
-		$combined = array();
-		foreach($results as $r) {
-			$nwsr = new WSSearchResult($r, array(
+		$results = PathwayIndex::searchByLiterature( $query );
+		$combined = [];
+		foreach ( $results as $r ) {
+			$nwsr = new WSSearchResult( $r, [
 				PathwayIndex::$f_graphId,
 				PathwayIndex::$f_literature_pubmed,
 				PathwayIndex::$f_literature_title,
-			));
-			$source = $r->getFieldValue(PathwayIndex::$f_source);
-			if($combined[$source]) {
+			] );
+			$source = $r->getFieldValue( PathwayIndex::$f_source );
+			if ( $combined[$source] ) {
 				$wsr =& $combined[$source];
-				foreach(array_keys($wsr->fields) as $fn) {
-					if($nwsr->fields[$fn]) {
+				foreach ( array_keys( $wsr->fields ) as $fn ) {
+					if ( $nwsr->fields[$fn] ) {
 						$newvalues = array_merge(
 							$nwsr->fields[$fn]->values,
 							$wsr->fields[$fn]->values
 						);
-						$newvalues = array_unique($newvalues);
+						$newvalues = array_unique( $newvalues );
 						$wsr->fields[$fn]->values = $newvalues;
 					}
 				}
@@ -469,10 +466,10 @@ function findPathwaysByLiterature($query) {
 				$combined[$source] = $nwsr;
 			}
 		}
-		return array("result" => $combined);
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+		return [ "result" => $combined ];
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -481,16 +478,16 @@ function findPathwaysByLiterature($query) {
  * @param string $query The name of an entity to find interactions for (e.g. 'P53')
  * @return array of object WSSearchResult $result Array of WSSearchResult objects
  **/
-function findInteractions($query) {
+function findInteractions( $query ) {
 	try {
-		$objects = array();
-		$results= PathwayIndex::searchInteractions($query);
-		foreach($results as $r) {
-			$objects[] = new WSSearchResult($r);
+		$objects = [];
+		$results = PathwayIndex::searchInteractions( $query );
+		foreach ( $results as $r ) {
+			$objects[] = new WSSearchResult( $r );
 		}
-		return array("result" => $objects);
-	} catch(Exception $e) {
-		throw new WSFault("Receiver", $e);
+		return [ "result" => $objects ];
+	} catch ( Exception $e ) {
+		throw new WSFault( "Receiver", $e );
 	}
 }
 
@@ -503,12 +500,12 @@ function findInteractions($query) {
  * @param string $code The database code to translate to (e.g. 'S' for UniProt).
  * @return array of string $xrefs The translated xrefs.
  */
-function getXrefList($pwId, $code) {
+function getXrefList( $pwId, $code ) {
 	try {
-		$list = PathwayIndex::listPathwayXrefs(new Pathway($pwId), $code);
-		return array("xrefs" => $list);
-	} catch(Exception $e) {
-		throw new WSFault("Receiver", "Unable to process request: " . $e);
+		$list = PathwayIndex::listPathwayXrefs( new Pathway( $pwId ), $code );
+		return [ "xrefs" => $list ];
+	} catch ( Exception $e ) {
+		throw new WSFault( "Receiver", "Unable to process request: " . $e );
 	}
 }
 
@@ -521,27 +518,27 @@ function getXrefList($pwId, $code) {
  * @param int $revision The revision this tag applies to
  * @param string $auth The authentication key
  * @param string $username The user name
- * @return boolean $success
+ * @return bool $success
  */
-function saveCurationTag($pwId, $tagName, $text, $revision, $auth, $username) {
-	if($auth) {
-		authenticate($username, $auth, true);
+function saveCurationTag( $pwId, $tagName, $text, $revision, $auth, $username ) {
+	if ( $auth ) {
+		authenticate( $username, $auth, true );
 	}
 
 	try {
-		$pathway = new Pathway($pwId);
-		if($pathway->exists()) {
+		$pathway = new Pathway( $pwId );
+		if ( $pathway->exists() ) {
 			$pageId = $pathway->getTitleObject()->getArticleId();
-//			if($revision !=  0) 
-				CurationTag::saveTag($pageId, $tagName, $text, $revision);
-//			else
-//				CurationTag::saveTag($pageId, $tagName, $text);				
+// if($revision !=  0)
+				CurationTag::saveTag( $pageId, $tagName, $text, $revision );
+// else
+// CurationTag::saveTag($pageId, $tagName, $text);
 		}
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
-	return array("success" => true);
+	return [ "success" => true ];
 }
 
 /**
@@ -550,24 +547,24 @@ function saveCurationTag($pwId, $tagName, $text, $revision, $auth, $username) {
  * @param string $tagName The name of the tag to apply
  * @param string $auth The authentication data
  * @param string $username The user name
- * @return boolean $success
+ * @return bool $success
  **/
-function removeCurationTag($pwId, $tagName, $auth, $username) {
-	if($auth) {
-		authenticate($username, $auth, true);
+function removeCurationTag( $pwId, $tagName, $auth, $username ) {
+	if ( $auth ) {
+		authenticate( $username, $auth, true );
 	}
 
 	try {
-		$pathway = new Pathway($pwId);
-		if($pathway->exists()) {
+		$pathway = new Pathway( $pwId );
+		if ( $pathway->exists() ) {
 			$pageId = $pathway->getTitleObject()->getArticleId();
-			CurationTag::removeTag($tagName, $pageId);
+			CurationTag::removeTag( $tagName, $pageId );
 		}
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
-	return array("success" => true);
+	return [ "success" => true ];
 }
 
 /**
@@ -575,15 +572,15 @@ function removeCurationTag($pwId, $tagName, $auth, $username) {
  * @param string $pwId The pathway identifier
  * @return array of object WSCurationTag $tags The curation tags.
  **/
-function getCurationTags($pwId) {
-	$pw = new Pathway($pwId);
+function getCurationTags( $pwId ) {
+	$pw = new Pathway( $pwId );
 	$pageId = $pw->getTitleObject()->getArticleId();
-	$tags = CurationTag::getCurationTags($pageId);
-	$wstags = array();
-	foreach($tags as $t) {
-		$wstags[] = new WSCurationTag($t);
+	$tags = CurationTag::getCurationTags( $pageId );
+	$wstags = [];
+	foreach ( $tags as $t ) {
+		$wstags[] = new WSCurationTag( $t );
 	}
-	return array("tags" => $wstags);
+	return [ "tags" => $wstags ];
 }
 
 /**
@@ -592,16 +589,16 @@ function getCurationTags($pwId) {
  * @param string $tagName The tag name
  * @return array of object WSCurationTag $tags The curation tags
  */
-function getCurationTagsByName($tagName) {
-	$tags = CurationTag::getCurationTagsByName($tagName);
-	$wstags = array();
-	foreach($tags as $t) {
-		$wst = new WSCurationTag($t);
-		if($wst->pathway) {
+function getCurationTagsByName( $tagName ) {
+	$tags = CurationTag::getCurationTagsByName( $tagName );
+	$wstags = [];
+	foreach ( $tags as $t ) {
+		$wst = new WSCurationTag( $t );
+		if ( $wst->pathway ) {
 			$wstags[] = $wst;
 		}
 	}
-	return array("tags" => $wstags);
+	return [ "tags" => $wstags ];
 }
 
 /**
@@ -610,15 +607,15 @@ function getCurationTagsByName($tagName) {
  * @param string $timestamp Only include history from after the given date
  * @return array of object WSCurationTagHistory $history The history
  **/
-function getCurationTagHistory($pwId, $timestamp = 0) {
-	$pw = new Pathway($pwId);
+function getCurationTagHistory( $pwId, $timestamp = 0 ) {
+	$pw = new Pathway( $pwId );
 	$pageId = $pw->getTitleObject()->getArticleId();
-	$hist = CurationTag::getHistory($pageId, $timestamp);
-	$wshist = array();
-	foreach($hist as $h) {
-		$wshist[] = new WSCurationTagHistory($h);
+	$hist = CurationTag::getHistory( $pageId, $timestamp );
+	$wshist = [];
+	foreach ( $hist as $h ) {
+		$wshist[] = new WSCurationTagHistory( $h );
 	}
-	return array("history" => $wshist);
+	return [ "history" => $wshist ];
 }
 
 /**
@@ -630,86 +627,86 @@ function getCurationTagHistory($pwId, $timestamp = 0) {
  * @param string $fileType The image type (One of 'svg', 'pdf' or 'png').
  * @return base64Binary $data The image data (base64 encoded)
  **/
-function getColoredPathway($pwId, $revision, $graphId, $color, $fileType) {
+function getColoredPathway( $pwId, $revision, $graphId, $color, $fileType ) {
 	try {
-		$p = new Pathway($pwId);
-		$p->setActiveRevision($revision);
-		$gpmlFile = realpath($p->getFileLocation(FILETYPE_GPML));
+		$p = new Pathway( $pwId );
+		$p->setActiveRevision( $revision );
+		$gpmlFile = realpath( $p->getFileLocation( FILETYPE_GPML ) );
 
 		$outFile = WPI_TMP_PATH . "/" . $p->getTitleObject()->getDbKey() . '.' . $fileType;
 
-		if(count($color) != count($graphId)) {
-			throw new Exception("Number of colors doesn't match number of graphIds");
+		if ( count( $color ) != count( $graphId ) ) {
+			throw new Exception( "Number of colors doesn't match number of graphIds" );
 		}
 		$colorArg = '';
-		for($i = 0; $i < count($color); $i++) {
+		for ( $i = 0; $i < count( $color ); $i++ ) {
 			$colorArg .= " -c '{$graphId[$i]}' '{$color[$i]}'";
 		}
 
 		$basePath = WPI_SCRIPT_PATH;
 		$cmd = "java -jar $basePath/bin/pathvisio_color_exporter.jar '$gpmlFile' '$outFile' $colorArg 2>&1";
-		wfDebug("COLOR EXPORTER: $cmd\n");
-		exec($cmd, $output, $status);
+		wfDebug( "COLOR EXPORTER: $cmd\n" );
+		exec( $cmd, $output, $status );
 
-		foreach ($output as $line) {
+		foreach ( $output as $line ) {
 			$msg .= $line . "\n";
 		}
-		if($status != 0 ) {
-			throw new Exception("Unable to convert to $outFile:\nStatus:$status\nMessage:$msg");
+		if ( $status != 0 ) {
+			throw new Exception( "Unable to convert to $outFile:\nStatus:$status\nMessage:$msg" );
 		}
-		$data = file_get_contents($outFile);
-	} catch(Exception $e) {
-		throw new WSFault("Receiver", "Unable to get pathway: " . $e);
+		$data = file_get_contents( $outFile );
+	} catch ( Exception $e ) {
+		throw new WSFault( "Receiver", "Unable to get pathway: " . $e );
 	}
-	return array("data" => base64_encode($data));
+	return [ "data" => base64_encode( $data ) ];
 }
 
-//Non ws functions
-function authenticate($username, $token, $write = false) {
+// Non ws functions
+function authenticate( $username, $token, $write = false ) {
 	global $wgUser, $wgAuth;
 	$user = User::newFromName( $username );
-	if( is_null($user) || $user->getID() == 0) {
-		throw new WSFault("Sender", "Invalid user name");
+	if ( is_null( $user ) || $user->getID() == 0 ) {
+		throw new WSFault( "Sender", "Invalid user name" );
 	}
 	$user->load();
-	if ($user->mToken == $token) {
-		$wgAuth->updateUser($user);
+	if ( $user->mToken == $token ) {
+		$wgAuth->updateUser( $user );
 		$wgUser = $user;
 	} else {
-		throw new WSFault("Sender", "Wrong authentication token");
+		throw new WSFault( "Sender", "Wrong authentication token" );
 	}
-	if($write) { //Also check for write access
+	if ( $write ) { // Also check for write access
 		$rights = $user->getRights();
-		if(!in_array('webservice_write', $rights)) {
-			throw new WSFault("Sender", "Account doesn't have write access for the web service. \n".
-			"Contact the site administrator to request write permissions.");
+		if ( !in_array( 'webservice_write', $rights ) ) {
+			throw new WSFault( "Sender", "Account doesn't have write access for the web service. \n".
+			"Contact the site administrator to request write permissions." );
 		}
 	}
 }
 
 /**
- * Apply a ontology tag to a pahtway. 
+ * Apply a ontology tag to a pahtway.
  * @param string $pwId The pathway identifier
  * @param string $term The ontology term to apply
  * @param string $termId The identifier of the term in the ontology
  * @param string $auth The authentication key
  * @param string $user The username
- * @return boolean $success
+ * @return bool $success
  */
-function saveOntologyTag($pwId, $term, $termId, $auth, $user) {
-	if($auth) {
-		authenticate($user, $auth, true);
+function saveOntologyTag( $pwId, $term, $termId, $auth, $user ) {
+	if ( $auth ) {
+		authenticate( $user, $auth, true );
 	}
 	try {
-		$pathway = new Pathway($pwId);
-		if($pathway->exists()) {
-			OntologyFunctions::addOntologyTag($termId, $term, $pwId);
-      }
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver", $e);
+		$pathway = new Pathway( $pwId );
+		if ( $pathway->exists() ) {
+			OntologyFunctions::addOntologyTag( $termId, $term, $pwId );
+	 }
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
-	return array("success" => true);
+	return [ "success" => true ];
 }
 
 /**
@@ -718,23 +715,23 @@ function saveOntologyTag($pwId, $term, $termId, $auth, $user) {
  * @param string $termId The ontology term identifier in the ontology
  * @param string $auth The authentication key
  * @param string $user The username
- * @return boolean $success
+ * @return bool $success
  */
-function removeOntologyTag($pwId, $termId, $auth, $user) {
-	if($auth) {
-                authenticate($user, $auth, true);
-        }
+function removeOntologyTag( $pwId, $termId, $auth, $user ) {
+	if ( $auth ) {
+				authenticate( $user, $auth, true );
+	}
 
 	try {
-		$pathway = new Pathway($pwId);
-		if($pathway->exists()) {
-			OntologyFunctions::removeOntologyTag($termId, $pwId);
+		$pathway = new Pathway( $pwId );
+		if ( $pathway->exists() ) {
+			OntologyFunctions::removeOntologyTag( $termId, $pwId );
 		}
-	} catch(Exception $e) {
-		wfDebug("ERROR: $e");
-		throw new WSFault("Receiver",$e);
+	} catch ( Exception $e ) {
+		wfDebug( "ERROR: $e" );
+		throw new WSFault( "Receiver", $e );
 	}
-	return array("success" => true);
+	return [ "success" => true ];
 }
 
 /**
@@ -742,20 +739,20 @@ function removeOntologyTag($pwId, $termId, $auth, $user) {
  * @param string $pwId The pathway identifier
  * @return array of object WSOntologyTerm $terms The ontology terms
  **/
-function getOntologyTermsByPathway($pwId) {
+function getOntologyTermsByPathway( $pwId ) {
 	  try {
-			  $pw = new Pathway($pwId);
-			  $terms = array();
+			  $pw = new Pathway( $pwId );
+			  $terms = [];
 			  $dbr = wfGetDB( DB_SLAVE );
 			  $res = $dbr->select(
 					  'ontology',
-					  array('*'),
-					  array('pw_id = ' . $dbr->addQuotes($pwId))
+					  [ '*' ],
+					  [ 'pw_id = ' . $dbr->addQuotes( $pwId ) ]
 			  );
 
-			  $terms = array();
+			  $terms = [];
 			  $count = 0;
-			  while($row = $dbr->fetchObject( $res )) {
+			  while ( $row = $dbr->fetchObject( $res ) ) {
 					  $term = new WSOntologyTerm();
 					  $term->id = $row->term_id;
 					  $term->name = $row->term;
@@ -765,12 +762,12 @@ function getOntologyTermsByPathway($pwId) {
 			  }
 			  $dbr->freeResult( $res );
 
-			  $termObjects = array();
-  } catch(Exception $e) {
-			  throw new WSFault("Receiver", "Unable to get ontology
-terms: " . $e);
+			  $termObjects = [];
+   } catch ( Exception $e ) {
+			  throw new WSFault( "Receiver", "Unable to get ontology
+terms: " . $e );
 	  }
-  return array("terms" => $terms);
+  return [ "terms" => $terms ];
 }
 
 /**
@@ -778,19 +775,19 @@ terms: " . $e);
  * @param string $ontology The Ontology name
  * @return array of object WSOntologyTerm $terms The ontology terms
  **/
-function getOntologyTermsByOntology($ontology) {
+function getOntologyTermsByOntology( $ontology ) {
 	  try {
-			  $terms = array();
+			  $terms = [];
 			  $dbr = wfGetDB( DB_SLAVE );
 			  $res = $dbr->select(
 					  'ontology',
-					  array('*'),
-					  array('ontology = ' . $dbr->addQuotes($ontology))
+					  [ '*' ],
+					  [ 'ontology = ' . $dbr->addQuotes( $ontology ) ]
 			  );
 
-			  $terms = array();
+			  $terms = [];
 			  $count = 0;
-			  while($row = $dbr->fetchObject( $res )) {
+			  while ( $row = $dbr->fetchObject( $res ) ) {
 					  $term = new WSOntologyTerm();
 					  $term->id = $row->term_id;
 					  $term->name = $row->term;
@@ -800,12 +797,12 @@ function getOntologyTermsByOntology($ontology) {
 			  }
 			  $dbr->freeResult( $res );
 
-			  $termObjects = array();
-  } catch(Exception $e) {
-			  throw new WSFault("Receiver", "Unable to get ontology
-terms: " . $e);
+			  $termObjects = [];
+   } catch ( Exception $e ) {
+			  throw new WSFault( "Receiver", "Unable to get ontology
+terms: " . $e );
 	  }
-  return array("terms" => $terms);
+  return [ "terms" => $terms ];
 }
 
 /**
@@ -813,24 +810,24 @@ terms: " . $e);
  * @param string $term The Ontology term
  * @return array of object WSPathwayInfo $pathways Array of pathway info objects
  **/
-function getPathwaysByOntologyTerm($term) {
+function getPathwaysByOntologyTerm( $term ) {
 	  try {
 			  $dbr = wfGetDB( DB_SLAVE );
 			  $res = $dbr->select(
 					  'ontology',
-					  array('*'),
-					  array('term_id = ' . $dbr->addQuotes($term))
+					  [ '*' ],
+					  [ 'term_id = ' . $dbr->addQuotes( $term ) ]
 			  );
-			  $objects = array();
-			  while($row = $dbr->fetchObject( $res )) {
-					$pathway = Pathway::newFromTitle($row->pw_id);
-					$objects[] = new WSPathwayInfo($pathway);
+			  $objects = [];
+			  while ( $row = $dbr->fetchObject( $res ) ) {
+					$pathway = Pathway::newFromTitle( $row->pw_id );
+					$objects[] = new WSPathwayInfo( $pathway );
 			  }
 			  $dbr->freeResult( $res );
-  } catch(Exception $e) {
-			  throw new WSFault("Receiver", "Unable to get Pathways: " . $e);
+   } catch ( Exception $e ) {
+			  throw new WSFault( "Receiver", "Unable to get Pathways: " . $e );
 	  }
-	  return array("pathways" => $objects);
+	  return [ "pathways" => $objects ];
 }
 
 /**
@@ -838,47 +835,48 @@ function getPathwaysByOntologyTerm($term) {
  * @param string $term The Ontology term
  * @return array of object WSPathwayInfo $pathways Array of pathway info objects
  **/
-function getPathwaysByParentOntologyTerm($term) {
+function getPathwaysByParentOntologyTerm( $term ) {
 	  try {
-			  $term = mysql_escape_string($term);
+			  $term = mysql_escape_string( $term );
 			  $dbr = wfGetDB( DB_SLAVE );
-			  //added OR statement as temporary fix while term_path method in otag is broken 
+			  // added OR statement as temporary fix while term_path method in otag is broken
 			  $query = "SELECT * FROM `ontology` " . "WHERE `term_path` LIKE '%$term%' OR `term_id` = '$term'";
-			  $res = $dbr->query($query);
-			  $objects = array();
-			  while($row = $dbr->fetchObject( $res )) {
-					$pathway = Pathway::newFromTitle($row->pw_id);
-					$objects[] = new WSPathwayInfo($pathway);
+			  $res = $dbr->query( $query );
+			  $objects = [];
+			  while ( $row = $dbr->fetchObject( $res ) ) {
+					$pathway = Pathway::newFromTitle( $row->pw_id );
+					$objects[] = new WSPathwayInfo( $pathway );
 			  }
 			  $dbr->freeResult( $res );
-  } catch(Exception $e) {
-			  throw new WSFault("Receiver", "Unable to get Pathways: " . $e);
+   } catch ( Exception $e ) {
+			  throw new WSFault( "Receiver", "Unable to get Pathways: " . $e );
 	  }
-	  return array("pathways" => $objects);
+	  return [ "pathways" => $objects ];
 }
 
-function formatXml($xml) {
-	if(is_array($xml)) {
-		return array_map(htmlentities, $xml);
+function formatXml( $xml ) {
+	if ( is_array( $xml ) ) {
+		return array_map( htmlentities, $xml );
 	} else {
-		return htmlentities($xml);
+		return htmlentities( $xml );
 	}
 }
 
-//Class definitions
+// Class definitions
  /**
  * @namespace http://www.wikipathways.org/webservice
  */
 class WSPathwayInfo {
-	function __construct($pathway) {
+	function __construct( $pathway ) {
 		$this->id = $pathway->getIdentifier();
 		$this->revision = $pathway->getLatestRevision();
 		$this->species = $pathway->species();
-		$this->name = formatXml($pathway->name());
+		$this->name = formatXml( $pathway->name() );
 		$this->url = $pathway->getTitleObject()->getFullURL();
 
-		//Hack to make response valid in case of missing revision
-		if(!$this->revision) $this->revision = 0;
+		// Hack to make response valid in case of missing revision
+		if ( !$this->revision ) { $this->revision = 0;
+		}
 	}
 
 	/**
@@ -908,18 +906,18 @@ class WSPathwayInfo {
  * @namespace http://www.wikipathways.org/webservice
  */
 class WSPathwayHistory extends WSPathwayInfo {
-	public function __construct($pathway) {
-		parent::__construct($pathway);
+	public function __construct( $pathway ) {
+		parent::__construct( $pathway );
 	}
 
-	public function addRow($histRow) {
+	public function addRow( $histRow ) {
 		$history[] = $histRow;
 	}
 
 	/**
 	* @var array of object WSHistoryRow $history - The pathway history
 	**/
-	public $history = array();
+	public $history = [];
 }
 
  /**
@@ -953,18 +951,18 @@ class WSSearchResult extends WSPathwayInfo {
 	 * @param $includeFields an array with the fields to include.
 	 * Leave 'null' to include all fields.
 	**/
-	function __construct($hit, $includeFields = null) {
-		parent::__construct($hit->getPathway());
+	function __construct( $hit, $includeFields = null ) {
+		parent::__construct( $hit->getPathway() );
 		$this->score = $hit->getScore();
-		if($includeFields === null) {
+		if ( $includeFields === null ) {
 			$includeFields = $hit->getFieldNames();
 		}
-		$this->fields = array();
-		foreach($includeFields as $fn) {
-			if(in_array($fn, $hit->getFieldNames())) {
-				$v = $hit->getFieldValues($fn);
-				if($v && count($v) > 0) {
-					$this->fields[$fn] = new WSIndexField($fn, $v);
+		$this->fields = [];
+		foreach ( $includeFields as $fn ) {
+			if ( in_array( $fn, $hit->getFieldNames() ) ) {
+				$v = $hit->getFieldValues( $fn );
+				if ( $v && count( $v ) > 0 ) {
+					$this->fields[$fn] = new WSIndexField( $fn, $v );
 				}
 			}
 		}
@@ -985,10 +983,10 @@ class WSSearchResult extends WSPathwayInfo {
  * @namespace http://www.wikipathways.org/webservice
  */
 class WSIndexField {
-	function __construct($name, $values) {
+	function __construct( $name, $values ) {
 		$this->name = $name;
 		$this->values = $values;
-		$this->values = formatXml($this->values);
+		$this->values = formatXml( $this->values );
 	}
 
 	/**
@@ -1006,8 +1004,8 @@ class WSIndexField {
  * @namespace http://www.wikipathways.org/webservice
  */
 class WSPathway extends WSPathwayInfo {
-	function __construct($pathway) {
-		parent::__construct($pathway);
+	function __construct( $pathway ) {
+		parent::__construct( $pathway );
 		$this->gpml = $pathway->getGPML();
 	}
 	/**
@@ -1035,21 +1033,21 @@ class WSAuth {
  * @namespace http://www.wikipathways.org/webservice
  **/
 class WSCurationTag {
-	public function __construct($metatag) {
+	public function __construct( $metatag ) {
 		$this->name = $metatag->getName();
-		$this->displayName = CurationTag::getDisplayName($this->name);
-		$title = Title::newFromId($metatag->getPageId());
-		if($title) {
-			$pathway = Pathway::newFromTitle($title);
-			if($pathway->isReadable() && !$pathway->isDeleted()) {
-				$this->pathway = new WSPathwayInfo($pathway);
+		$this->displayName = CurationTag::getDisplayName( $this->name );
+		$title = Title::newFromId( $metatag->getPageId() );
+		if ( $title ) {
+			$pathway = Pathway::newFromTitle( $title );
+			if ( $pathway->isReadable() && !$pathway->isDeleted() ) {
+				$this->pathway = new WSPathwayInfo( $pathway );
 			}
 		}
 
 		$this->revision = $metatag->getPageRevision();
 		$this->text = $metatag->getText();
 		$this->timeModified = $metatag->getTimeMod();
-		$this->userModified = User::newFromId($metatag->getUserMod())->getName();
+		$this->userModified = User::newFromId( $metatag->getUserMod() )->getName();
 	}
 
 	/**
@@ -1088,16 +1086,15 @@ class WSCurationTag {
 	public $userModified;
 }
 
-
 /**
  * @namespace http://www.wikipathways.org/webservice
  **/
 class WSCurationTagHistory {
-	public function __construct($histRow) {
+	public function __construct( $histRow ) {
 		$this->tagName = $histRow->getTagName();
-		$this->pathwayId = Title::newFromId($histRow->getPageId())->getText();
+		$this->pathwayId = Title::newFromId( $histRow->getPageId() )->getText();
 		$this->action = $histRow->getAction();
-		$this->user = User::newFromId($histRow->getUser())->getName();
+		$this->user = User::newFromId( $histRow->getUser() )->getName();
 		$this->time = $histRow->getTime();
 		$this->text = $histRow->getText();
 	}
@@ -1158,17 +1155,17 @@ class WSCurationTagHistory {
  */
  class WSRelation {
 
-	public function __construct($result) {
-				if($result->pwId_1) {
+	public function __construct( $result ) {
+				if ( $result->pwId_1 ) {
 					$this->pathway1 = new WSPathwayInfo(
-							Pathway::newFromTitle($result->pwId_1)
+							Pathway::newFromTitle( $result->pwId_1 )
 					);
-		}
-				if($result->pwId_2) {
+		  }
+				if ( $result->pwId_2 ) {
 					$this->pathway2 = new WSPathwayInfo(
-							Pathway::newFromTitle($result->pwId_2)
+							Pathway::newFromTitle( $result->pwId_2 )
 					);
-		}
+		  }
 				$this->type = $result->type;
 				$this->score = (float)$result->score;
 	}
@@ -1192,22 +1189,17 @@ class WSCurationTagHistory {
 	 *@var float $score The degree of relativeness(score) between the pair of pathways
 	 */
 	public $score;
+ }
+
+function isClearGPML( $xml ) {
+	if ( $xml[0] === "<" ) { return true;
+ } else { return false;
+ }
 }
 
-
-
-
-
-
-function isClearGPML($xml){
-	if($xml[0]==="<") return true; else return false;
-}
-
-
-function decodeGpml($gpml){
-
-	if(!isClearGPML($gpml)){
-		return base64_decode($gpml);
+function decodeGpml( $gpml ) {
+	if ( !isClearGPML( $gpml ) ) {
+		return base64_decode( $gpml );
 	} else {
 		return $gpml;
 	}

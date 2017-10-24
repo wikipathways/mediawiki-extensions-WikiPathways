@@ -15,54 +15,53 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	$dbr =& wfGetDB( DB_SLAVE );
 	$sk = $wgUser->getSkin();
 	$shownav = !$specialPage->including();
-	$hidebots = $wgRequest->getBool('hidebots',1);
+	$hidebots = $wgRequest->getBool( 'hidebots', 1 );
 
 	$hidebotsql = '';
-	if ($hidebots) {
-
+	if ( $hidebots ) {
 		/** Make a list of group names which have the 'bot' flag
-		    set.
+			set.
 		*/
-		$botconds=array();
-		foreach ($wgGroupPermissions as $groupname=>$perms) {
-			if(array_key_exists('bot',$perms) && $perms['bot']) {
-				$botconds[]="ug_group='$groupname'";
+		$botconds = [];
+		foreach ( $wgGroupPermissions as $groupname => $perms ) {
+			if ( array_key_exists( 'bot', $perms ) && $perms['bot'] ) {
+				$botconds[] = "ug_group='$groupname'";
 			}
 		}
 
 		/* If not bot groups, do not set $hidebotsql */
-		if ($botconds) {
-			$isbotmember=$dbr->makeList($botconds, LIST_OR);
+		if ( $botconds ) {
+			$isbotmember = $dbr->makeList( $botconds, LIST_OR );
 
 			/** This join, in conjunction with WHERE ug_group
-			    IS NULL, returns only those rows from IMAGE
-		    	where the uploading user is not a member of
-		    	a group which has the 'bot' permission set.
+				IS NULL, returns only those rows from IMAGE
+				where the uploading user is not a member of
+				a group which has the 'bot' permission set.
 			*/
-			$ug = $dbr->tableName('user_groups');
+			$ug = $dbr->tableName( 'user_groups' );
 			$hidebotsql = " LEFT OUTER JOIN $ug ON img_user=ug_user AND ($isbotmember)";
 		}
 	}
 
-	$image = $dbr->tableName('image');
+	$image = $dbr->tableName( 'image' );
 
-	$sql="SELECT img_timestamp from $image";
-	if ($hidebotsql) {
+	$sql = "SELECT img_timestamp from $image";
+	if ( $hidebotsql ) {
 		$sql .= "$hidebotsql WHERE ug_group IS NULL";
 	}
-	$sql.=' ORDER BY img_timestamp DESC LIMIT 1';
-	$res = $dbr->query($sql, 'wfSpecialNewImages');
-	$row = $dbr->fetchRow($res);
-	if($row!==false) {
-		$ts=$row[0];
+	$sql .= ' ORDER BY img_timestamp DESC LIMIT 1';
+	$res = $dbr->query( $sql, 'wfSpecialNewImages' );
+	$row = $dbr->fetchRow( $res );
+	if ( $row !== false ) {
+		$ts = $row[0];
 	} else {
-		$ts=false;
+		$ts = false;
 	}
-	$dbr->freeResult($res);
-	$sql='';
+	$dbr->freeResult( $res );
+	$sql = '';
 
 	/** If we were clever, we'd use this to cache. */
-	$latestTimestamp = wfTimestamp( TS_MW, $ts);
+	$latestTimestamp = wfTimestamp( TS_MW, $ts );
 
 	/** Hardcode this for now. */
 	$limit = 48;
@@ -73,11 +72,11 @@ function wfSpecialNewimages( $par, $specialPage ) {
 		}
 	}
 
-	$where = array();
+	$where = [];
 	$searchpar = '';
 	if ( $wpIlMatch != '' ) {
 		$nt = Title::newFromUrl( $wpIlMatch );
-		if($nt ) {
+		if ( $nt ) {
 			$m = $dbr->strencode( strtolower( $nt->getDBkey() ) );
 			$m = str_replace( '%', "\\%", $m );
 			$m = str_replace( '_', "\\_", $m );
@@ -87,33 +86,33 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	}
 
 	$invertSort = false;
-	if( $until = $wgRequest->getVal( 'until' ) ) {
+	if ( $until = $wgRequest->getVal( 'until' ) ) {
 		$where[] = 'img_timestamp < ' . $dbr->timestamp( $until );
 	}
-	if( $from = $wgRequest->getVal( 'from' ) ) {
+	if ( $from = $wgRequest->getVal( 'from' ) ) {
 		$where[] = 'img_timestamp >= ' . $dbr->timestamp( $from );
 		$invertSort = true;
 	}
-	$sql='SELECT img_size, img_name, img_user, img_user_text,'.
-	     "img_description,img_timestamp FROM $image";
+	$sql = 'SELECT img_size, img_name, img_user, img_user_text,'.
+		 "img_description,img_timestamp FROM $image";
 
-	if($hidebotsql) {
+	if ( $hidebotsql ) {
 		$sql .= $hidebotsql;
-		$where[]='ug_group IS NULL';
+		$where[] = 'ug_group IS NULL';
 	}
-	if(count($where)) {
-		$sql.=' WHERE '.$dbr->makeList($where, LIST_AND);
+	if ( count( $where ) ) {
+		$sql .= ' WHERE '.$dbr->makeList( $where, LIST_AND );
 	}
-	$sql.=' ORDER BY img_timestamp '. ( $invertSort ? '' : ' DESC' );
-	$sql.=' LIMIT '.($limit+1);
-	$res = $dbr->query($sql, 'wfSpecialNewImages');
+	$sql .= ' ORDER BY img_timestamp '. ( $invertSort ? '' : ' DESC' );
+	$sql .= ' LIMIT '.( $limit + 1 );
+	$res = $dbr->query( $sql, 'wfSpecialNewImages' );
 
 	/**
 	 * We have to flip things around to get the last N after a certain date
 	 */
-	$images = array();
+	$images = [];
 	while ( $s = $dbr->fetchObject( $res ) ) {
-		if( $invertSort ) {
+		if ( $invertSort ) {
 			array_unshift( $images, $s );
 		} else {
 			array_push( $images, $s );
@@ -125,8 +124,8 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	$firstTimestamp = null;
 	$lastTimestamp = null;
 	$shownImages = 0;
-	foreach( $images as $s ) {
-		if( ++$shownImages > $limit ) {
+	foreach ( $images as $s ) {
+		if ( ++$shownImages > $limit ) {
 			# One extra just to test for whether to show a page link;
 			# don't actually show it.
 			break;
@@ -142,7 +141,7 @@ function wfSpecialNewimages( $par, $specialPage ) {
 		$gallery->add( $img, "$ul<br />\n<i>".$wgLang->timeanddate( $s->img_timestamp, true )."</i><br />\n" );
 
 		$timestamp = wfTimestamp( TS_MW, $s->img_timestamp );
-		if( empty( $firstTimestamp ) ) {
+		if ( empty( $firstTimestamp ) ) {
 			$firstTimestamp = $timestamp;
 		}
 		$lastTimestamp = $timestamp;
@@ -150,15 +149,15 @@ function wfSpecialNewimages( $par, $specialPage ) {
 
 	$bydate = wfMsg( 'bydate' );
 	$lt = $wgLang->formatNum( min( $shownImages, $limit ) );
-	if ($shownav) {
-		$text = wfMsgExt( 'imagelisttext', array('parse'), $lt, $bydate );
+	if ( $shownav ) {
+		$text = wfMsgExt( 'imagelisttext', [ 'parse' ], $lt, $bydate );
 		$wgOut->addHTML( $text . "\n" );
 	}
 
 	$sub = wfMsg( 'ilsubmit' );
 	$titleObj = SpecialPage::getTitleFor( 'Newimages' );
 	$action = $titleObj->escapeLocalURL( $hidebots ? '' : 'hidebots=0' );
-	if ($shownav) {
+	if ( $shownav ) {
 		$wgOut->addHTML( "<form id=\"imagesearch\" method=\"post\" action=\"" .
 		  "{$action}\">" .
 		  "<input type='text' size='20' name=\"wpIlMatch\" value=\"" .
@@ -171,39 +170,39 @@ function wfSpecialNewimages( $par, $specialPage ) {
 	 */
 
 	# If we change bot visibility, this needs to be carried along.
-	if(!$hidebots) {
-		$botpar='&hidebots=0';
+	if ( !$hidebots ) {
+		$botpar = '&hidebots=0';
 	} else {
-		$botpar='';
+		$botpar = '';
 	}
 	$now = wfTimestampNow();
 	$date = $wgLang->timeanddate( $now, true );
 	$dateLink = $sk->makeKnownLinkObj( $titleObj, wfMsg( 'sp-newimages-showfrom', $date ), 'from='.$now.$botpar.$searchpar );
 
-	$botLink = $sk->makeKnownLinkObj($titleObj, wfMsg( 'showhidebots', ($hidebots ? wfMsg('show') : wfMsg('hide'))),'hidebots='.($hidebots ? '0' : '1').$searchpar);
+	$botLink = $sk->makeKnownLinkObj( $titleObj, wfMsg( 'showhidebots', ( $hidebots ? wfMsg( 'show' ) : wfMsg( 'hide' ) ) ), 'hidebots='.( $hidebots ? '0' : '1' ).$searchpar );
 
 	$prevLink = wfMsg( 'prevn', $wgLang->formatNum( $limit ) );
-	if( $firstTimestamp && $firstTimestamp != $latestTimestamp ) {
+	if ( $firstTimestamp && $firstTimestamp != $latestTimestamp ) {
 		$prevLink = $sk->makeKnownLinkObj( $titleObj, $prevLink, 'from=' . $firstTimestamp . $botpar . $searchpar );
 	}
 
 	$nextLink = wfMsg( 'nextn', $wgLang->formatNum( $limit ) );
-	if( $shownImages > $limit && $lastTimestamp ) {
+	if ( $shownImages > $limit && $lastTimestamp ) {
 		$nextLink = $sk->makeKnownLinkObj( $titleObj, $nextLink, 'until=' . $lastTimestamp.$botpar.$searchpar );
 	}
 
 	$prevnext = '<p>' . $botLink . ' '. wfMsg( 'viewprevnext', $prevLink, $nextLink, $dateLink ) .'</p>';
 
-	if ($shownav)
+	if ( $shownav ) {
 		$wgOut->addHTML( $prevnext );
+	}
 
-	if( count( $images ) ) {
+	if ( count( $images ) ) {
 		$wgOut->addHTML( $gallery->toHTML() );
-		if ($shownav)
+		if ( $shownav ) {
 			$wgOut->addHTML( $prevnext );
+		}
 	} else {
 		$wgOut->addWikiText( wfMsg( 'noimages' ) );
 	}
 }
-
-?>
