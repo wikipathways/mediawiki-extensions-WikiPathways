@@ -211,14 +211,15 @@ class PathwayThumb {
 			$boxheight = $height;
 			$thumbUrl  = $img->getViewURL();
 		} else {
-			if ( $boxheight === false ) {
-				$boxheight = -1;
+            $param[ 'width' ] = $boxwidth;
+			if ( $boxheight !== false ) {
+				$param[ 'height' ] = $boxheight;
 			}
-			$thumb = $img->getThumbnail( $boxwidth, $boxheight );
+			$thumb = $img->transform( $param, 0 );
 			if ( $thumb ) {
 				$thumbUrl = $thumb->getUrl();
-				$boxwidth = $thumb->width;
-				$boxheight = $thumb->height;
+				$boxwidth = $thumb->getWidth();
+				$boxheight = $thumb->getHeight();
 			} else {
 				$error = $img->getLastError();
 			}
