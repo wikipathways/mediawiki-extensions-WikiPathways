@@ -404,3 +404,9 @@ $wgEnotifWatchlist = false;
 
 // enable ontology tags on pathway page
 $wpiEnableOtag = true;
+
+// Enable RSS feeds from front page
+$wgRSSUrlWhitelist = [
+    "https://wikipathways.github.io/academy/curators/curators_list.xml?max=1",
+    "https://groups.google.com/group/wikipathways-discuss/feed/rss_v2_0_msgs.xml?short&max=2"
+];
