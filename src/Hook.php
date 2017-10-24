@@ -25,7 +25,9 @@ class Hook {
 	// Probably better to put this in parser init hook
 	public static function pathwayViewer() {
 		global $wgParser;
-		$wgParser->setHook( "pathwayBibliography", "WikiPathways\\PathwayBibliography::output" );
+		$wgParser->setHook(
+            "pathwayBibliography", "WikiPathways\\PathwayBibliography::output"
+        );
 		$wgParser->setHook( "Xref", "WikiPathways\\XrefPanel::renderXref" );
 		$wgParser->setHook( "pathwayHistory", "WikiPathways\\PathwayHistory::history" );
 		$wgParser->setHook(
@@ -61,8 +63,6 @@ class Hook {
 		Pathway::registerFileType( FILETYPE_PWF );
 		Pathway::registerFileType( FILETYPE_TXT );
 		Pathway::registerFileType( FILETYPE_BIOPAX );
-
-        RecentChangesBox::init;
 	}
 
 	public static function pathwayMagic( &$magicWords, $langCode ) {
