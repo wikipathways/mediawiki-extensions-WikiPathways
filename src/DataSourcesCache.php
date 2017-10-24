@@ -29,11 +29,15 @@ class DataSourcesCache {
 	static $file = "datasources.txt";
 	static $content = null;
 
+	public static function getFilename() {
+		return WPI_CACHE_PATH . "/" . self::$file;
+	}
+
 	public static function update() {
 		## Download a fresh datasources file
 		$txt = file_get_contents( self::$url );
+		$f = self::getFilename();
 		if ( $txt ) { // Only update if file could be downloaded
-			$f = WPI_CACHE_PATH . "/" . self::$file;
 			$fh = fopen( $f, 'w' );
 			if ( $fh !== false ) {
 				fwrite( $fh, $txt );
@@ -47,7 +51,7 @@ class DataSourcesCache {
 	}
 
 	private static function read() {
-		$f = WPI_CACHE_PATH . "/" . self::$file;
+		$f = self::getFilename();
 		if ( file_exists( $f ) ) {
 			return file_get_contents( $f );
 		}
