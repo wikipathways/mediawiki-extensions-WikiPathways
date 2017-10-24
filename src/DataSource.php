@@ -23,16 +23,16 @@
 namespace WikiPathways;
 
 class DataSource {
-	private static $linkouts; //Map of urls keyed by name
-	private static $codes; //Map of system codes keyed by name
-	private static $types; //Map of system types keyed by name
-	private static $species; //Map of system species keyed by name
+	private static $linkouts; // Map of urls keyed by name
+	private static $codes; // Map of system codes keyed by name
+	private static $types; // Map of system types keyed by name
+	private static $species; // Map of system species keyed by name
 
 	private static function initLinkouts() {
-		self::$linkouts = array();
+		self::$linkouts = [];
 		$txt = DataSourcesCache::getContent();
-		foreach(explode("\n", $txt) as $line) {
-			$cols = explode("\t", $line);
+		foreach ( explode( "\n", $txt ) as $line ) {
+			$cols = explode( "\t", $line );
 			$name = $cols[0];
 			$url = isset( $cols[3] ) ? $cols[3] : "";
 			self::$linkouts[$name] = $url;
@@ -40,10 +40,10 @@ class DataSource {
 	}
 
 	private static function initCodes() {
-		self::$codes = array();
+		self::$codes = [];
 		$txt = DataSourcesCache::getContent();
-		foreach(explode("\n", $txt) as $line) {
-			$cols = explode("\t", $line);
+		foreach ( explode( "\n", $txt ) as $line ) {
+			$cols = explode( "\t", $line );
 			$name = $cols[0];
 			$code = $cols[1];
 			self::$codes[$name] = $code;
@@ -51,10 +51,10 @@ class DataSource {
 	}
 
 	private static function initTypes() {
-		self::$types = array();
+		self::$types = [];
 		$txt = DataSourcesCache::getContent();
-		foreach(explode("\n", $txt) as $line) {
-			$cols = explode("\t", $line);
+		foreach ( explode( "\n", $txt ) as $line ) {
+			$cols = explode( "\t", $line );
 			$name = $cols[0];
 			$type = $cols[5];
 			self::$types[$name] = $type;
@@ -62,10 +62,10 @@ class DataSource {
 	}
 
 	private static function initSpecies() {
-		self::$species = array();
+		self::$species = [];
 		$txt = DataSourcesCache::getContent();
-		foreach(explode("\n", $txt) as $line) {
-			$cols = explode("\t", $line);
+		foreach ( explode( "\n", $txt ) as $line ) {
+			$cols = explode( "\t", $line );
 			$name = $cols[0];
 			$s = $cols[6];
 			self::$species[$name] = $s;
@@ -76,13 +76,13 @@ class DataSource {
 	 * returns the url template for linkouts. "$ID" in the template is replaced with
 	 * the $id parameter provided.
 	 */
-	public static function getLinkout($id, $datasource) {
-		if(!self::$linkouts) {
+	public static function getLinkout( $id, $datasource ) {
+		if ( !self::$linkouts ) {
 			self::initLinkouts();
 		}
-		if($id != '' && $datasource && array_key_exists($datasource, self::$linkouts)) {
+		if ( $id != '' && $datasource && array_key_exists( $datasource, self::$linkouts ) ) {
 			$value = self::$linkouts[$datasource];
-			return str_ireplace('$id', $id, $value);
+			return str_ireplace( '$id', $id, $value );
 		} else {
 			return false;
 		}
@@ -91,11 +91,11 @@ class DataSource {
 	/**
 	 * returns the system code
 	 */
-	public static function getCode($datasource) {
-		if(!self::$codes) {
+	public static function getCode( $datasource ) {
+		if ( !self::$codes ) {
 			self::initCodes();
 		}
-		if($datasource && array_key_exists($datasource, self::$codes)) {
+		if ( $datasource && array_key_exists( $datasource, self::$codes ) ) {
 			$value = self::$codes[$datasource];
 			return $value;
 		} else {
@@ -106,11 +106,11 @@ class DataSource {
 	/**
 	 * returns the datasource type, e.g., gene, probe, metabolite
 	 */
-	public static function getType($datasource) {
-		if(!self::$types) {
+	public static function getType( $datasource ) {
+		if ( !self::$types ) {
 			self::initTypes();
 		}
-		if($datasource && array_key_exists($datasource, self::$types)) {
+		if ( $datasource && array_key_exists( $datasource, self::$types ) ) {
 			$value = self::$types[$datasource];
 			return $value;
 		} else {
@@ -122,11 +122,11 @@ class DataSource {
 	 * returns "Genus species" associated with given datasource. If not a
 	 * species-specific datasource, then a blank "" is returned.
 	 */
-	public static function getSpecies($datasource) {
-		if(!self::$species) {
+	public static function getSpecies( $datasource ) {
+		if ( !self::$species ) {
 			self::initSpecies();
 		}
-		if($datasource && array_key_exists($datasource, self::$species)) {
+		if ( $datasource && array_key_exists( $datasource, self::$species ) ) {
 			$value = self::$species[$datasource];
 			return $value;
 		} else {
@@ -138,14 +138,14 @@ class DataSource {
 	 * returns the species-specific Ensembl datasource name, e.g., "Ensembl Mouse".
 	 * If there isn't one, it just returns "Ensembl".
 	 */
-	public static function getEnsemblDatasource($s) {
-		if(!self::$species) {
+	public static function getEnsemblDatasource( $s ) {
+		if ( !self::$species ) {
 			self::initSpecies();
 		}
-		$datasource = "Ensembl"; //default return
-		$match = "Ensembl"; //string match
-		foreach(array_keys(self::$species) as $name){
-			if(self::$species[$name] === $s && strncmp($name, $match, strlen($match)) == 0){
+		$datasource = "Ensembl"; // default return
+		$match = "Ensembl"; // string match
+		foreach ( array_keys( self::$species ) as $name ) {
+			if ( self::$species[$name] === $s && strncmp( $name, $match, strlen( $match ) ) == 0 ) {
 				$datasource = $name;
 			}
 		}
@@ -156,14 +156,14 @@ class DataSource {
 	 * returns the list of species-specific datasources other than Ensembl, usually
 	 * model organism databases (MODs).
 	 */
-	public static function getModDatasources($s) {
-		if(!self::$species) {
+	public static function getModDatasources( $s ) {
+		if ( !self::$species ) {
 			self::initSpecies();
 		}
-		$dsList = array();
-		$match = "Ensembl"; //string match
-		foreach(array_keys(self::$species) as $name){
-			if(self::$species[$name] === $s && strncmp($name, $match, strlen($match)) != 0){
+		$dsList = [];
+		$match = "Ensembl"; // string match
+		foreach ( array_keys( self::$species ) as $name ) {
+			if ( self::$species[$name] === $s && strncmp( $name, $match, strlen( $match ) ) != 0 ) {
 				$dsList[] = $name;
 			}
 		}
@@ -173,13 +173,13 @@ class DataSource {
 	/**
 	 * returns the list of datasources per type, e.g. 'gene', 'probe', or 'metabolite' types.
 	 */
-	public static function getDatasourcesByType($type){
-		if(!self::$types) {
+	public static function getDatasourcesByType( $type ) {
+		if ( !self::$types ) {
 			self::initTypes();
 		}
-		$dsList = array();
-		foreach(array_keys(self::$types) as $name){
-			if(self::$types[$name] === $type){
+		$dsList = [];
+		foreach ( array_keys( self::$types ) as $name ) {
+			if ( self::$types[$name] === $type ) {
 				$dsList[] = $name;
 			}
 		}

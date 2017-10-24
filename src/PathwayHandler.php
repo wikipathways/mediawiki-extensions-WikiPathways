@@ -26,8 +26,13 @@ use MWException;
 
 class PathwayHandler extends ContentHandler {
 
-	public function __construct( $modelId = CONTENT_MODEL_PATHWAY,
-		$formats = array( CONTENT_MODEL_PATHWAY ) ) {
+	/**
+	 * @param string $modelId see docs
+	 * @param array $formats see docs
+	 */
+	public function __construct(
+		$modelId = CONTENT_MODEL_PATHWAY, $formats = [ CONTENT_MODEL_PATHWAY ]
+	) {
 		parent::__construct( $modelId, $formats );
 	}
 
@@ -36,12 +41,12 @@ class PathwayHandler extends ContentHandler {
 	 *
 	 * @since 1.21
 	 *
-	 * @param $content Content The Content object to serialize
-	 * @param $format null|String The desired serialization format
+	 * @param Content $content The Content object to serialize
+	 * @param null|string $format The desired serialization format
 	 * @return string Serialized form of the content
 	 */
 	public function serializeContent( Content $content, $format = null ) {
-		if ( !( $content instanceOf PathwayContent ) ) {
+		if ( !( $content instanceof PathwayContent ) ) {
 			throw new MWException( "Expected PathwayContent object, got " .
 				get_class( $content ) );
 		}
@@ -55,7 +60,7 @@ class PathwayHandler extends ContentHandler {
 	 * @since 1.21
 	 *
 	 * @param string $blob serialized form of the content
-	 * @param $format null|String the format used for serialization
+	 * @param null|string $format the format used for serialization
 	 * @return Content the Content object created by deserializing $blob
 	 */
 	public function unserializeContent( $blob, $format = null ) {

@@ -20,20 +20,17 @@
  */
 namespace WikiPathways;
 
-class PathwaysPagerFactory
-{
-	static function get( $type, $species, $tag, $sortOrder )
-	{
-		switch( $type ) {
+class PathwaysPagerFactory {
+	static function get( $type, $species, $tag, $sortOrder ) {
+		switch ( $type ) {
 		case 'list':
-			return new ListPathwaysPager($species, $tag, $sortOrder);
+			return new ListPathwaysPager( $species, $tag, $sortOrder );
 		  break;
 		case 'single':
-			return new SinglePathwaysPager($species, $tag, $sortOrder);
+			return new SinglePathwaysPager( $species, $tag, $sortOrder );
 		  break;
 		default:
-			return new ThumbPathwaysPager($species, $tag, $sortOrder);
+			return new ThumbPathwaysPager( $species, $tag, $sortOrder );
 		}
 	}
 }
-

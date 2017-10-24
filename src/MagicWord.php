@@ -21,91 +21,85 @@
 
 namespace WikiPathways;
 
-class MagicWord
-{
-    // Make this configurable in extension.json or otherwise?
-    public static $variableIDs = [
-    'pathwayname','pathwayspecies', 'pathwayimagepage',
-    'pathwaygpmlpage', 'pathwayoftheday'
-    ];
-    protected static $expanded;
+class MagicWord {
+	// Make this configurable in extension.json or otherwise?
+	public static $variableIDs = [
+	'pathwayname','pathwayspecies', 'pathwayimagepage',
+	'pathwaygpmlpage', 'pathwayoftheday'
+	];
+	protected static $expanded;
 
-    protected static function getVariableIDs() 
-    {
-        if (!self::$expanded ) {
-            self::$expanded = array_map(
-                function ( $word ) {
-                    $upper = strtoupper("mag_" . $word);
+	protected static function getVariableIDs() {
+		if ( !self::$expanded ) {
+			self::$expanded = array_map(
+				function ( $word ) {
+					$upper = strtoupper( "mag_" . $word );
 
-                    // how this is handled in older code
-                    define($upper, $upper);
+					// how this is handled in older code
+					define( $upper, $upper );
 
-                    return $upper;
-                }, self::$variableIDs
-            );
-        }
-        return self::$expanded;
-    }
+					return $upper;
+				}, self::$variableIDs
+			);
+		}
+		return self::$expanded;
+	}
 
-    protected static function getPathwayVariable( $pathway, $index ) 
-    {
-        switch ( $index ) {
-        case 'MAG_PATHWAYNAME':
-            return $pathway->name();
-        case 'MAG_PATHWAYSPECIES':
-            return $pathway->species();
-        case 'MAG_PATHWAYIMAGEPAGE':
-            return $pathway->getFileTitle(FILETYPE_IMG)->getFullText();
-        case 'MAG_PATHWAYGPMLPAGE':
-            return $pathway->getTitleObject()->getFullText();
-        }
-    }
+	protected static function getPathwayVariable( $pathway, $index ) {
+		switch ( $index ) {
+		case 'MAG_PATHWAYNAME':
+			return $pathway->name();
+		case 'MAG_PATHWAYSPECIES':
+			return $pathway->species();
+		case 'MAG_PATHWAYIMAGEPAGE':
+			return $pathway->getFileTitle( FILETYPE_IMG )->getFullText();
+		case 'MAG_PATHWAYGPMLPAGE':
+			return $pathway->getTitleObject()->getFullText();
+		}
+	}
 
-    public static function onMagicWordMagicWords( &$magicWords ) 
-    {
-        foreach ( self::getVariableIDs() as $var ) {
-            $magicWords[] = $var;
-        }
-    }
+	public static function onMagicWordMagicWords( &$magicWords ) {
+		foreach ( self::getVariableIDs() as $var ) {
+			$magicWords[] = $var;
+		}
+	}
 
-    public static function onMagicWordwgVariableIDs( &$variables ) 
-    {
-        foreach ( self::getVariableIDs() as $var ) {
-            $variables[] = constant($var);
-        }
-    }
+	public static function onMagicWordwgVariableIDs( &$variables ) {
+		foreach ( self::getVariableIDs() as $var ) {
+			$variables[] = constant( $var );
+		}
+	}
 
-    public static function onLanguageGetMagic( &$langMagic, $langCode = 0 ) 
-    {
-        $varID = self::getVariableIDs();
-        foreach ( range(0, count($varID) - 1) as $ind ) {
-            $langMagic[constant($varID[$ind])] = [ 0, self::$variableIDs[$ind] ];
-            $langMagic[$varID[$ind]] = [ 0, self::$variableIDs[$ind] ];
-        }
-    }
+	public static function onLanguageGetMagic( &$langMagic, $langCode = 0 ) {
+		$varID = self::getVariableIDs();
+		foreach ( range( 0, count( $varID ) - 1 ) as $ind ) {
+			$langMagic[constant( $varID[$ind] )] = [ 0, self::$variableIDs[$ind] ];
+			$langMagic[$varID[$ind]] = [ 0, self::$variableIDs[$ind] ];
+		}
+	}
 
-    public static function onParserGetVariableValueSwitch(
-        &$parser, &$cache, &$index, &$ret
-    ) {
-        switch ( $index ) {
-        case 'MAG_PATHWAYOFTHEDAY':
-            $pwd = new PathwayOfTheDay(null);
-            $pw = $pwd->todaysPathway();
-            $ret = $pw->getTitleObject()->getFullText();
-            break;
-        case 'MAG_PATHWAYNAME':
-        case 'MAG_PATHWAYSPECIES':
-        case 'MAG_PATHWAYIMAGEPAGE':
-        case 'MAG_PATHWAYGPMLPAGE':
-            $title = $parser->mTitle;
-            if ($title->getNamespace() == NS_PATHWAY ) {
-                $pathway = Pathway::newFromTitle($title);
-                $ret = self::getPathwayVariable($pathway, $index);
-            } else {
-                $ret = "NOT A PATHWAY";
-            }
-            break;
-        }
-        return true;
-    }
+	public static function onParserGetVariableValueSwitch(
+		&$parser, &$cache, &$index, &$ret
+	) {
+		switch ( $index ) {
+		case 'MAG_PATHWAYOFTHEDAY':
+			$pwd = new PathwayOfTheDay( null );
+			$pw = $pwd->todaysPathway();
+			$ret = $pw->getTitleObject()->getFullText();
+			break;
+		case 'MAG_PATHWAYNAME':
+		case 'MAG_PATHWAYSPECIES':
+		case 'MAG_PATHWAYIMAGEPAGE':
+		case 'MAG_PATHWAYGPMLPAGE':
+			$title = $parser->mTitle;
+			if ( $title->getNamespace() == NS_PATHWAY ) {
+				$pathway = Pathway::newFromTitle( $title );
+				$ret = self::getPathwayVariable( $pathway, $index );
+			} else {
+				$ret = "NOT A PATHWAY";
+			}
+			break;
+		}
+		return true;
+	}
 }

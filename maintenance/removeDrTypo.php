@@ -1,9 +1,9 @@
 <?php
 
-require_once("Maintenance.php");
+require_once "Maintenance.php";
 
-//Removes all pathways having the Danio Rero typo
-$dbr =& wfGetDB(DB_SLAVE);
+// Removes all pathways having the Danio Rero typo
+$dbr =& wfGetDB( DB_SLAVE );
 $ns = NS_PATHWAY;
 $query = "SELECT page_title FROM page
 						WHERE page_namespace = $ns
@@ -11,17 +11,17 @@ $query = "SELECT page_title FROM page
 
 echo $query . "<BR>\n";
 
-$res = $dbr->query($query);
+$res = $dbr->query( $query );
 
 $np = $dbr->numRows( $res );
 echo 'nrow: ' . $np . '<br>';
 $i = 0;
-while( $row = $dbr->fetchRow( $res )) {
+while ( $row = $dbr->fetchRow( $res ) ) {
 	$title = $row[0];
-	$pathway = Pathway::newFromTitle($title);
-	echo("Removing {$pathway->getTitleObject()->getFullText()}<br>\n");
+	$pathway = Pathway::newFromTitle( $title );
+	echo( "Removing {$pathway->getTitleObject()->getFullText()}<br>\n" );
 
-	if($doit) {
+	if ( $doit ) {
 		$pathway->delete();
 	}
 }

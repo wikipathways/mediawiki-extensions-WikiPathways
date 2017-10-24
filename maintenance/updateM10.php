@@ -4,22 +4,21 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	print "This script must be run from the command line\n";
 	exit();
 }
-chdir("../");
+chdir( "../" );
 
-chdir(dirname(__FILE__));
+chdir( __DIR__ );
 
 /* Tables for web service logging */
 echo "*** Creating tables for web service logging ***\n";
 
-$dbw =& wfGetDB(DB_MASTER);
+$dbw =& wfGetDB( DB_MASTER );
 $dbw->immediateBegin();
 
-
-$dbw->sourceFile(realpath('./wslog.sql'), false, 'printSql');
+$dbw->sourceFile( realpath( './wslog.sql' ), false, 'printSql' );
 
 $dbw->immediateCommit();
 
-//Create metatag index
+// Create metatag index
 $dbw->immediateBegin();
 
 $dbw->query(
@@ -36,7 +35,7 @@ $dbw->query(
 );
 $dbw->immediateCommit();
 
-//Modify metatag table
+// Modify metatag table
 $dbw->immediateBegin();
 
 $dbw->query(

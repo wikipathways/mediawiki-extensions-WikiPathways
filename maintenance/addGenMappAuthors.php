@@ -9,8 +9,8 @@
 $mapFile = "author_mappings.txt";
 $pass = '';
 
-if(!$pass) {
-	print("Please set a password first\n");
+if ( !$pass ) {
+	print( "Please set a password first\n" );
 	exit();
 }
 
@@ -20,32 +20,32 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	exit();
 }
 
-chdir("../");
+chdir( "../" );
 
-chdir(dirname(__FILE__));
+chdir( __DIR__ );
 
-println("**** Reading author mapping file '" . $mapFile . "' ****");
+println( "**** Reading author mapping file '" . $mapFile . "' ****" );
 
-$lines = file($mapFile);
-$map = array();
+$lines = file( $mapFile );
+$map = [];
 
-foreach ($lines as $line_num => $line) {
-	$cols = explode("\t", $line);
+foreach ( $lines as $line_num => $line ) {
+	$cols = explode( "\t", $line );
 	$field = $cols[0];
-	$ex_usr = explode(";", $cols[1]);
-	$nw_usr = explode(";", $cols[2]);
-	$nw_nm = explode(";", $cols[3]);
+	$ex_usr = explode( ";", $cols[1] );
+	$nw_usr = explode( ";", $cols[2] );
+	$nw_nm = explode( ";", $cols[3] );
 
-	$authors = array();
-	foreach($ex_usr as $u) {
-		if($u) {
-			$authors[$u] = new GMAuthor(null, trim($u));
+	$authors = [];
+	foreach ( $ex_usr as $u ) {
+		if ( $u ) {
+			$authors[$u] = new GMAuthor( null, trim( $u ) );
 		}
 	}
 	$i = 0;
-	foreach($nw_usr as $u) {
-		if($u) {
-			$authors[$u] = new GMAuthor(trim($nw_nm[$i]), trim($u));
+	foreach ( $nw_usr as $u ) {
+		if ( $u ) {
+			$authors[$u] = new GMAuthor( trim( $nw_nm[$i] ), trim( $u ) );
 		}
 		$i++;
 	}
@@ -53,60 +53,58 @@ foreach ($lines as $line_num => $line) {
 	$map[$field] = $authors;
 }
 
-foreach(Pathway::getAllPathways() as $pathway) {
-	println("* Processing " . $pathway->name() . " | " . $pathway->species());
+foreach ( Pathway::getAllPathways() as $pathway ) {
+	println( "* Processing " . $pathway->name() . " | " . $pathway->species() );
 	$rev = $pathway->getFirstRevision();
-	$first_user = User::newFromId($rev->getUser());
-	if(!$first_user || $first_user->isAnon() || $first_user->isBot()) {
-		println("\tFirst revision user is bot/anonymous");
-		//Get the GPML author
+	$first_user = User::newFromId( $rev->getUser() );
+	if ( !$first_user || $first_user->isAnon() || $first_user->isBot() ) {
+		println( "\tFirst revision user is bot/anonymous" );
+		// Get the GPML author
 		$pd = $pathway->getPathwayData();
 		$gpml = $pd->getGpml();
 		$author = $gpml["Author"];
-		if($author) {
-			println("\tGPML author found: " . $author);
+		if ( $author ) {
+			println( "\tGPML author found: " . $author );
 			$gmAuthors = $map[(string)$author];
 			$first = true;
-			foreach($gmAuthors as $gma) {
-				if(!$gma->exists()) {
-					println("\tAuthor " . $gma->real_name . " doesn't exist, creating account");
+			foreach ( $gmAuthors as $gma ) {
+				if ( !$gma->exists() ) {
+					println( "\tAuthor " . $gma->real_name . " doesn't exist, creating account" );
 					$gma->create();
 				}
-				if($first) {
+				if ( $first ) {
 					$first = false;
-					addFirstAuthor($pathway, $gma);
+					addFirstAuthor( $pathway, $gma );
 				} else {
-					addAuthor($pathway, $gma);
+					addAuthor( $pathway, $gma );
 				}
 			}
 		} else {
-			println("\tSkipping, no GPML author found");
+			println( "\tSkipping, no GPML author found" );
 		}
 	} else {
-		println("\tSkipping, first revision not by bot or anonymous user: " . $first_user->getName());
+		println( "\tSkipping, first revision not by bot or anonymous user: " . $first_user->getName() );
 	}
 }
 
-
-
-function addAuthor($pathway, $gma) {
-	$dbw =& wfGetDB(DB_MASTER);
+function addAuthor( $pathway, $gma ) {
+	$dbw =& wfGetDB( DB_MASTER );
 	$dbw->immediateBegin();
 
-	println("\tAdding author " . $gma->real_name);
+	println( "\tAdding author " . $gma->real_name );
 
 	$uid = $gma->getUser()->getId();
 	$rev = $pathway->getFirstRevision()->getId();
 	$pid = $pathway->getTitleObject()->getArticleId();
 
-	//Check if user contributed already
-	$dbr =& wfGetDB(DB_SLAVE);
+	// Check if user contributed already
+	$dbr =& wfGetDB( DB_SLAVE );
 
 	$query = "SELECT rev_id FROM revision WHERE rev_page = '$pid' AND rev_user = '$uid'";
 
-	$res = $dbr->query($query);
-	while($row = $dbr->fetchObject( $res )) {
-		println("\t\tSkipping: author already contributed to this pathway");
+	$res = $dbr->query( $query );
+	while ( $row = $dbr->fetchObject( $res ) ) {
+		println( "\t\tSkipping: author already contributed to this pathway" );
 		return;
 	}
 
@@ -116,16 +114,16 @@ function addAuthor($pathway, $gma) {
 		"SELECT rev_page, rev_text_id, rev_comment, $uid, '{$gma->user_name}', rev_timestamp, " .
 		"rev_minor_edit, rev_deleted, rev_len, rev_parent_id " .
 		"FROM revision WHERE rev_id = $rev";
-	$dbw->query($query);
+	$dbw->query( $query );
 	$dbw->immediateCommit();
 }
 
-function addFirstAuthor($pathway, $gma) {
-	$dbw =& wfGetDB(DB_MASTER);
+function addFirstAuthor( $pathway, $gma ) {
+	$dbw =& wfGetDB( DB_MASTER );
 	$dbw->immediateBegin();
 
-	println("\tAdding first author " . $gma->real_name);
-	//Replace user id in first revision
+	println( "\tAdding first author " . $gma->real_name );
+	// Replace user id in first revision
 	$uid = $gma->getUser()->getId();
 	$rev = $pathway->getFirstRevision()->getId();
 
@@ -143,7 +141,7 @@ class GMAuthor {
 	public $real_name;
 	public $user_name;
 
-	function __construct($real_name, $user_name) {
+	function __construct( $real_name, $user_name ) {
 		$this->real_name = $real_name;
 		$this->user_name = $user_name;
 	}
@@ -154,19 +152,19 @@ class GMAuthor {
 	}
 
 	function getUser() {
-		return User::newFromName($this->user_name);
+		return User::newFromName( $this->user_name );
 	}
 
 	function create() {
 		global $pass;
-		$user = User::createNew($this->user_name, array(
+		$user = User::createNew( $this->user_name, [
 			"password" => $pass,
 			"real_name" => $this->real_name
-		));
-		wfRunHooks( 'AddNewAccount', array( $user ) );
+		] );
+		wfRunHooks( 'AddNewAccount', [ $user ] );
 	}
 }
 
-function println($str) {
-	echo($str . "\n");
+function println( $str ) {
+	echo( $str . "\n" );
 }

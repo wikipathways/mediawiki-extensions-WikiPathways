@@ -23,10 +23,8 @@
  */
 namespace WikiPathways;
 
-class PathwayViewer
-{
-	public static function getJsDependencies()
-	{
+class PathwayViewer {
+	public static function getJsDependencies() {
 		global $wgScriptPath;
 
 		$scripts = [
@@ -51,8 +49,7 @@ class PathwayViewer
 		return $scripts;
 	}
 
-	public static function enable( &$parser, $pwId, $imgId )
-	{
+	public static function enable( &$parser, $pwId, $imgId ) {
 		global $wgStylePath, $wpiJavascriptSources,
 		$wpiJavascriptSnippets, $wgRequest, $wgJsMimeType;
 
@@ -66,12 +63,12 @@ class PathwayViewer
 				$wpiJavascriptSources = self::getJsDependencies();
 			}
 
-			$revision = $wgRequest->getval('oldid');
+			$revision = $wgRequest->getval( 'oldid' );
 
-			$pathway = Pathway::newFromTitle($pwId);
+			$pathway = Pathway::newFromTitle( $pwId );
 
-			if ($revision ) {
-				$pathway->setActiveRevision($revision);
+			if ( $revision ) {
+				$pathway->setActiveRevision( $revision );
 			}
 		} catch ( Exception $e ) {
 			return "invalid pathway title: $e";

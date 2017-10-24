@@ -32,9 +32,8 @@ class GpmlHistoryPager extends HistoryPager {
 		$this->pathway = $pathway;
 	}
 
-	private static function historyRow($h, $style) {
-
-		if($h) {
+	private static function historyRow( $h, $style ) {
+		if ( $h ) {
 			$row = "<TR $style>";
 			$row .= "<TD>$h[diff]";
 			$row .= "<TD id=\"historyTable_$h[id]_tag\">$h[id]";
@@ -47,7 +46,6 @@ class GpmlHistoryPager extends HistoryPager {
 			return "";
 		}
 	}
-
 
 	/**
 	 * Create radio buttons for page history
@@ -91,12 +89,12 @@ class GpmlHistoryPager extends HistoryPager {
 			return $first . $second;
 	}
 
-	private function gpmlHistoryLine($pathway, $row, $nr, $counter = '', $cur = false, $firstInList = false) {
+	private function gpmlHistoryLine( $pathway, $row, $nr, $counter = '', $cur = false, $firstInList = false ) {
 		global $wpiScript, $wgLang, $wgUser, $wgTitle;
 
 		$rev = new Revision( $row );
 
-		$user = User::newFromId($rev->getUser());
+		$user = User::newFromId( $rev->getUser() );
 		/* Show bots
 		   if($user->isBot()) {
 		   //Ignore bots
@@ -104,7 +102,7 @@ class GpmlHistoryPager extends HistoryPager {
 		   }
 		*/
 
-		$rev->setTitle( $pathway->getFileTitle(FILETYPE_GPML) );
+		$rev->setTitle( $pathway->getFileTitle( FILETYPE_GPML ) );
 
 		$revUrl = WPI_SCRIPT_URL . '?action=revert&pwTitle=' .
 				$pathway->getTitleObject()->getPartialURL() .
@@ -113,27 +111,26 @@ class GpmlHistoryPager extends HistoryPager {
 		$diff = self::diffButtons( $rev, $firstInList, $counter, $nr );
 
 		$revert = "";
-		if($wgUser->getID() != 0 && $wgTitle && $wgTitle->userCanEdit()) {
+		if ( $wgUser->getID() != 0 && $wgTitle && $wgTitle->userCanEdit() ) {
 			$revert = $cur ? "" : "(<A href=$revUrl>revert</A>), ";
 		}
 
-		$dt = $wgLang->timeanddate( wfTimestamp(TS_MW, $rev->getTimestamp()), true );
+		$dt = $wgLang->timeanddate( wfTimestamp( TS_MW, $rev->getTimestamp() ), true );
 		$oldid = $firstInList ? '' : "oldid=" . $rev->getId();
-		$view = Linker::link($pathway->getTitleObject(), 'view', ['oldid' => $oldid ] );
+		$view = Linker::link( $pathway->getTitleObject(), 'view', [ 'oldid' => $oldid ] );
 
 		$date = $wgLang->timeanddate( $rev->getTimestamp(), true );
 		$user = Linker::userLink( $rev->getUser(), $rev->getUserText() );
 		$descr = $rev->getComment();
-		return array('diff'=>$diff, 'rev'=>$revert, 'view'=>$view, 'date'=>$date, 'user'=>$user, 'descr'=>$descr, 'id'=>$rev->getId());
+		return [ 'diff' => $diff, 'rev' => $revert, 'view' => $view, 'date' => $date, 'user' => $user, 'descr' => $descr, 'id' => $rev->getId() ];
 	}
-
 
 	public function formatRow( $row ) {
 		$latest = $this->mCounter == 1;
 		$firstInList = $this->mCounter == 1;
-		$style = ($this->mCounter <= $this->nrShow) ? '' : 'class="toggleMe"';
+		$style = ( $this->mCounter <= $this->nrShow ) ? '' : 'class="toggleMe"';
 
-		$s = self::historyRow( $this->gpmlHistoryLine($this->pathway, $row, $this->getNumRows(), $this->mCounter++, $latest, $firstInList), $style);
+		$s = self::historyRow( $this->gpmlHistoryLine( $this->pathway, $row, $this->getNumRows(), $this->mCounter++, $latest, $firstInList ), $style );
 
 		$this->mLastRow = $row;
 		return $s;
@@ -145,7 +142,7 @@ class GpmlHistoryPager extends HistoryPager {
 
 		$nr = $this->getNumRows();
 
-		if($nr < 1) {
+		if ( $nr < 1 ) {
 			$table = '';
 		} else {
 			$table = '<form action="' . SITE_URL . '/index.php" method="get">';
@@ -156,9 +153,9 @@ class GpmlHistoryPager extends HistoryPager {
 
 		}
 
-		if($nr >= $this->nrShow) {
+		if ( $nr >= $this->nrShow ) {
 			$expand = "<b>View all...</b>";
-			$collapse = "<b>View last " . ($this->nrShow) . "</b>";
+			$collapse = "<b>View last " . ( $this->nrShow ) . "</b>";
 			$button = "<table><td width='51%'><div onClick='".
 				'doToggle("historyTable", this, "'.$expand.'", "'.$collapse.'")'."' style='cursor:pointer;color:#0000FF'>".
 				"$expand<td width='20%'></table>";

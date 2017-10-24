@@ -17,71 +17,64 @@
  */
 namespace WikiPathways;
 
-class ThumbPathwaysPager extends BasePathwaysPager
-{
+class ThumbPathwaysPager extends BasePathwaysPager {
 
-	function __construct( $species, $tag, $sortOrder )
-	{
-		parent::__construct($species, $tag, $sortOrder);
+	function __construct( $species, $tag, $sortOrder ) {
+		parent::__construct( $species, $tag, $sortOrder );
 
 		$this->mLimit = 10;
 	}
 
-	function getStartBody()
-	{
+	function getStartBody() {
 		return "<div class='infinite-container'>";
 	}
 
-	function getEndBody()
-	{
+	function getEndBody() {
 		return "</div>";
 	}
 
-	function getNavigationBar()
-	{
+	function getNavigationBar() {
 		global $wgLang;
 
 		/* Link to nowhere by default */
 		$link = "<a class='infinite-more-link' href='data:'></a>";
 
 		$queries = $this->getPagingQueries();
-		$opts = array( 'parsemag', 'escapenoentities' );
+		$opts = [ 'parsemag', 'escapenoentities' ];
 
-		if(isset($queries['next']) && $queries['next'] ) {
+		if ( isset( $queries['next'] ) && $queries['next'] ) {
 			$link = $this->getSkin()->makeKnownLinkObj(
 				$this->getTitle(),
-				wfMessage('nextn', $opts, $wgLang->formatNum($this->mLimit))->text(),
-				wfArrayToCGI($queries['next'], $this->getDefaultQuery()), '', '',
+				wfMessage( 'nextn', $opts, $wgLang->formatNum( $this->mLimit ) )->text(),
+				wfArrayToCGI( $queries['next'], $this->getDefaultQuery() ), '', '',
 				"class='infinite-more-link'"
 			);
 		}
 
-		return $link;;
+		return $link;
+;
 	}
 
-	function getTopNavigationBar()
-	{
+	function getTopNavigationBar() {
 		return "";
 	}
 
-	function getBottomNavigationBar()
-	{
+	function getBottomNavigationBar() {
 		return $this->getNavigationBar();
 	}
 
 	/* From getDownloadURL in PathwayPage */
-	function formatRow( $row )
-	{
-		$title = Title::newFromDBkey($this->nsName .":". $row->page_title);
-		$pathway = Pathway::newFromTitle($title);
+	function formatRow( $row ) {
+		$title = Title::newFromDBkey( $this->nsName .":". $row->page_title );
+		$pathway = Pathway::newFromTitle( $title );
 
 		$endRow = "";
 		$row = "";
-		if($this->hasRecentEdit($title) ) {
+		if ( $this->hasRecentEdit( $title ) ) {
 			$row = "<b>";
 			$endRow = "</b>";
 		}
 
-		return $row.$this->getThumb($pathway, $this->formatTags($title)).$endRow;
+		return $row.$this->getThumb( $pathway, $this->formatTags( $title ) ).$endRow;
 	}
 }

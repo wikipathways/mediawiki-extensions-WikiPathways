@@ -21,71 +21,64 @@
  */
 namespace WikiPathways;
 
-class RecentQueryPage extends \QueryPage
-{
+class RecentQueryPage extends \QueryPage {
 	public $requestedSort = '';
 	private $namespace;
 
-	public function __construct( $namespace )
-	{
+	public function __construct( $namespace ) {
 		$this->namespace = $namespace;
 	}
 
-	public function getName()
-	{
+	public function getName() {
 		return "RecentPathwayChanges";
 	}
 
-	public function isExpensive()
-	{
+	public function isExpensive() {
 		// page_counter is not indexed
 		return true;
 	}
 
-	public function isSyndicated()
-	{
+	public function isSyndicated() {
 		return false;
 	}
 
 	/**
 	 * Show a drop down list to select a field for sorting.
 	 */
-	function getPageHeader()
-	{
+	function getPageHeader() {
 		global $wgRequest;
-		$requestedSort = $wgRequest->getVal('sort');
+		$requestedSort = $wgRequest->getVal( 'sort' );
 
 		$self = $this->getTitle();
 
 		// Form tag
-		$out = wfOpenElement('form', [ 'method' => 'post', 'action' => $self->getLocalUrl() ]);
+		$out = wfOpenElement( 'form', [ 'method' => 'post', 'action' => $self->getLocalUrl() ] );
 
 		// Drop-down list
-		$out .= wfElement('label', [ 'for' => 'sort' ], 'Sort by:') . ' ';
-		$out .= wfOpenElement('select', [ 'name' => 'sort' ]);
+		$out .= wfElement( 'label', [ 'for' => 'sort' ], 'Sort by:' ) . ' ';
+		$out .= wfOpenElement( 'select', [ 'name' => 'sort' ] );
 		$fields = [ 'Date','Title','User' ];
 		foreach ( $fields as $field ) {
 			$attribs = [ 'value' => $field ];
-			if ($field == $requestedSort ) {
+			if ( $field == $requestedSort ) {
 				$attribs['selected'] = 'selected';
 			}
-			$out .= wfElement('option', $attribs, $field);
+			$out .= wfElement( 'option', $attribs, $field );
 		}
-		$out .= wfCloseElement('select') . ' ';
+		$out .= wfCloseElement( 'select' ) . ' ';
 
 		// Submit button and form bottom
-		$out .= wfElement('input', [ 'type' => 'submit', 'value' => wfMessage( ('allpagessubmit' )->plain()) ]);
-		$out .= wfCloseElement('form');
+		$out .= wfElement( 'input', [ 'type' => 'submit', 'value' => wfMessage( ( 'allpagessubmit' )->plain() ) ] );
+		$out .= wfCloseElement( 'form' );
 
 		return $out;
 	}
 
-	public function getSQL()
-	{
-		$dbr = wfGetDB(DB_SLAVE);
-		list( $recentchanges, $watchlist ) = $dbr->tableNamesN('recentchanges', 'watchlist');
+	public function getSQL() {
+		$dbr = wfGetDB( DB_SLAVE );
+		list( $recentchanges, $watchlist ) = $dbr->tableNamesN( 'recentchanges', 'watchlist' );
 
-		$forceclause = $dbr->useIndexClause("rc_timestamp");
+		$forceclause = $dbr->useIndexClause( "rc_timestamp" );
 
 		$sql = "SELECT *,
 				'RecentPathwayChanges' as type,
@@ -101,40 +94,38 @@ class RecentQueryPage extends \QueryPage
 		return $sql;
 	}
 
-	public function getOrder()
-	{
+	public function getOrder() {
 		global $wgRequest;
-		$requestedSort = $wgRequest->getVal('sort');
+		$requestedSort = $wgRequest->getVal( 'sort' );
 
-		if ($requestedSort == 'Title' ) {
+		if ( $requestedSort == 'Title' ) {
 			return 'ORDER BY rc_title, rc_timestamp DESC';
-		} elseif ($requestedSort == 'User' ) {
+		} elseif ( $requestedSort == 'User' ) {
 			return 'ORDER BY rc_user_text, rc_timestamp DESC';
 		} else {
 			return 'ORDER BY rc_timestamp DESC';
 		}
 	}
 
-	public function formatResult( $skin, $result )
-	{
+	public function formatResult( $skin, $result ) {
 		global $wgContLang;
 
-		$userPage = Title::makeTitle(NS_USER, $result->rc_user_text);
-		$name = $skin->makeLinkObj($userPage, htmlspecialchars($userPage->getText()));
-		$date = date('d F Y', $result->unix_time);
+		$userPage = Title::makeTitle( NS_USER, $result->rc_user_text );
+		$name = $skin->makeLinkObj( $userPage, htmlspecialchars( $userPage->getText() ) );
+		$date = date( 'd F Y', $result->unix_time );
 		$comment = ( $result->rc_comment ? $result->rc_comment : "no comment" );
 		$titleName = $result->title;
 		try {
-			$pathway = Pathway::newFromTitle($result->title);
-			if (!$pathway->isReadable() ) {
+			$pathway = Pathway::newFromTitle( $result->title );
+			if ( !$pathway->isReadable() ) {
 				// Skip private pathways
 				return null;
 			}
 			$titleName = $pathway->getSpecies().":".$pathway->getName();
 		} catch ( Exception $e ) {
 		}
-		$title = Title::makeTitle($result->namespace, $titleName);
-		$id = Title::makeTitle($result->namespace, $result->title);
+		$title = Title::makeTitle( $result->namespace, $titleName );
+		$id = Title::makeTitle( $result->namespace, $result->title );
 
 		$this->message['hist'] = wfMessage( 'hist', [ 'escape' ] )->text();
 		$histLink = $skin->makeKnownLinkObj(
@@ -148,7 +139,7 @@ class RecentQueryPage extends \QueryPage
 		);
 
 		$this->message['diff'] = wfMessage( 'diff', [ 'escape' ] )->text();
-		if ($result->rc_type > 0 ) {
+		if ( $result->rc_type > 0 ) {
 			// not an edit of an existing page
 			$diffLink = $this->message['diff'];
 		} else {
@@ -158,9 +149,9 @@ class RecentQueryPage extends \QueryPage
 			 . "&pwTitle={$id->getFullText()}'>diff</a>";
 		}
 
-		$text = $wgContLang->convert($result->rc_comment);
+		$text = $wgContLang->convert( $result->rc_comment );
 		$plink = $skin->makeKnownLinkObj(
-			$id, htmlspecialchars($wgContLang->convert($title->getBaseText()))
+			$id, htmlspecialchars( $wgContLang->convert( $title->getBaseText() ) )
 		);
 
 		/* Not link to history for now, later on link to our own pathway history

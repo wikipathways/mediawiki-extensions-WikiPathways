@@ -21,17 +21,17 @@ class Statistics {
 	/*
 	 * Loads javascript required for statistics.
 	 */
-	function loadStatistics(&$parser) {
+	function loadStatistics( &$parser ) {
 		global $wgOut;
 
 		$src = WPI_URL . "/statistics/statistics.js";
 		$parser->mOutput->addHeadItem(
-			"<script src=\"https://www.google.com/jsapi\" type=\"text/javascript\"></script>\n");
+			"<script src=\"https://www.google.com/jsapi\" type=\"text/javascript\"></script>\n" );
 		$parser->mOutput->addHeadItem(
-			"<script src=\"$src\" type=\"text/javascript\"></script>\n");
+			"<script src=\"$src\" type=\"text/javascript\"></script>\n" );
 		$css = WPI_URL . "/statistics/statistics.css";
 		$parser->mOutput->addHeadItem(
-			"<link rel=\"stylesheet\" href=\"$css\" type=\"text/css\"/>");
+			"<link rel=\"stylesheet\" href=\"$css\" type=\"text/css\"/>" );
 
 		return '';
 	}

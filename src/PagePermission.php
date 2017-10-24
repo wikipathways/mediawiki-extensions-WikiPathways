@@ -22,10 +22,10 @@ namespace WikiPathways;
  */
 class PagePermissions {
 	private $pageId;
-	private $permissions = array(); #Array where key is action, value is array of users
+	private $permissions = []; # Array where key is action, value is array of users
 	private $expires;
 
-	public function __construct($pageId) {
+	public function __construct( $pageId ) {
 		$this->pageId = $pageId;
 	}
 
@@ -41,13 +41,13 @@ class PagePermissions {
 	 * Find out if the user can perform the given
 	 * action based on the permissions in this object
 	 */
-	public function userCan($action, $user) {
-		if($user instanceof User) {
+	public function userCan( $action, $user ) {
+		if ( $user instanceof User ) {
 			$user = $user->getId();
 		}
 		$p = $this->permissions[$action];
-		if($p) {
-			return (boolean)$p[$user];
+		if ( $p ) {
+			return (bool)$p[$user];
 		}
 		return false;
 	}
@@ -55,16 +55,16 @@ class PagePermissions {
 	/**
 	 * Permit the user to perform the given action
 	 */
-	public function setUserPermission($user_id, $action) {
+	public function setUserPermission( $user_id, $action ) {
 		$this->permissions[$action][$user_id] = $user_id;
 	}
 
 	/**
 	 * Permit the user to read/write this page
 	 */
-	public function addReadWrite($user_id) {
-		$this->setUserPermission($user_id, 'read');
-		$this->setUserPermission($user_id, 'edit');
+	public function addReadWrite( $user_id ) {
+		$this->setUserPermission( $user_id, 'read' );
+		$this->setUserPermission( $user_id, 'edit' );
 	}
 
 	public function getManageUsers() {
@@ -74,24 +74,24 @@ class PagePermissions {
 	/**
 	 * Permit the user to manage the permissions of this page
 	 */
-	public function addManage($user_id) {
-		$this->setUserPermission($user_id, PermissionManager::$ACTION_MANAGE);
+	public function addManage( $user_id ) {
+		$this->setUserPermission( $user_id, PermissionManager::$ACTION_MANAGE );
 	}
 
 	/**
 	 * Remove all permissions for the given user
 	 */
-	public function clearPermissions($user_id) {
-		foreach($this->permissions as &$a) {
-			unset($a[$user_id]);
+	public function clearPermissions( $user_id ) {
+		foreach ( $this->permissions as &$a ) {
+			unset( $a[$user_id] );
 		}
 	}
 
 	/**
 	 * Forbid the user to perform the given action
 	 */
-	public function removeUserPermission($user_id, $action) {
-		unset($this->permissions[$action][$user_id]);
+	public function removeUserPermission( $user_id, $action ) {
+		unset( $this->permissions[$action][$user_id] );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class PagePermissions {
 	 * The permissions will be cleared automatically
 	 * after the given date.
 	 */
-	public function setExpires($timestamp) {
+	public function setExpires( $timestamp ) {
 		$this->expires = $timestamp;
 	}
 
@@ -111,7 +111,7 @@ class PagePermissions {
 	 * Check if the permissions are expired
 	 */
 	public function isExpired() {
-		return $this->expires && ((float)$this->expires - (float)wfTimestamp(TS_MW)) <= 0;
+		return $this->expires && ( (float)$this->expires - (float)wfTimestamp( TS_MW ) ) <= 0;
 	}
 
 	/**
@@ -121,8 +121,8 @@ class PagePermissions {
 	 */
 	public function isEmpty() {
 		$empty = true;
-		foreach($this->permissions as &$a) {
-			if(count($a) > 0) {
+		foreach ( $this->permissions as &$a ) {
+			if ( count( $a ) > 0 ) {
 				$empty = false;
 				break;
 			}

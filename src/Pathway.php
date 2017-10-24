@@ -945,7 +945,8 @@ class Pathway {
 		$rev = Revision::newFromId($oldId);
 		$gpml = $rev->getText();
 		if(self::isDeletedMark($gpml)) {
-			throw new Exception("You are trying to revert to a deleted version of the pathway. Please choose another version to revert to.");
+			throw new Exception( "You are trying to revert to a deleted version of the pathway. "
+								 . "Please choose another version to revert to." );
 		}
 		if($gpml) {
 			$usr = $wgUser->getSkin()->userLink($wgUser->getId(), $wgUser->getName());
@@ -972,7 +973,7 @@ class Pathway {
 			$deprev = $this->getMetaDataCache()->getValue(MetaDataCache::$FIELD_DELETED);
 			if( $deprev ) {
 				$rev = $this->getActiveRevision();
-				if( $rev == 0 || $rev == $deprev ) {
+				if( $rev == 0 || $rev == $deprev->getText() ) {
 					return true;
 				}
 			}
@@ -1175,7 +1176,6 @@ class Pathway {
 		$basePath = WPI_SCRIPT_PATH;
 		$maxMemoryM = intval($wgMaxShellMemory / 1024); //Max script memory on java program in megabytes
 		$cmd = "java -Xmx{$maxMemoryM}M -jar $basePath/bin/pathvisio_core.jar \"$gpmlFile\" \"$outFile\" 2>&1";
-		var_dump($cmd);exit;
 		wfDebug("CONVERTER: $cmd\n");
 		$msg = wfJavaExec($cmd, $status);
 

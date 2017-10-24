@@ -26,19 +26,19 @@ class PathwayHistory {
 	public static function history( $input, $argv, $parser ) {
 		$parser->disableCache();
 		try {
-			$pathway = Pathway::newFromTitle($parser->mTitle);
-			return self::getHistory($pathway);
-		} catch(MWException $e) {
+			$pathway = Pathway::newFromTitle( $parser->mTitle );
+			return self::getHistory( $pathway );
+		} catch ( MWException $e ) {
 			return "Error: $e";
 		}
 	}
 
-	static function getHistory($pathway) {
+	static function getHistory( $pathway ) {
 		global $wgUser, $wpiScriptURL;
 
 		$gpmlTitle = $pathway->getTitleObject();
-		$gpmlArticle = new Article($gpmlTitle);
-		$hist = new HistoryPager($gpmlArticle);
+		$gpmlArticle = new Article( $gpmlTitle );
+		$hist = new HistoryPager( $gpmlArticle );
 
 		$pager = new GpmlHistoryPager( $pathway, $hist );
 
@@ -49,16 +49,16 @@ class PathwayHistory {
 	/**
 	 * Generates dynamic display of radio buttons for selecting versions to compare
 	 */
-	function diffButtons( $rev, $firstInList, $counter, $linesonpage) {
-		if( $linesonpage > 1) {
-			$radio = array(
+	function diffButtons( $rev, $firstInList, $counter, $linesonpage ) {
+		if ( $linesonpage > 1 ) {
+			$radio = [
 				'type'  => 'radio',
 				'value' => $rev->getId(),
 				# do we really need to flood this on every item?
 				#                               'title' => wfMsgHtml( 'selectolderversionfordiff' )
-			);
+			];
 
-			if( !$rev->userCan( Revision::DELETED_TEXT ) ) {
+			if ( !$rev->userCan( Revision::DELETED_TEXT ) ) {
 				$radio['disabled'] = 'disabled';
 			}
 
@@ -66,26 +66,26 @@ class PathwayHistory {
 			if ( $firstInList ) {
 				$first = wfElement( 'input', array_merge(
 					$radio,
-					array(
+					[
 						'style' => 'visibility:hidden',
-						'name'  => 'old' ) ) );
-				$checkmark = array( 'checked' => 'checked' );
+						'name'  => 'old' ] ) );
+				$checkmark = [ 'checked' => 'checked' ];
 			} else {
-				if( $counter == 2 ) {
-					$checkmark = array( 'checked' => 'checked' );
+				if ( $counter == 2 ) {
+					$checkmark = [ 'checked' => 'checked' ];
 				} else {
-					$checkmark = array();
+					$checkmark = [];
 				}
 				$first = wfElement( 'input', array_merge(
 					$radio,
 					$checkmark,
-					array( 'name'  => 'old' ) ) );
-				$checkmark = array();
+					[ 'name'  => 'old' ] ) );
+				$checkmark = [];
 			}
 			$second = wfElement( 'input', array_merge(
 				$radio,
 				$checkmark,
-				array( 'name'  => 'new' ) ) );
+				[ 'name'  => 'new' ] ) );
 			return $first . $second;
 		} else {
 			return '';

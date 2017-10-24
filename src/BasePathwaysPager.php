@@ -20,8 +20,7 @@
  */
 namespace WikiPathways;
 
-abstract class BasePathwaysPager extends \AlphabeticPager
-{
+abstract class BasePathwaysPager extends \AlphabeticPager {
 	protected $species;
 	protected $tag;
 	protected $sortOrder;
@@ -32,87 +31,79 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 	const MAX_IMG_SIZE = 20480;
 	const MAX_IMG_WIDTH = 180;
 
-	public static function thumbToData( $thumb )
-	{
+	public static function thumbToData( $thumb ) {
 		$data = "";
-		$suffix = $thumb->thumbName([ "width" => self::MAX_IMG_WIDTH ]);
-		$thumbnail = $thumb->getThumbPath($suffix);
+		$suffix = $thumb->thumbName( [ "width" => self::MAX_IMG_WIDTH ] );
+		$thumbnail = $thumb->getThumbPath( $suffix );
 
-		if ($thumb->isLocal() && file_exists($thumbnail)
-			&& filesize($thumbnail) < self::MAX_IMG_SIZE
+		if ( $thumb->isLocal() && file_exists( $thumbnail )
+			&& filesize( $thumbnail ) < self::MAX_IMG_SIZE
 		) {
-			$c = file_get_contents($thumbnail);
+			$c = file_get_contents( $thumbnail );
 			list( $thumbExt, $thumbMime )
-			= $thumb->handler->getThumbType($thumb->getExtension(), $thumb->getMimeType());
-			return "data:" . $thumbMime . ";base64," . base64_encode($c);
+			= $thumb->handler->getThumbType( $thumb->getExtension(), $thumb->getMimeType() );
+			return "data:" . $thumbMime . ";base64," . base64_encode( $c );
 		}
-		return $thumb->getThumbUrl($suffix);
+		return $thumb->getThumbUrl( $suffix );
 	}
 
-	public static function imgToData( $img )
-	{
+	public static function imgToData( $img ) {
 		$data = "";
 		$path = $img->getPath();
 
-		if ($img->isLocal() && file_exists($path)
-			&& filesize($path) < self::MAX_IMG_SIZE
+		if ( $img->isLocal() && file_exists( $path )
+			&& filesize( $path ) < self::MAX_IMG_SIZE
 		) {
-			$c = file_get_contents($path);
-			return "data:" . $img->getMimeType() . ";base64," . base64_encode($c);
+			$c = file_get_contents( $path );
+			return "data:" . $img->getMimeType() . ";base64," . base64_encode( $c );
 		}
-		return $thumb->getThumbUrl($suffix);
+		return $thumb->getThumbUrl( $suffix );
 	}
 
-	public static function hasRecentEdit( $title )
-	{
+	public static function hasRecentEdit( $title ) {
 		global $wgPathwayRecentSinceDays;
-		$article = new Article($title);
+		$article = new Article( $title );
 
-		$ts = wfTimeStamp(TS_UNIX, $article->getTimestamp());
-		$prev = date_create("now");
-		$prev->modify("-$wgPathwayRecentSinceDays days");
+		$ts = wfTimeStamp( TS_UNIX, $article->getTimestamp() );
+		$prev = date_create( "now" );
+		$prev->modify( "-$wgPathwayRecentSinceDays days" );
 		/* @ indicates we have a unix timestmp */
-		$date = date_create("@$ts");
+		$date = date_create( "@$ts" );
 
 		return $date > $prev;
 	}
 
-	public function getOffset()
-	{
-		return $this->getOffset()->getText('offset');
+	public function getOffset() {
+		return $this->getOffset()->getText( 'offset' );
 	}
 
-	public function getLimit()
-	{
+	public function getLimit() {
 		$result = $this->getOffset()->getLimitOffset();
 		return $result[0];
 	}
 
-	public function isBackwards()
-	{
-		return ( $this->getOffset()->getVal('dir') == 'prev' );
+	public function isBackwards() {
+		return ( $this->getOffset()->getVal( 'dir' ) == 'prev' );
 	}
 
-	public function getOrder()
-	{
-		return $this->getOffset()->getVal('order');
+	public function getOrder() {
+		return $this->getOffset()->getVal( 'order' );
 	}
 
-	public function __construct( $species = "---", $tag = "---", $sortOrder = 0 )
-	{
+	public function __construct( $species = "---", $tag = "---", $sortOrder = 0 ) {
 		global $wgCanonicalNamespaceNames;
 
-		if (! isset($wgCanonicalNamespaceNames[ $this->ns ]) ) {
-			throw new MWException("Invalid namespace {$this->ns}");
+		if ( ! isset( $wgCanonicalNamespaceNames[ $this->ns ] ) ) {
+			throw new MWException( "Invalid namespace {$this->ns}" );
 		}
 		$this->nsName = $wgCanonicalNamespaceNames[ $this->ns ];
 		$this->species = $species;
 		$this->sortOrder = $sortOrder;
-		if ($tag !== "---" ) {
+		if ( $tag !== "---" ) {
 			$this->tag = $tag;
 		} else {
 			$label = CurationTag::getUserVisibleTagNames();
-			$this->tag = $label[ wfMesage('browsepathways-all-tags')->plain() ];
+			$this->tag = $label[ wfMesage( 'browsepathways-all-tags' )->plain() ];
 		}
 
 		// Follwing bit copy-pasta from Pager's IndexPager with some bits replace
@@ -125,37 +116,36 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 		$this->mOffset = $this->getOffset();
 
 		// Use consistent behavior for the limit options
-		$this->mDefaultLimit = intval($wgUser->getOption('rclimit'));
+		$this->mDefaultLimit = intval( $wgUser->getOption( 'rclimit' ) );
 		$this->mLimit = $this->getLimit();
 
 		$this->mIsBackwards = $this->isBackwards();
-		$this->mDb = wfGetDB(DB_SLAVE);
+		$this->mDb = wfGetDB( DB_SLAVE );
 
 		$index = $this->getIndexField();
 		$order = $this->getOrder();
-		if (is_array($index) && isset($index[$order]) ) {
+		if ( is_array( $index ) && isset( $index[$order] ) ) {
 			$this->mOrderType = $order;
 			$this->mIndexField = $index[$order];
-		} elseif (is_array($index) ) {
+		} elseif ( is_array( $index ) ) {
 			// First element is the default
-			reset($index);
-			list( $this->mOrderType, $this->mIndexField ) = each($index);
+			reset( $index );
+			list( $this->mOrderType, $this->mIndexField ) = each( $index );
 		} else {
 			// $index is not an array
 			$this->mOrderType = null;
 			$this->mIndexField = $index;
 		}
 
-		if (!isset($this->mDefaultDirection) ) {
+		if ( !isset( $this->mDefaultDirection ) ) {
 			$dir = $this->getDefaultDirections();
-			$this->mDefaultDirection = is_array($dir)
+			$this->mDefaultDirection = is_array( $dir )
 			? $dir[$this->mOrderType]
 			: $dir;
 		}
 	}
 
-	public function getQueryInfo()
-	{
+	public function getQueryInfo() {
 		$q = [
 		'options' => [ 'DISTINCT' ],
 		'tables' => [ 'page', 'tag as t0', 'tag as t1' ],
@@ -171,8 +161,8 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 		'tag as t1' => [ 'JOIN', 't1.page_id = page.page_id' ],
 		]
 		];
-		if ($this->species !== '---' ) {
-			$species = preg_replace("/_/", " ", $this->species);
+		if ( $this->species !== '---' ) {
+			$species = preg_replace( "/_/", " ", $this->species );
 			$q['tables'][] = 'tag as t2';
 			$q['join_conds']['tag as t2'] = [ 'JOIN', 't2.page_id = page.page_id' ];
 			$q['conds']['t2.tag_text'] = $species;
@@ -181,25 +171,21 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 		return $q;
 	}
 
-	public function getIndexField()
-	{
+	public function getIndexField() {
 		return 't1.tag_text';
 		// This should look at $this->sortOrder for the field to sort on.
 	}
 
-	public function getTopNavigationBar()
-	{
+	public function getTopNavigationBar() {
 		return $this->getNavigationBar();
 	}
 
-	public function getBottomNavigationBar()
-	{
+	public function getBottomNavigationBar() {
 		return $this->getNavigationBar();
 	}
 
-	public function getGPMLlink( $pathway )
-	{
-		if ($pathway->getActiveRevision() ) {
+	public function getGPMLlink( $pathway ) {
+		if ( $pathway->getActiveRevision() ) {
 			$oldid = "&oldid={$pathway->getActiveRevision()}";
 		}
 		return XML::Element(
@@ -211,12 +197,11 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 		);
 	}
 
-	public function getThumb( $pathway, $icons, $boxwidth = self::MAX_IMG_WIDTH, $withText = true )
-	{
+	public function getThumb( $pathway, $icons, $boxwidth = self::MAX_IMG_WIDTH, $withText = true ) {
 		global $wgContLang;
 
 		$label = $pathway->name() . '<br/>';
-		if ($this->species === '---' ) {
+		if ( $this->species === '---' ) {
 			$label .= "(" . $pathway->species() . ")<br/>";
 		}
 		$label .= $icons;
@@ -235,7 +220,7 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 		$link = "";
 		$img = $pathway->getImage();
 
-		if (!$img->exists() ) {
+		if ( !$img->exists() ) {
 			$s .= "Image does not exist";
 		} else {
 			$imgURL = $img->getURL();
@@ -246,25 +231,25 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 			$width  = $img->getWidth();
 			$height = $img->getHeight();
 
-			$thumb = $img->getThumbnail($boxwidth, $boxheight);
-			if ($thumb ) {
-				$thumbUrl = $this->thumbToData($img);
+			$thumb = $img->getThumbnail( $boxwidth, $boxheight );
+			if ( $thumb ) {
+				$thumbUrl = $this->thumbToData( $img );
 				$boxwidth = $thumb->width;
 				$boxheight = $thumb->height;
 			} else {
 				$error = $img->getLastError();
 			}
 
-			if ($thumbUrl == '' ) {
+			if ( $thumbUrl == '' ) {
 				// Couldn't generate thumbnail? Scale the image client-side.
 				$thumbUrl = $img->getViewURL();
-				if ($boxheight == -1 ) {
+				if ( $boxheight == -1 ) {
 					// Approximate...
-					$boxheight = intval($height * $boxwidth / $width);
+					$boxheight = intval( $height * $boxwidth / $width );
 				}
 			}
-			if ($error ) {
-				$s .= htmlspecialchars($error);
+			if ( $error ) {
+				$s .= htmlspecialchars( $error );
 			} else {
 				$s .= '<img src="'.$thumbUrl.'" '.
 				'width="'.$boxwidth.'" height="'.$boxheight.'" ' .
@@ -273,24 +258,23 @@ abstract class BasePathwaysPager extends \AlphabeticPager
 			}
 		}
 		$s .= '</a>';
-		if ($withText ) {
+		if ( $withText ) {
 			$s .= $link.'<div class="thumbcaption"'.$textalign.'>'.$label."</div>";
 		}
 		$s .= "</div></div>";
 
-		return str_replace("\n", ' ', $s);
+		return str_replace( "\n", ' ', $s );
 	}
 
-	public function formatTags( $title )
-	{
-		$tags = CurationTag::getCurationImagesForTitle($title);
-		ksort($tags);
+	public function formatTags( $title ) {
+		$tags = CurationTag::getCurationImagesForTitle( $title );
+		ksort( $tags );
 		$tagLabel = "<span class='tag-icons'>";
 		foreach ( $tags as $label => $attr ) {
-			$img = wfLocalFile($attr['img']);
-			$imgLink = Xml::element('img', [ 'src' => $this->imgToData($img), "title" => $label ]);
-			$href = $this->getOffset()->appendQuery([ "tag" => $attr['tag'] ]);
-			$tagLabel .= Xml::element('a', [ 'href' => $href ], null) . $imgLink . "</a>";
+			$img = wfLocalFile( $attr['img'] );
+			$imgLink = Xml::element( 'img', [ 'src' => $this->imgToData( $img ), "title" => $label ] );
+			$href = $this->getOffset()->appendQuery( [ "tag" => $attr['tag'] ] );
+			$tagLabel .= Xml::element( 'a', [ 'href' => $href ], null ) . $imgLink . "</a>";
 		}
 		$tagLabel .= "</span>";
 		return $tagLabel;

@@ -10,7 +10,7 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	exit();
 }
 
-if(count($_SERVER['argv']) < 3) {
+if ( count( $_SERVER['argv'] ) < 3 ) {
 	$help = <<<HELP
 Wrong number of arguments, 2 or 3 expected. Usage:
 	php SandboxEdit.php user pass [url]
@@ -19,7 +19,7 @@ Wrong number of arguments, 2 or 3 expected. Usage:
 	- pass: The password of a WikiPathways bot account
 	- url: The url to the webservice WSDL. Defaults to http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl
 HELP;
-	exit($help);
+	exit( $help );
 }
 
 $sandbox = 'WP4';
@@ -27,31 +27,32 @@ $sandbox = 'WP4';
 $user = $_SERVER['argv'][1];
 $pass = $_SERVER['argv'][2];
 $url = 'http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl';
-if(count($_SERVER['argv']) > 3) $url = $_SERVER['argv'][3];
+if ( count( $_SERVER['argv'] ) > 3 ) { $url = $_SERVER['argv'][3];
+}
 
-$client = new SoapClient($url);
+$client = new SoapClient( $url );
 
-echo("Logging in as $user\n");
-$key = $client->login(array('name' => $user, 'pass' => $pass))->auth;
+echo( "Logging in as $user\n" );
+$key = $client->login( [ 'name' => $user, 'pass' => $pass ] )->auth;
 
-$pw = $client->getPathway(array('pwId' => $sandbox, 'revision' => 0))->pathway;
+$pw = $client->getPathway( [ 'pwId' => $sandbox, 'revision' => 0 ] )->pathway;
 $rev = $pw->revision;
 $gpml = $pw->gpml;
 
-$ts = date('YmdHis');
+$ts = date( 'YmdHis' );
 $comment = "<Comment Source=\"BotTest\">$ts</Comment>";
 
-if(preg_match('/Source="BotTest"/', $gpml)) {
-	//Update timestamp
-	$gpml = preg_replace('/<Comment Source="BotTest">[0-9]{14}/s',
-		'<Comment Source="BotTest">' . $ts, $gpml);
+if ( preg_match( '/Source="BotTest"/', $gpml ) ) {
+	// Update timestamp
+	$gpml = preg_replace( '/<Comment Source="BotTest">[0-9]{14}/s',
+		'<Comment Source="BotTest">' . $ts, $gpml );
 } else {
-	$gpml = preg_replace('/(<Pathway (?U).+)(<(Graphics|BiopaxRef))/s',
-		"$1$comment\n$2", $gpml);
+	$gpml = preg_replace( '/(<Pathway (?U).+)(<(Graphics|BiopaxRef))/s',
+		"$1$comment\n$2", $gpml );
 }
 
-$client->updatePathway(array(
+$client->updatePathway( [
 	'pwId' => $sandbox, 'description' => 'Bot edit test',
 	'revision' => $rev, 'gpml' => $gpml,
-	'auth' => array('key' => $key, 'user' => $user)
-));
+	'auth' => [ 'key' => $key, 'user' => $user ]
+] );

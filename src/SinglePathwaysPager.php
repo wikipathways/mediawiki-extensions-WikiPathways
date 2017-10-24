@@ -17,38 +17,31 @@
  */
 namespace WikiPathways;
 
-class SinglePathwaysPager extends BasePathwaysPager
-{
-	function __construct( $species, $tag, $sortOrder )
-	{
-		parent::__construct($species, $tag, $sortOrder);
+class SinglePathwaysPager extends BasePathwaysPager {
+	function __construct( $species, $tag, $sortOrder ) {
+		parent::__construct( $species, $tag, $sortOrder );
 
-		$this->mLimitsShown = array( 5 );
+		$this->mLimitsShown = [ 5 ];
 		$this->mDefaultLimit = 5;
 		$this->mLimit = 5;
 	}
 
-	function getStartBody()
-	{
+	function getStartBody() {
 		return "<div id='singleMode'>";
 	}
 
-	function getEndBody()
-	{
+	function getEndBody() {
 		return "</div><div id='singleModeSlider' style='clear: both'></div>";
 	}
 
-
-	function getNavigationBar()
-	{
+	function getNavigationBar() {
 		/* Nothing */
 	}
 
-	function formatRow( $row )
-	{
-		$title = Title::newFromDBkey($this->nsName .":". $row->page_title);
-		$pathway = Pathway::newFromTitle($title);
+	function formatRow( $row ) {
+		$title = Title::newFromDBkey( $this->nsName .":". $row->page_title );
+		$pathway = Pathway::newFromTitle( $title );
 
-		return $this->getThumb($pathway, $this->formatTags($title), 100, false);
+		return $this->getThumb( $pathway, $this->formatTags( $title ), 100, false );
 	}
 }

@@ -1,0 +1,1279 @@
+Manifest-Version: 1.0
+Export-Package: org.pathvisio.core,org.pathvisio.core.biopax,org.pathv
+ isio.core.data,org.pathvisio.core.debug,org.pathvisio.core.gpmldiff,o
+ rg.pathvisio.core.gui,org.pathvisio.core.model,org.pathvisio.core.pre
+ ferences,org.pathvisio.core.util,org.pathvisio.core.view
+Class-Path: lib/com.springsource.org.jdom-1.1.0.jar lib/derbyclient.ja
+ r lib/javax.xml.rpc_1.1.0.v201005080400.jar lib/javax.xml.soap_1.3.0.
+ v201105210645.jar lib/javax.xml_1.3.4.v201005080400.jar lib/org.apach
+ e.batik.bridge_1.7.0.v201011041433.jar lib/org.apache.batik.css_1.7.0
+ .v201011041433.jar lib/org.apache.batik.dom.svg_1.7.0.v201011041433.j
+ ar lib/org.apache.batik.dom_1.7.0.v201011041433.jar lib/org.apache.ba
+ tik.ext.awt_1.7.0.v201011041433.jar lib/org.apache.batik.extension_1.
+ 7.0.v201011041433.jar lib/org.apache.batik.parser_1.7.0.v201011041433
+ .jar lib/org.apache.batik.svggen_1.7.0.v201011041433.jar lib/org.apac
+ he.batik.transcoder_1.7.0.v201011041433.jar lib/org.apache.batik.util
+ .gui_1.7.0.v200903091627.jar lib/org.apache.batik.util_1.7.0.v2010110
+ 41433.jar lib/org.apache.batik.xml_1.7.0.v201011041433.jar lib/org.ap
+ ache.xalan_2.7.1.v201005080400.jar lib/org.apache.xerces_2.9.0.v20110
+ 1211617.jar lib/org.apache.xml.resolver_1.2.0.v201005080400.jar lib/o
+ rg.apache.xml.serializer_2.7.1.v201005080400.jar lib/org.bridgedb.bio
+ .jar lib/org.bridgedb.jar lib/org.bridgedb.rdb.jar lib/org.pathvisio.
+ jgoodies.forms.jar lib/org.pathvisio.pdftranscoder.jar lib/org.pathvi
+ sio.ws.commons.util.jar lib/org.pathvisio.xmlrpc.client.jar lib/org.p
+ athvisio.xmlrpc.common.jar lib/org.w3c.css.sac_1.3.1.v200903091627.ja
+ r lib/org.w3c.dom.events_3.0.0.draft20060413_v201105210656.jar lib/or
+ g.w3c.dom.smil_1.0.1.v200903091627.jar lib/org.w3c.dom.svg_1.1.0.v201
+ 011041433.jar Biopax3GPML.jar
+Bundle-Name: PathVisio core module
+Created-By: 19.1-b02 (Sun Microsystems Inc.)
+Bundle-Copyright: 2006-2013 BiGCaT Bioinformatics
+Require-Bundle: derby;bundle-version="10.4.2000000",com.springsource.o
+ rg.jdom;bundle-version="1.1.0",org.pathvisio.pdftranscoder;bundle-ver
+ sion="1.7.0",org.bridgedb;bundle-version="1.1.0",org.bridgedb.bio;bun
+ dle-version="1.1.0",org.bridgedb.rdb;bundle-version="1.1.0",org.apach
+ e.batik.bridge;bundle-version="1.7.0",org.apache.batik.css;bundle-ver
+ sion="1.7.0",org.apache.batik.dom;bundle-version="1.7.0",org.apache.b
+ atik.dom.svg;bundle-version="1.7.0",org.apache.batik.ext.awt;bundle-v
+ ersion="1.7.0",org.apache.batik.extension;bundle-version="1.7.0",org.
+ apache.batik.parser;bundle-version="1.7.0",org.apache.batik.svggen;bu
+ ndle-version="1.7.0",org.apache.batik.transcoder;bundle-version="1.7.
+ 0",org.apache.batik.util;bundle-version="1.7.0",org.apache.batik.util
+ .gui;bundle-version="1.7.0",org.apache.batik.xml;bundle-version="1.7.
+ 0",javax.xml;bundle-version="1.3.4",org.apache.xml.resolver;bundle-ve
+ rsion="1.2.0",org.apache.xml.serializer;bundle-version="2.7.1",org.w3
+ c.css.sac;bundle-version="1.3.1",org.w3c.dom.events;bundle-version="3
+ .0.0",org.w3c.dom.smil;bundle-version="1.0.1",org.w3c.dom.svg;bundle-
+ version="1.1.0",org.junit;bundle-version="4.10.0";resolution:=optiona
+ l
+Ant-Version: Apache Ant 1.7.0
+Bundle-Vendor: PathVisio developers
+Bundle-Version: 3.0.0
+Bundle-ManifestVersion: 2
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Bundle-Description: This module is the core module of the PathVisio ap
+ plication. It contains the data model and basic preferences of the ap
+ plication.
+Bundle-SymbolicName: org.pathvisio.core
+Import-Package: org.osgi.framework;version="1.5.0"
+Bundle-DocURL: http://www.pathvisio.org
+Main-Class: org.pathvisio.core.util.Converter
+
+Name: newligandsquare.gif
+SHA1-Digest: /HPXKOe+N9stRtoTHmTXC+8tzFA=
+
+Name: org/pathvisio/core/model/CurvedConnectorShape$CurvedSegment.clas
+ s
+SHA1-Digest: 14qp5N1VKOpWJUmWcel73E+MwYc=
+
+Name: org/pathvisio/core/view/VPathwayWrapper.class
+SHA1-Digest: tYnf4spSjRl/49TvsuHQC5Ejno8=
+
+Name: org/pathvisio/core/model/ConnectorRestrictions.class
+SHA1-Digest: dAfqNzFjY2/vEQTUBw0aHeYh39U=
+
+Name: botresult.css
+SHA1-Digest: 9+ltkI4yex7E51e3GNGJcJWP3n4=
+
+Name: org/pathvisio/core/view/Adjustable.class
+SHA1-Digest: FYjRppnIa3DXujD6KSy/0ziVtvc=
+
+Name: org/pathvisio/core/debug/EventDispatchThreadOnly.class
+SHA1-Digest: h9NgokvOjLxmxH29FyJRwEoOrXg=
+
+Name: org/pathvisio/core/view/VPathway$ZComparator.class
+SHA1-Digest: NyKqfyfexmMt+2lf02JrLpzpxt4=
+
+Name: org/pathvisio/core/util/JarUtils.class
+SHA1-Digest: DlvAeUgNf1/sOQEhajm1QpMUmq8=
+
+Name: org/pathvisio/core/model/EUGeneExporter.class
+SHA1-Digest: ZQvncWRoPx2WtdQXh6497q/NPGA=
+
+Name: org/pathvisio/core/model/PathwayElement$1.class
+SHA1-Digest: sbhS+YjBfuXPeCswYs3UdoEobuc=
+
+Name: org/pathvisio/core/gpmldiff/GlassPane.class
+SHA1-Digest: 2e+biUG+XfaJfIay5hDDOWYyVtk=
+
+Name: copy.gif
+SHA1-Digest: gskJh+PyefCy230HydhE30z+g2w=
+
+Name: org/pathvisio/core/util/ProgressKeeper$ProgressEvent.class
+SHA1-Digest: dbOCxuq5r/0OhI99whoNuzXWBRY=
+
+Name: org/pathvisio/core/model/ConnectorShapeFactory.class
+SHA1-Digest: k72bz0EQ4ArZO7TUS7rvVkpJlKg=
+
+Name: org/pathvisio/core/view/Citation.class
+SHA1-Digest: FjQxJ6ntYHbLM4X3JZZ0BZpaXM0=
+
+Name: org/pathvisio/core/preferences/PreferenceEvent.class
+SHA1-Digest: h1mm0t/zJshyhCikp6SzNdGq9BM=
+
+Name: org/pathvisio/core/view/VPathwayEvent$VPathwayEventType.class
+SHA1-Digest: x1xifASpwAZscNlVWHQTsGG/hUs=
+
+Name: org/pathvisio/core/gpmldiff/GpmlDiff.class
+SHA1-Digest: FyRh62OvXSqc8S/QLg+FYHd6Xcw=
+
+Name: up.gif
+SHA1-Digest: rqbNW3nRFowBFZHlyTlgi3vj/ow=
+
+Name: org/pathvisio/core/gpmldiff/BasicCost.class
+SHA1-Digest: krWo2w4bIeQAJ4j4bcvgD8vmfys=
+
+Name: newmembrane region.gif
+SHA1-Digest: ujJxpcSp9QcMt4s8Jozned0ZSqM=
+
+Name: org/pathvisio/core/view/InfoBox.class
+SHA1-Digest: PD3g1l1RYvb3xBxsY1ta1OFW1RM=
+
+Name: org/pathvisio/core/Engine$1.class
+SHA1-Digest: WBW8UYUZy+qT0y5OK/BBjlvBJJ4=
+
+Name: org/pathvisio/core/model/StaticPropertyType.class
+SHA1-Digest: DXIKS9I7tbEqlKOKoHcR4h/nJt8=
+
+Name: org/pathvisio/core/view/ViewActions$1.class
+SHA1-Digest: LlEQUnc1SXJcZTSx/l2zpZwBBNQ=
+
+Name: org/pathvisio/core/model/GpmlFormat2013a$1.class
+SHA1-Digest: T/n+eAlTeQ4JJgl95V7pZQNY6HQ=
+
+Name: org/pathvisio/core/model/GpmlFormat200X.class
+SHA1-Digest: VGZ2DFJjgndKxuZsbJeVIfSpezY=
+
+Name: org/pathvisio/core/biopax/BiopaxNode.class
+SHA1-Digest: YwrbJQWbEhoQ5AV4JlIy0t09thQ=
+
+Name: org/pathvisio/core/view/Handle.class
+SHA1-Digest: w2FnHyyEtEPMRae9DthsLegGDiw=
+
+Name: org/pathvisio/core/view/State.class
+SHA1-Digest: bf2YD6AA2Y/V8D+0Q3ukAyhJPTY=
+
+Name: org/pathvisio/core/view/VPathwayElement.class
+SHA1-Digest: 3UOVkIZnhy89pONe5TZCKKEXnoo=
+
+Name: org/pathvisio/core/view/ViewActions$CopyAction.class
+SHA1-Digest: 0Osx7z+f65bJB937IUpQcXP40Cg=
+
+Name: GPML2008a.xsd
+SHA1-Digest: ACFV0+CXENyXGx28UYkeqF+XP3A=
+
+Name: newmim-interaction.gif
+SHA1-Digest: y/4nZgBtLn8FPaaUkdNUt5JBw4M=
+
+Name: bottom.gif
+SHA1-Digest: Ngtenj6EedAgklxTo1i1WgE6rf0=
+
+Name: aligntop.gif
+SHA1-Digest: 2AA6cuVXARC6yBUbEMwN2UFyI7w=
+
+Name: org/pathvisio/core/view/Legend.class
+SHA1-Digest: Huhvk520g0Mh6NCvPJ7ycUFnahU=
+
+Name: org/pathvisio/core/gpmldiff/PanelOutputter$ModData.class
+SHA1-Digest: GHKajdR7HJslEKh6q/dJrQVuMew=
+
+Name: org/pathvisio/core/gpmldiff/PwyDoc$MaxScoreComparator.class
+SHA1-Digest: jSF5chBVS6G5b8TmynBvlNjW6cw=
+
+Name: org/pathvisio/core/debug/WorkerThreadOnly.class
+SHA1-Digest: tBKvqbD2kRVThi5EAIhUyM+qpdA=
+
+Name: org/pathvisio/core/view/LinkAnchor.class
+SHA1-Digest: 9QGOLogSUryxtIY3A1M7BBYhmt4=
+
+Name: newdashedline.gif
+SHA1-Digest: pHqUrIE0FetGkfoEH7UleHk4TUs=
+
+Name: org/pathvisio/core/view/Handle$Style.class
+SHA1-Digest: ECMRiOT8M9jseR95jzAsxBp9wig=
+
+Name: org/pathvisio/core/gpmldiff/PatchMain.class
+SHA1-Digest: 7i5mW+6pSr6cAQa1z58CmsH1vis=
+
+Name: org/pathvisio/core/model/DataNodeListExporter.class
+SHA1-Digest: 8RWif6zdHQ+deUNRsaXEEuBDyNQ=
+
+Name: org/pathvisio/core/util/FileUtils.class
+SHA1-Digest: JmvDjB1lZBpmeIhfR5LOo4FBD/Y=
+
+Name: org/pathvisio/core/model/ConnectorShape.class
+SHA1-Digest: TTQWaw+GbETZrTxVYU6vdvMF6MM=
+
+Name: GPML2013a.xsd
+SHA1-Digest: /sqcWvZ5JtYS0juRupu3pLTm+4s=
+
+Name: org/pathvisio/core/debug/DebugList.class
+SHA1-Digest: bbXeYqUj/762GYDpC9UqzZu+GcM=
+
+Name: org/pathvisio/core/view/ViewActions$AddState.class
+SHA1-Digest: IC4q699h2cg1xUfcOm58QetvlXY=
+
+Name: org/pathvisio/core/gui/ToolTipProvider.class
+SHA1-Digest: w8iIGtGD1WEbUrL/ST/TtOOjbLo=
+
+Name: org/pathvisio/core/view/KeyEvent.class
+SHA1-Digest: 2U70OrqUoO+OaMEfee+d6jjNi/I=
+
+Name: org/pathvisio/core/view/ViewActions$OrderTopAction.class
+SHA1-Digest: l4Tu7g4pMyTxBDB4tESbFvwpZpY=
+
+Name: org/pathvisio/core/gpmldiff/PanelOutputter$ModData$ModType.class
+SHA1-Digest: 5x8fUDJgz8G/4aMkhf8b/vfgNTw=
+
+Name: newnucleus.gif
+SHA1-Digest: I78zqguqqrhKf5oypa0quMWMnuc=
+
+Name: org/pathvisio/core/data/GdbEvent.class
+SHA1-Digest: QAQA7TGe5VcXL/YuEF3P7nuuqkY=
+
+Name: newreaction.gif
+SHA1-Digest: 2Ceg/Av4uYtsbaY4hfXRSVwBquo=
+
+Name: org/pathvisio/core/model/GraphLink$GraphIdContainer.class
+SHA1-Digest: uUZcEIYeWs2UR5AncKDcSoozHPI=
+
+Name: newbrace.gif
+SHA1-Digest: hO1ZKmk1FtR3yHfm0FgkoDMzhKg=
+
+Name: sizewidth.gif
+SHA1-Digest: t8JsGC+3qTfco8cPqj6/0kIjhjY=
+
+Name: GPML2007.xsd
+SHA1-Digest: wl0gon1Z+jJnNFbxw6Rmy8C/NDc=
+
+Name: newlabel.gif
+SHA1-Digest: Mzl3cVx1ssWLTVAgYv8GGo3AyYc=
+
+Name: newconversion.gif
+SHA1-Digest: wzb5XvR72qQ9PyxfK9UP/ZB4qzY=
+
+Name: newline.gif
+SHA1-Digest: qXlVdEDYjwqOfC03cdSsCkdMe0M=
+
+Name: org/pathvisio/core/view/VPathway$HoverManager.class
+SHA1-Digest: Xbu9rONs3Hvbp28zqhEG6pP01dU=
+
+Name: org/pathvisio/core/view/DefaultTemplates$GraphicalLineTemplate.c
+ lass
+SHA1-Digest: NV6SztRyL9FuUSN3fSyUeIQU9+s=
+
+Name: visualizations.gif
+SHA1-Digest: +SCYNVMI57PJFqfA2qa6UUyknM0=
+
+Name: top.gif
+SHA1-Digest: gMBOHSRbXeCHesmTpNgc3/UvK4E=
+
+Name: org/pathvisio/core/util/ProgressKeeper.class
+SHA1-Digest: QFkWxoFleDVkeUKI2tXEAzLQ6DU=
+
+Name: alignbottom.gif
+SHA1-Digest: GbCNv7JwAQT9Lo0uQQYjcHzuzEc=
+
+Name: org/pathvisio/core/data/GdbManager$GdbEventListener.class
+SHA1-Digest: EeT2FarrIlaDLZL8THHQcmwxV2Q=
+
+Name: org/pathvisio/core/util/Utils.class
+SHA1-Digest: izRI7SDi4Sisq+zoha42nk6dP4o=
+
+Name: org/pathvisio/core/Engine.class
+SHA1-Digest: CSL03o+JwOj1QfhyZn4vnl13LDk=
+
+Name: org/pathvisio/core/view/LinAlg.class
+SHA1-Digest: n635aVBWb6PB320KIWPi702E60Y=
+
+Name: org/pathvisio/core/model/PathwayElement$MAnchor.class
+SHA1-Digest: ypNHxlT+rTWDvKK7pcE9cDOsq2M=
+
+Name: import.gif
+SHA1-Digest: Q+5GLgeb9TUO8aiseNxjPBS/3yU=
+
+Name: org/pathvisio/core/view/VElementMouseListener.class
+SHA1-Digest: lCgTvHTxMo5StDXt1eAfKnE1/KQ=
+
+Name: org/pathvisio/core/gpmldiff/SimilarityFunction.class
+SHA1-Digest: rxg6WzrupfffivNoNoctgQ2mZko=
+
+Name: org/pathvisio/core/view/ViewActions$WaypointAction.class
+SHA1-Digest: XabxhLWzvEmEd3rwynPu4/RyzNw=
+
+Name: org/pathvisio/core/view/VPathway$YComparator.class
+SHA1-Digest: mhthtGgJ1qzZrZURDM8KrIGYHaw=
+
+Name: org/pathvisio/core/view/ViewActions$TextFormattingAction.class
+SHA1-Digest: OYMCl94jvp4Akl+Wd8TY+af2wIM=
+
+Name: newmetabolite.gif
+SHA1-Digest: 0tCwrLW2oLHnoso2IHtVkKFgr0o=
+
+Name: edit.gif
+SHA1-Digest: GBFyUw66caqMlFO5ueclN4e8YPY=
+
+Name: org/pathvisio/core/model/GraphLink.class
+SHA1-Digest: SG4HLe2ks6GjaGzyR4gaa4V2ALY=
+
+Name: org/pathvisio/core/view/UndoAction.class
+SHA1-Digest: 5Kx7sj4kNpDIM+ez5y18J+s4dRA=
+
+Name: org/pathvisio/core/gpmldiff/BetterSim$1.class
+SHA1-Digest: syHeVelNoe3ii7SciVYcaHmt2MU=
+
+Name: org/pathvisio/core/model/GpmlFormat2010a.class
+SHA1-Digest: 7IXlUF0vgX5BUhd1SRb3BjLIqdI=
+
+Name: org/pathvisio/core/gpmldiff/Patch.class
+SHA1-Digest: 2eRiB8OyGKHlrstmRydB+XRJ5Io=
+
+Name: unchecked.gif
+SHA1-Digest: T5NJjafROenm+qnmuBa5pdgNILc=
+
+Name: org/pathvisio/core/model/AStar$AStarNode.class
+SHA1-Digest: LscvKtSMMfljzb2OHPu9Qs6fiYY=
+
+Name: org/pathvisio/core/biopax/Namespaces.class
+SHA1-Digest: lmRxhIu7yDUCPWc4erBcc5uy8cQ=
+
+Name: org/pathvisio/core/model/ShapeType.class
+SHA1-Digest: qqlhauGKCnJBqI4fNBJWWjOUsvs=
+
+Name: org/pathvisio/core/view/ViewActions$GroupAction.class
+SHA1-Digest: UQJu9jDsnln8itSX0h90qETOGDI=
+
+Name: org/pathvisio/core/model/ConnectorShape$Segment.class
+SHA1-Digest: foWKxHbwt6Eh+/WswjoeapcZq60=
+
+Name: org/pathvisio/core/model/PathwayElement$GenericPoint.class
+SHA1-Digest: 6dKABsx3X2KIBVhA1A6PYpS+cx0=
+
+Name: save.gif
+SHA1-Digest: 2gyM4XtYsKQ6TBRY4C4H2NwhWDA=
+
+Name: new-logo-small.png
+SHA1-Digest: cH/fNtXqyyX5vcb7uEshCVtEcBg=
+
+Name: newpathway.gif
+SHA1-Digest: u7mMdCk2GkLcJMkRi5YGqKe0qhU=
+
+Name: newproteincomplex.gif
+SHA1-Digest: IZYKgMHIw7ok3fXyX8RGNEGoTd4=
+
+Name: org/pathvisio/core/preferences/PreferenceListener.class
+SHA1-Digest: wF9Fc7ko+Dr2t5PDI54ER2DESOc=
+
+Name: stackhorizontaltop.gif
+SHA1-Digest: 38NaSEiN4EQGQsgu8RSaCdupjM8=
+
+Name: org/pathvisio/core/view/VPathway$1.class
+SHA1-Digest: Cvaio7F0/s6lPPm+Qu2H18YpfsE=
+
+Name: org/pathvisio/core/util/ProgressKeeper$ProgressListener.class
+SHA1-Digest: rQ5w8C00A7Ugjkp34gnx/TVdLJg=
+
+Name: org/pathvisio/core/view/VPathwayEvent.class
+SHA1-Digest: Eb5BJ87NtRjPxqh27gDFHO0GMG0=
+
+Name: org/pathvisio/core/model/GroupStyle.class
+SHA1-Digest: ErDd7GVZu8722HvdZcOzkTRE0kQ=
+
+Name: org/pathvisio/core/ApplicationEvent$Type.class
+SHA1-Digest: Mth9Y+zcz57Q60OILUBKUIUCm40=
+
+Name: org/pathvisio/core/model/StraightConnectorShape.class
+SHA1-Digest: lTlaioRlk4PL64++117kPLM2LoQ=
+
+Name: protein.bmp
+SHA1-Digest: ePFPXQgvULTn5B/b4vPAw1uMMM0=
+
+Name: org/pathvisio/core/model/PathwayElement$Comment.class
+SHA1-Digest: yWDvLrW7lJBnvBsjweBu3zDk7ko=
+
+Name: org/pathvisio/core/model/GpmlFormatAbstract$ByElementName.class
+SHA1-Digest: qDT/vA3Hu7Fmsgi5jclNwuTHIGg=
+
+Name: org/pathvisio/core/view/GroupPainterRegistry$4.class
+SHA1-Digest: S6OK5jeNDrqUH2vCcQQEQ2G5VlI=
+
+Name: org/pathvisio/core/view/CompositeStroke.class
+SHA1-Digest: y8qwLPHf7CjQyrr8Vs6Y4ESxZrM=
+
+Name: org/pathvisio/core/model/PathwayElementListener.class
+SHA1-Digest: Vvm3mn8CpqEi2Z7Jzsg1wfCpkdQ=
+
+Name: newrna.gif
+SHA1-Digest: CPkXTr1D1NkZtBFybc6CWWvmRbU=
+
+Name: org/pathvisio/core/model/PathwayEvent.class
+SHA1-Digest: 7t8wIlVzKlnxXxM9Z9rtp3CTz/Y=
+
+Name: org/pathvisio/core/view/DefaultTemplates$LineTemplate.class
+SHA1-Digest: vOlBKWANtGvzoNygsZUFLzB4kTU=
+
+Name: close.gif
+SHA1-Digest: iPhwIjzz0UJP7Qu1jJjbqfCsKCQ=
+
+Name: org/pathvisio/core/view/LinkProvider.class
+SHA1-Digest: 6eib4FoOUE5Iu6jSycNg3KXvkmk=
+
+Name: savetoweb.gif
+SHA1-Digest: ct9VOIpbjBghIlwXB2YkjMVVVdU=
+
+Name: sorttable.js
+SHA1-Digest: Me/AbfeAToOAucQLTLRYD3e0MU4=
+
+Name: newreceptorround.gif
+SHA1-Digest: r8i5/ZI0cK4Y+IDDSUTdyzwBG6w=
+
+Name: org/pathvisio/core/model/Pathway.class
+SHA1-Digest: PdRdZO7nRSmIfqoRZAblmjih3RQ=
+
+Name: org/pathvisio/core/view/GenMAPPShapes$1.class
+SHA1-Digest: jV+nwvijcvfVYGDJwbIZe7Vtk9o=
+
+Name: newvesicle.gif
+SHA1-Digest: BqqCHMt8oTkFJIRmkOWHizft8l4=
+
+Name: newarrow.gif
+SHA1-Digest: wzb5XvR72qQ9PyxfK9UP/ZB4qzY=
+
+Name: org/pathvisio/core/view/ViewActions$RemoveState.class
+SHA1-Digest: aWuTSszGe+lFWwgCJYq78REU+K8=
+
+Name: newvacuole.gif
+SHA1-Digest: LsVscXNSt2Lh6UhMM4g7kJCLw+g=
+
+Name: org/pathvisio/core/util/RootElementFinder.class
+SHA1-Digest: zWcduqZMBor2EOcQIK/V/27ZG1w=
+
+Name: newbranching left.gif
+SHA1-Digest: mDTz17RikA7k9bLVBxbVqcaQvhg=
+
+Name: newcytosol region.gif
+SHA1-Digest: ujJxpcSp9QcMt4s8Jozned0ZSqM=
+
+Name: org/pathvisio/core/model/AbstractShape.class
+SHA1-Digest: rIyGcx62fjoxjNMcpumzr1frE0U=
+
+Name: newcomplex.gif
+SHA1-Digest: Of41IRnCsGfVNL1QVRmEQ88kMvA=
+
+Name: org/pathvisio/core/view/Line.class
+SHA1-Digest: zvuL04Cjhv75LKsXxDMUPxo1HHU=
+
+Name: newcella.gif
+SHA1-Digest: ggF6w8H132k1+9oo3p/UrvTW9SE=
+
+Name: bigcateye.svg
+SHA1-Digest: ZeGwRi9yZFCkLpd7/qQK5qQv6J0=
+
+Name: org/pathvisio/core/util/PathwayParser$ParseException.class
+SHA1-Digest: 0ViNPNnNVtRxHqc1wxly1j1u8HE=
+
+Name: newtriangle.gif
+SHA1-Digest: 2Ur3UFAPvoeSRMRlchogcYZZhPY=
+
+Name: org/pathvisio/core/view/AbstractLinkAnchorDelegate.class
+SHA1-Digest: Lzu+JSX8T0Bq11wXCvcf2QI+ZWk=
+
+Name: alignleft.gif
+SHA1-Digest: ZQQl/+TjtgciY1hlGK4vMzyXYBk=
+
+Name: org/pathvisio/core/view/DefaultTemplates$ShapeTemplate.class
+SHA1-Digest: CrgxzLNtbzqkyMMJZNINOluscwo=
+
+Name: org/pathvisio/core/view/ViewActions$SelectClassAction.class
+SHA1-Digest: EAtmo5K15THajJvCeI7XcjFv/S4=
+
+Name: undo.gif
+SHA1-Digest: tlfSC1q5UH3gXbuPZHNZFzk6IaM=
+
+Name: org/pathvisio/core/model/ValignType.class
+SHA1-Digest: ptBpoiXM8lSDtBPHUXLZbe+zdIQ=
+
+Name: org/pathvisio/core/model/ObjectType.class
+SHA1-Digest: sI0Me2GzhVFXZ/rKe8TfsTu/8Ac=
+
+Name: newinteractionmenu.gif
+SHA1-Digest: VuHysVGPajzyHn+KR9TA3YQLVSQ=
+
+Name: org/pathvisio/core/view/GroupPainter.class
+SHA1-Digest: 9AfbxnRlydon+kgHBIZZZNexYcY=
+
+Name: checked.gif
+SHA1-Digest: nfa4c+Gz0Z6iZJs2ED7LXeN+4Fk=
+
+Name: org/pathvisio/core/gui/SwingKeyEvent.class
+SHA1-Digest: gV8u38FTihRdEEM84y7zhcTqKhQ=
+
+Name: org/pathvisio/core/view/LayoutType.class
+SHA1-Digest: eLvCKo/4zYStsohNYpdF2pbYsXY=
+
+Name: org/pathvisio/core/view/Shape.class
+SHA1-Digest: mZcsWKiFldaidyIsCAVU74RlX3c=
+
+Name: org/pathvisio/core/preferences/PreferenceManager.class
+SHA1-Digest: 3TbhsRzz8n05uLh0uCiqvHzuzzE=
+
+Name: logo-fullsize.png
+SHA1-Digest: PbKRqEHVujSRfrXtVmE7Z3DF97o=
+
+Name: newdashedarrow.gif
+SHA1-Digest: dYcbRsx6YqkzvDXJ4FncjDt0NW4=
+
+Name: org/pathvisio/core/view/SelectionBox.class
+SHA1-Digest: Q638Sfayqd7GwsBzUvEdfpvMReA=
+
+Name: newroundedrectangle.gif
+SHA1-Digest: lxpvgEU0ibdUmb4P/c5N32RC0jQ=
+
+Name: org/pathvisio/core/gpmldiff/BasicSim.class
+SHA1-Digest: ewWE4VoiUN3verH7gSSffmIFhOY=
+
+Name: fullscreen.gif
+SHA1-Digest: xCxnBanMARKde1sXHfFtJ9opG8k=
+
+Name: newbranching right.gif
+SHA1-Digest: KrTcvMDV1CfBY7RzcfMAOZ5aaP4=
+
+Name: org/pathvisio/core/preferences/Preference.class
+SHA1-Digest: XcSYGZ26udTw8+3S3/ThH5d5fL8=
+
+Name: newcatalysis.gif
+SHA1-Digest: VWqWd4BQ5+37lM/mPUMSoqd72wA=
+
+Name: GPML2010a.xsd
+SHA1-Digest: subeGm3GUnnA4Fcu+fcUsuO/wHE=
+
+Name: redo.gif
+SHA1-Digest: Myjex2eS1RP5345PGHerK4NHhcE=
+
+Name: org/pathvisio/core/model/GraphLink$GraphRefContainer.class
+SHA1-Digest: MOoTmuPwO+sn1rpM3n02HHmRY/U=
+
+Name: org/pathvisio/core/model/GpmlFormatVersion.class
+SHA1-Digest: kmuCeDz+zv0WuSd7tUHJkKM0Ss0=
+
+Name: org/pathvisio/core/data/GdbManager.class
+SHA1-Digest: KuDQV8bPG3XmfdM88j9Uju2AI2o=
+
+Name: newlinemenu.gif
+SHA1-Digest: YKPSHgyG8goVmLQcQefgovTxpAk=
+
+Name: org/pathvisio/core/view/DefaultTemplates$CellularComponentTempla
+ te.class
+SHA1-Digest: dJliI09TIlCLpG+2gcMHI4IYoBA=
+
+Name: org/pathvisio/core/model/PathwayIO.class
+SHA1-Digest: +Wp6DVY8hrDVbScBcR4vWHIrqc0=
+
+Name: org/pathvisio/core/view/ViewActions$OrderBottomAction.class
+SHA1-Digest: ZBdXg2Xf/xFFWKiKGSkwKpc3BVk=
+
+Name: org/pathvisio/core/model/EUGeneExporter$EUGenePathway.class
+SHA1-Digest: na8Ya7zJa/2v8AoEVttQVMTONAY=
+
+Name: protein_hi.bmp
+SHA1-Digest: nCftqs31k6jO2J6QffsN0512cb4=
+
+Name: org/pathvisio/core/util/ColorExporter.class
+SHA1-Digest: LYxwcJY4dBc9NSUDyVKopynw06o=
+
+Name: org/pathvisio/core/model/StaticProperty.class
+SHA1-Digest: a5NaM6RODOdg1PcEw1Tk2EJ+Plk=
+
+Name: org/pathvisio/core/view/DefaultTemplates.class
+SHA1-Digest: cewRCw3x8FdrOzZmX6rG18dVNo4=
+
+Name: org/pathvisio/core/view/ViewActions$OrderUpAction.class
+SHA1-Digest: 0Ub2WZt1PyXuMC6rtEvBB0wcrcY=
+
+Name: newnucleolus.gif
+SHA1-Digest: LsVscXNSt2Lh6UhMM4g7kJCLw+g=
+
+Name: org/pathvisio/core/gpmldiff/DgpmlOutputter.class
+SHA1-Digest: aj1jPOqf1wgxrdx0Y6cItp+aDQ4=
+
+Name: org/pathvisio/core/model/DataNodeType.class
+SHA1-Digest: j6XEY1oWhCgm4DFRxvui/SylU+I=
+
+Name: stackverticalcenter.gif
+SHA1-Digest: SWakgslfaMMAjtB3QrOTnnV4lmc=
+
+Name: newribosome.gif
+SHA1-Digest: b/UrhL7feqB4ciMXLv1B+hKiDfs=
+
+Name: org/pathvisio/core/view/GraphicsShape.class
+SHA1-Digest: /8bMZoJeEMBERQ1IZC+HPGQi304=
+
+Name: org/pathvisio/core/model/LineType.class
+SHA1-Digest: TAc8xLnARMgEViFQJgZ+1V8zAK0=
+
+Name: export.gif
+SHA1-Digest: UiiqYChRQCoVaN71qsqOiHY0Nf4=
+
+Name: org/pathvisio/core/gpmldiff/PanelOutputter.class
+SHA1-Digest: 96CSicssguFVxoInJe7NWpUPzQU=
+
+Name: newligandround.gif
+SHA1-Digest: FQEzWum+sg5RJJh+8ASAtiTvRoE=
+
+Name: org/pathvisio/core/model/Pathway$StatusFlagListener.class
+SHA1-Digest: AtkKo6acNbmeSo99Wk/dSLQU3fI=
+
+Name: org/pathvisio/core/view/ViewActions$PasteAction.class
+SHA1-Digest: 2obmwcoE2XggQWv6QjHrGeVILqw=
+
+Name: newunknown.gif
+SHA1-Digest: rblLoapqEBQ4ICw9f4jPOSOl/Fw=
+
+Name: org/pathvisio/core/gpmldiff/GlassPane$Type.class
+SHA1-Digest: wRB7cNT5B/NcQldkR3pIcpvAtOI=
+
+Name: stackhorizontalcenter.gif
+SHA1-Digest: zVyVgyl6iVtgnBQ1IpdVS2oACKQ=
+
+Name: neworganb.gif
+SHA1-Digest: bCNoHkyBpQfDjVwzhxx1Z81y2XI=
+
+Name: newoval.gif
+SHA1-Digest: LsVscXNSt2Lh6UhMM4g7kJCLw+g=
+
+Name: org/pathvisio/core/view/GenMAPPShapes.class
+SHA1-Digest: Ua9q3hnHNocMSHAYj36gbXuLdb0=
+
+Name: neworganc.gif
+SHA1-Digest: 2RbcXjPxYnTvBfqbiH7/JGjXnhc=
+
+Name: org/pathvisio/core/view/VPathway$XComparator.class
+SHA1-Digest: DWqMxEtod6zbIVTsnAe9udY4q0Y=
+
+Name: org/pathvisio/core/view/DefaultTemplates$SingleElementTemplate.c
+ lass
+SHA1-Digest: 59Ym807J8ibmEUEsrLBLHSTBPsg=
+
+Name: org/pathvisio/core/model/CellularComponentType.class
+SHA1-Digest: wlo7i9wsixgO71arEXCX4RUf7Po=
+
+Name: org/pathvisio/core/model/PathwayListener.class
+SHA1-Digest: yo+owu4ekkU+ohjgP/ZzpEYChrA=
+
+Name: newmy line.gif
+SHA1-Digest: H+vT8v3vEo0IcYYyiMehVoiq/6s=
+
+Name: neworgana.gif
+SHA1-Digest: KHrODK8ftzhdqxFuWFJvs7Ekm7Q=
+
+Name: org/pathvisio/core/model/GpmlFormat.class
+SHA1-Digest: vxtMJ4FNZbvindkY54EHyLJwxgw=
+
+Name: org/pathvisio/core/model/ConnectorType.class
+SHA1-Digest: ENEmRZTVvgE25xhuwF9WiUngUOA=
+
+Name: org/pathvisio/core/view/Handle$Freedom.class
+SHA1-Digest: kil29iJhAKfVV2mqUmOmFUKuGG0=
+
+Name: saveas.gif
+SHA1-Digest: YYqqSJ8tFBwKTcxOAdZhS/De1IA=
+
+Name: org/pathvisio/core/ApplicationEvent.class
+SHA1-Digest: fQn+/if9ei0H6Qf+RQmcigz0eC0=
+
+Name: org/pathvisio/core/model/PathwayElement.class
+SHA1-Digest: 8SL9T/SAWSNco6HCYBONcABIEos=
+
+Name: org/pathvisio/core/model/CellularComponentType$1.class
+SHA1-Digest: MUe2EfJ2Yd+BE3+cUAvN7/KLtgg=
+
+Name: org/pathvisio/core/biopax/PropertyType.class
+SHA1-Digest: qeAXHj7NSqZeeTRTLjQhB1ZoPqM=
+
+Name: org/pathvisio/core/view/GeneProduct.class
+SHA1-Digest: 4eIoQg3uVQFGPAhWqJdTAYpwnuE=
+
+Name: org/pathvisio/core/model/LineStyle.class
+SHA1-Digest: HmLqsT7Ky/AnK4TFi5T8NDZ9wzs=
+
+Name: org/pathvisio/core/data/GdbEvent$Type.class
+SHA1-Digest: pAkQCg6TxFXPfr8vxITfRpscOy0=
+
+Name: org/pathvisio/core/biopax/BiopaxReferenceManager.class
+SHA1-Digest: pxYxXhwGNNLEDRXQCcEzBGpGN/o=
+
+Name: newhexagon.gif
+SHA1-Digest: 2kNGrYiznmpNeKeLEwu21epkPq8=
+
+Name: colorpicker.gif
+SHA1-Digest: gzE0pHA3orcnbKBrnwMIyM7AHz0=
+
+Name: aligncenterx.gif
+SHA1-Digest: 43HVq7PxnHBsnw8aQE7y/2BSZoY=
+
+Name: org/pathvisio/core/view/UndoManagerEvent.class
+SHA1-Digest: N6RjX0taZJ+1nuFCfxSy8jvgdzw=
+
+Name: newmodification.gif
+SHA1-Digest: 7Ttg2KJ2J8hLaiP0e11Y6wwqqDc=
+
+Name: minimize.gif
+SHA1-Digest: 1nUOCBfizF66du9676T4i+34aQc=
+
+Name: org/pathvisio/core/view/ViewActions$ShowUnlinkedConnectors.class
+SHA1-Digest: z+33VHO7/H42jP4/d79lHzitDTE=
+
+Name: org/pathvisio/core/debug/DebugList$DebugIterator.class
+SHA1-Digest: OLfiSxAGzr5N8USrXk42Zk1ZnS4=
+
+Name: apply.gif
+SHA1-Digest: bvdm0MntkMZ+DSyokeBc4ocMBf4=
+
+Name: unchecked_unavailable.gif
+SHA1-Digest: pJoqDzLem5pnjESufXKH6YZJpA0=
+
+Name: org/pathvisio/core/model/IShape.class
+SHA1-Digest: f4fECOAPzfwUpTMkcHu962dNAaU=
+
+Name: org/pathvisio/core/model/AbstractConnector.class
+SHA1-Digest: E50tU+gxER285sR1YhO7qvhWNYU=
+
+Name: org/pathvisio/core/view/VElementMouseEvent.class
+SHA1-Digest: GsQOULAIGvKjjKBs3arStPwj7wo=
+
+Name: org/pathvisio/core/util/Resources.class
+SHA1-Digest: jvbSFLpqDjJ9m4aGTT22jH5d90s=
+
+Name: org/pathvisio/core/view/DefaultTemplates$LabelTemplate.class
+SHA1-Digest: gVm8NO3Jvqrvjh+mtxCr975I920=
+
+Name: org/pathvisio/core/model/MGroup.class
+SHA1-Digest: UXVvVOWXD6hvY5+4NNYOCK4TuAI=
+
+Name: org/pathvisio/core/util/PathwayParser.class
+SHA1-Digest: O6TFsNObbss/PyWs80hTNMKpli8=
+
+Name: org/pathvisio/core/view/VPoint.class
+SHA1-Digest: NBaaiRrF49FqUVMLJ9ZLUUGX6Os=
+
+Name: org/pathvisio/core/model/GpmlFormat200X$1.class
+SHA1-Digest: nuRfU9fzCZWMKO+reKJitS2OfFQ=
+
+Name: org/pathvisio/core/gpmldiff/Patch$ModDel.class
+SHA1-Digest: SzUWyYJSu6WxrZ20iHZWnM4XrMc=
+
+Name: newmitochondria.gif
+SHA1-Digest: ubYmW6jDumBTNDESi98kS60w8Sw=
+
+Name: org/pathvisio/core/model/GpmlFormatWriter.class
+SHA1-Digest: aJuocLvXEVBUoiWji7d1d9deEjU=
+
+Name: org/pathvisio/core/view/ArrowShape$FillType.class
+SHA1-Digest: bes11qqQSKTVAbgIk+ou3yEwuRg=
+
+Name: org/pathvisio/core/util/CommonsFileUtils.class
+SHA1-Digest: XXHjW8wOBFNDC5g6arlkOajxjXw=
+
+Name: org/pathvisio/core/Globals.class
+SHA1-Digest: LBUieLMiiLTNc7YeU8bonYW/nog=
+
+Name: org/pathvisio/core/model/PathwayElementEvent.class
+SHA1-Digest: x/L9lbrM5r+Rox/b8ELgSD3Qv2g=
+
+Name: newgolgi apparatus.gif
+SHA1-Digest: o73Y6dtvLaVcanHR5vZznzSpBQE=
+
+Name: org/pathvisio/core/gpmldiff/Map2D.class
+SHA1-Digest: rpWADdb7WMUUaZsr6PdCWXnh7z8=
+
+Name: org/pathvisio/core/model/AbstractPathwayFormat.class
+SHA1-Digest: 8udNh+Qi1p1dmVNSPyU9YWRvcbg=
+
+Name: aligncentery.gif
+SHA1-Digest: iPF2DlL060e8EEb0tbAD0/vBYdY=
+
+Name: org/pathvisio/core/model/CurvedConnectorShape.class
+SHA1-Digest: n0d4yAfzXHxwJJmNGetcvuXwvhE=
+
+Name: org/pathvisio/core/model/Pathway$1.class
+SHA1-Digest: vFaRvuEGuSi4F6AWJ0h8c+jGk4o=
+
+Name: sizeheight.gif
+SHA1-Digest: AAPt0znb6ZCVhgEqjDQk6sggxzQ=
+
+Name: newdatanodemenu.gif
+SHA1-Digest: PbMaUbAHqNmrnVU6pwvV/0kDvK8=
+
+Name: org/pathvisio/core/view/ViewActions$SelectAllAction.class
+SHA1-Digest: Z6VMBrpbmxxMVocwFascYbFsvaE=
+
+Name: org/pathvisio/core/view/UndoManager.class
+SHA1-Digest: uY58jvW6Y71JBdD+U95RaSRPnLc=
+
+Name: tree_collapsed.gif
+SHA1-Digest: vLPyB6K//kj7phWM9+7ACWYqocI=
+
+Name: org/pathvisio/core/model/MState.class
+SHA1-Digest: PeET75lW0+2LosHf8xSlnwc85TI=
+
+Name: org/pathvisio/core/view/GroupPainterRegistry.class
+SHA1-Digest: zVrydezkvcV94McSq/9Xq3zjzgU=
+
+Name: org/pathvisio/core/biopax/BiopaxReferenceManager$1.class
+SHA1-Digest: QG0SjfB+XVA6tVJeCteifBJkFb0=
+
+Name: org/pathvisio/core/model/PathwayElement$MPoint.class
+SHA1-Digest: 7nwSCv21XZ+fa3HFrQ31J3Tnmxg=
+
+Name: org/pathvisio/core/model/ElbowConnectorShape.class
+SHA1-Digest: WRds5TTcjrCXNFW5kesBv9ZDTIY=
+
+Name: org/pathvisio/core/model/Property.class
+SHA1-Digest: DmxtBvmzd9kZx51vsLqjLAwbX14=
+
+Name: colorset.gif
+SHA1-Digest: eFJB1CBW7TD7zfl7MPCMUQhMw0I=
+
+Name: org/pathvisio/core/view/GroupPainterRegistry$2.class
+SHA1-Digest: xdYcBXDpBFWr66TMJpMk33oER+w=
+
+Name: newcell.gif
+SHA1-Digest: 85cnl+FU5wSwC9tP0SFLI1NG75M=
+
+Name: org/pathvisio/core/model/ImageExporter.class
+SHA1-Digest: 3EgTR5zmSpENJ34tsNmZUXw8ZOE=
+
+Name: bigcateye.gif
+SHA1-Digest: V+LW6Ypf9yTX3yHQgTf8TZRYC/Y=
+
+Name: org/pathvisio/core/view/Line$1.class
+SHA1-Digest: U9ZnCHiKcuSpP+go5mTdeC9sJwI=
+
+Name: org/pathvisio/core/view/VAnchor.class
+SHA1-Digest: zYPxExSncUXzMoPSyT5MLrm6Hqg=
+
+Name: newgeneproduct.gif
+SHA1-Digest: PbMaUbAHqNmrnVU6pwvV/0kDvK8=
+
+Name: org/pathvisio/core/view/DefaultTemplates$InteractionTemplate.cla
+ ss
+SHA1-Digest: qAVkxeLMXjqfS9qheJPST1ljEAM=
+
+Name: org/pathvisio/core/model/ConverterException.class
+SHA1-Digest: ZyZ8BwtBZdYi19Hx5IP6Lly7C8A=
+
+Name: logo.jpg
+SHA1-Digest: EIxSEa/4nDw5KOwFMzWDVy/0yc8=
+
+Name: org/pathvisio/core/util/Stats.class
+SHA1-Digest: X3Q19sW0I9ZZBRV5RnEU+4Ko8pw=
+
+Name: org/pathvisio/core/model/Pathway$StatusFlagEvent.class
+SHA1-Digest: LkDx34h3UaJ1xFaG4AkMrvVWqrc=
+
+Name: org/pathvisio/core/model/GpmlFormatAbstract.class
+SHA1-Digest: G5Ejmevn1ZvdK1QGLQk7uv4rP+M=
+
+Name: neworganelle.gif
+SHA1-Digest: orcsXOGleTHE/dVqOcHy0EuYw0M=
+
+Name: org/pathvisio/core/view/ArrowShape.class
+SHA1-Digest: 2y11l12B21Y8i6phO+CzU/F6098=
+
+Name: org/pathvisio/core/view/ShapeRegistry.class
+SHA1-Digest: pl+fYX6H6B6gvAQnN8rye4YZCeM=
+
+Name: newcleavage.gif
+SHA1-Digest: ECUMbjkhhpCkKqGmgTmRR0dstQc=
+
+Name: org/pathvisio/core/model/BatikImageExporter.class
+SHA1-Digest: AwmYTzA7Q2GHJrsOU0EBcuw4lqU=
+
+Name: org/pathvisio/core/model/PathwayExporter.class
+SHA1-Digest: M4InLpZ+hITZYvZrr6Mkp/W0sjA=
+
+Name: org/pathvisio/core/gpmldiff/DiffOutputter.class
+SHA1-Digest: g/YVlscASfCQsWWZ303Dthrpl0U=
+
+Name: org/pathvisio/core/model/FreeConnectorShape.class
+SHA1-Digest: NyroG3K8YC4qJ9qVeI5hAIcNyS4=
+
+Name: newcurve.gif
+SHA1-Digest: eY8gVMw3cmUZJ/tJ4Zc26PIHu78=
+
+Name: org/pathvisio/core/gpmldiff/CostFunction.class
+SHA1-Digest: ZkvTtj0BQNS0Y672KgZmjLbH0e8=
+
+Name: logo-tiny.jpg
+SHA1-Digest: 6mfjDSGuz7dd5+c9Ezgwcg5L9Tw=
+
+Name: org/pathvisio/core/view/UndoManagerListener.class
+SHA1-Digest: uhc546CvuPvN0bwb7mou5cDfYJU=
+
+Name: org/pathvisio/core/model/AlignType.class
+SHA1-Digest: 5ZTTQvzyvKlz0ywIGd8rLGfo3Zo=
+
+Name: org/pathvisio/core/gui/SwingMouseEvent.class
+SHA1-Digest: RzFNN/i5SPFA8g767itBcbguGbk=
+
+Name: org/pathvisio/core/view/BasicShapes.class
+SHA1-Digest: Zcy6xUx1v1ZBvfuP5lWvlka6Ozk=
+
+Name: org/pathvisio/core/model/ConnectorShape$WayPoint.class
+SHA1-Digest: rQuYvpet3CvO3tL+IcOzVK3NEwM=
+
+Name: paste.gif
+SHA1-Digest: kSy7O0je2Lav/MCjBOAoW4A+ap4=
+
+Name: stackverticalright.gif
+SHA1-Digest: 1oB37fH/0cjDpC1E7JnhiokeqWc=
+
+Name: org/pathvisio/core/view/ViewActions$OrderDownAction.class
+SHA1-Digest: Z9s+nCiTpX1P1TJzUwJUaird8oE=
+
+Name: org/pathvisio/core/preferences/GlobalPreference.class
+SHA1-Digest: X1LLKZts8SZmvO8e/iKW9Z06560=
+
+Name: org/pathvisio/core/util/RootElementFinder$RootElementHandler.cla
+ ss
+SHA1-Digest: jUAafjpGhVcG+p5ra++G+AbEGOg=
+
+Name: org/pathvisio/core/debug/Logger.class
+SHA1-Digest: smorFp0v9vXY21Ejn797BSWyZfo=
+
+Name: select.gif
+SHA1-Digest: kin9bu36IG3JXTjLBPRv8ynqBGo=
+
+Name: org/pathvisio/core/model/RasterImageExporter.class
+SHA1-Digest: WC3GVN+Pr41ENf06nK+VokpksB4=
+
+Name: org/pathvisio/core/view/Label.class
+SHA1-Digest: lk49vn2go8Zag2M4iY4M7q70xjQ=
+
+Name: org/pathvisio/core/view/ViewActions$DeleteAction.class
+SHA1-Digest: pbLvMJB69tHiOeBMpFVnXNbV64o=
+
+Name: restorescreen.gif
+SHA1-Digest: qY0O/bjpnbUCnI/+Gf9R84Hyml0=
+
+Name: newtemplatemenu.gif
+SHA1-Digest: 2Ceg/Av4uYtsbaY4hfXRSVwBquo=
+
+Name: org/pathvisio/core/util/Relation.class
+SHA1-Digest: M0+5mYjRnPGJK9OkgxG9j9ozlUQ=
+
+Name: stackhorizontalbottom.gif
+SHA1-Digest: l1LZh1I50l30ok2N0NTUVipHjGg=
+
+Name: open.gif
+SHA1-Digest: vWsn29PEvRsCfzdv84nl1KueK+4=
+
+Name: newarc.gif
+SHA1-Digest: vc1ZGVpkn90Rwfa/Kz2yQRLBlZI=
+
+Name: org/pathvisio/core/view/Group.class
+SHA1-Digest: dYKRc48yueFy/qvJnGPM1LEf1XU=
+
+Name: org/pathvisio/core/data/XrefWithSymbol.class
+SHA1-Digest: BZVcn/XI5Lmgc0rx0YEqVxoY7Vk=
+
+Name: org/pathvisio/core/view/ViewActions$UndoAction.class
+SHA1-Digest: dYL+FkQdxKDDMiK9Ji9JqKRea4k=
+
+Name: newrectangle.gif
+SHA1-Digest: A6P/AYwyjjWgEXPnUemJlD+Qano=
+
+Name: org/pathvisio/core/util/ColorExporter$1.class
+SHA1-Digest: IgjT9vEw01hT3wknrp+sycjAFwE=
+
+Name: org/pathvisio/core/model/AnchorType.class
+SHA1-Digest: bvMb5Csa6ZdXZkenzLeADDypUqk=
+
+Name: org/pathvisio/core/view/InputEvent.class
+SHA1-Digest: OXrZL5Q7iw8ArZUZdFTlGnCiehU=
+
+Name: org/pathvisio/core/view/GroupPainterRegistry$3.class
+SHA1-Digest: 0x5nj9T9/4fG2rEI1aosuqLiRao=
+
+Name: alignright.gif
+SHA1-Digest: axNONrrhiwJrdm9d9aqKRhoQUnM=
+
+Name: org/pathvisio/core/view/ViewActions$GroupActionBase.class
+SHA1-Digest: qsQ5FBLpzvzGCvuEjjgXibfB8rQ=
+
+Name: newinteraction.gif
+SHA1-Digest: EsNYFer+M4mtt5GzH348d4x914Q=
+
+Name: newitemmenu.gif
+SHA1-Digest: 79ULisZ+43Ea31MWdD+v5lKEusY=
+
+Name: newstimulation.gif
+SHA1-Digest: 3zFx9bSmvqmPSynj4iSmB2D+V2A=
+
+Name: newsarcoplasmic reticulum.gif
+SHA1-Digest: Gxu/WAvwPUlRWbvRUcV/1fVsFhs=
+
+Name: mRNA.bmp
+SHA1-Digest: 2oN7cWJvFrRluV2IOn5LFyqn0SY=
+
+Name: org/pathvisio/core/model/GpmlFormat2010a$1.class
+SHA1-Digest: sHwrqon4o8fPWnWSfzUQSVbN+TQ=
+
+Name: org/pathvisio/core/view/ViewActions$ComplexAction.class
+SHA1-Digest: NA/kIkIsCoPWlOUhfaWTuJp/DV8=
+
+Name: org/pathvisio/core/debug/ThreadSafe.class
+SHA1-Digest: Cmg30mHHDmPz50bU0N6YbWQOw4Y=
+
+Name: org/pathvisio/core/view/GenMAPPShapes$Internal.class
+SHA1-Digest: F8Jd/+T4l43gkOj80teOVUAdPqU=
+
+Name: org/pathvisio/core/model/MLine.class
+SHA1-Digest: MmfTtlqNuUFDgoDVv8IEaU4j02g=
+
+Name: org/pathvisio/core/model/AStar.class
+SHA1-Digest: gF5f1Qf1paoSRucumEqpY1ORMGo=
+
+Name: org/pathvisio/core/view/ViewActions$SelectObjectAction.class
+SHA1-Digest: VlmnK+tH0DDVD++8jMTKHwzE2tA=
+
+Name: org/pathvisio/core/model/OrientationType.class
+SHA1-Digest: UPtfZ+jp2K4Z0z8Kh58pYJ7jJVE=
+
+Name: org/pathvisio/core/util/Converter.class
+SHA1-Digest: i1Wn0rFRk47OD55HngooIqeqSUo=
+
+Name: org/pathvisio/core/view/Template.class
+SHA1-Digest: 1UuRtplELHyIgfhECgzrKBJCMkg=
+
+Name: org/pathvisio/core/view/ViewActions$PositionPasteAction.class
+SHA1-Digest: JSL3hN1i0TO3a1P94n1nnHZDAwY=
+
+Name: org/pathvisio/core/view/DefaultTemplates$ReactionTemplate.class
+SHA1-Digest: qbitc0jNLZOr1aEutsTehAFQrao=
+
+Name: org/pathvisio/core/util/ProgressKeeper$1.class
+SHA1-Digest: i4HOcHfmlUHhGshoFD4R6cxLmVE=
+
+Name: org/pathvisio/core/gpmldiff/PwyElt.class
+SHA1-Digest: H724V1suLpUXeYBPEMEUxFgLT60=
+
+Name: org/pathvisio/core/view/SelectionBox$SelectionEvent.class
+SHA1-Digest: hOmpHiQ802hVg86w68GUe5aPzLI=
+
+Name: header.html
+SHA1-Digest: rS2F1IdLOsIhZ1NBFKtkTPxeL20=
+
+Name: org/pathvisio/core/view/LinAlg$Point.class
+SHA1-Digest: 1gLh7QwSbYxJ2AjSCLtL23lODjo=
+
+Name: legend.gif
+SHA1-Digest: hHXSv1sE3nkA1aTJk3Oyu/MC1TY=
+
+Name: org/pathvisio/core/view/Graphics.class
+SHA1-Digest: rfU4uzHLOJF3duggf4BBv51kil4=
+
+Name: newmim-degradation.gif
+SHA1-Digest: IeqpgobA93FVznzi4vqLXCZvNx8=
+
+Name: newnecessary stimulation.gif
+SHA1-Digest: IyuAj9zOIfgmWE60UWB0UwU0sCQ=
+
+Name: org/pathvisio/core/view/MIMShapes.class
+SHA1-Digest: gJs9N1uu5RL7TUSHBKFnI2gMJCs=
+
+Name: stackverticalleft.gif
+SHA1-Digest: wtHJTkgnyI6g1YsSEw+tubzXpQM=
+
+Name: newlineshapemenu.gif
+SHA1-Digest: h9jy3siBIdEuPvbCO9XQPl94uRk=
+
+Name: org/pathvisio/core/view/Handle$1.class
+SHA1-Digest: av/QK/jvFyHUFAL76FkkHPWUU7U=
+
+Name: org/pathvisio/core/biopax/PublicationXref.class
+SHA1-Digest: B9rtpUlq6bByxM+OMxWlmVv+nHs=
+
+Name: org/pathvisio/core/util/ColorConverter.class
+SHA1-Digest: 2CI5KyCjGPEznhfLXfPiFAlCbMg=
+
+Name: org/pathvisio/core/view/GroupPainterRegistry$1.class
+SHA1-Digest: W9TEZiUspBxMvdjZqdTtg8fBqjs=
+
+Name: newmy-shape.gif
+SHA1-Digest: lo8uEuPK3iZMK+oEmCYdBO3M4nQ=
+
+Name: org/pathvisio/core/view/DefaultLinkAnchorDelegate.class
+SHA1-Digest: bUcImBilNIkbE2neH9xN/AmbxzA=
+
+Name: org/pathvisio/core/view/VPathwayListener.class
+SHA1-Digest: RMGk274L1HFLS5ZFVNFDTPfXmyk=
+
+Name: newtbar.gif
+SHA1-Digest: sXzfh3kfYCwdxL77wuUW5HIXCyk=
+
+Name: data_icons.ai
+SHA1-Digest: feXBrNdspkOAvKxjB09ALAHBCL8=
+
+Name: newendoplasmic reticulum.gif
+SHA1-Digest: DKI8cu3PxpWaZ8bX8gyMysKzhgA=
+
+Name: org/pathvisio/core/gpmldiff/Patch$Change.class
+SHA1-Digest: vgn+NeT64GhBKFx0Siqmz1iWBsQ=
+
+Name: plugin.png
+SHA1-Digest: uHlK4oZxOKKAfjayQ8SDYn6cL3Q=
+
+Name: newbinding.gif
+SHA1-Digest: BySfFZLYAhKSnBFjkXN/cx8Y+Es=
+
+Name: org/pathvisio/core/view/MouseEvent.class
+SHA1-Digest: /s9J7nFCp6LwS2JzMatuR71/HQY=
+
+Name: newcovalent bond.gif
+SHA1-Digest: dDvKMyGWANb9rRGa04DDWqIZi4c=
+
+Name: org/pathvisio/core/view/SelectionBox$SelectionListener.class
+SHA1-Digest: aaeiL8Wf/FfxuI4iudYJCF52Dmw=
+
+Name: org/pathvisio/core/model/MappFormat.class
+SHA1-Digest: Uqv+y59ZPwKjWuYwETcl6c14ZTQ=
+
+Name: org/pathvisio/core/model/GpmlFormatAbstract$AttributeInfo.class
+SHA1-Digest: Ud/iuDT4efWHLd2mOxc+5BcWNqE=
+
+Name: mRNA_hi.bmp
+SHA1-Digest: YWe17dthAeO/JV+2hLF05ijHbR4=
+
+Name: org/pathvisio/core/model/SegmentedConnector.class
+SHA1-Digest: MP/NWVKoxFHC8X3BUoQMfBEyOPg=
+
+Name: org/pathvisio/core/gui/PathwayTransferable.class
+SHA1-Digest: iQYJNR0u1VuIv/c9L9TBi5vom6U=
+
+Name: org/pathvisio/core/view/DefaultTemplates$DataNodeTemplate.class
+SHA1-Digest: rBg42+5cIJsSiLwiwTXVtbd1/YQ=
+
+Name: org/pathvisio/core/gpmldiff/SearchNode.class
+SHA1-Digest: Er8cR6uz2yodmFQq5t0t6ZmzBn0=
+
+Name: org/pathvisio/core/data/PubMedResult.class
+SHA1-Digest: MQ9FQPaekFmqXn7HG6VMP+cKl/w=
+
+Name: cancel.gif
+SHA1-Digest: 98xz88ogg7oqjDM5dQkCMvXiyfc=
+
+Name: org/pathvisio/core/model/CellularComponentType$2.class
+SHA1-Digest: cwzBXtRw3mGI+FX0qkOSjkga00I=
+
+Name: org/pathvisio/core/model/ShapeType$1.class
+SHA1-Digest: LysIS5v36AMVXh+3UdT/M52CVro=
+
+Name: org/pathvisio/core/data/PubMedQuery.class
+SHA1-Digest: e9oZ4+Uv1F3wY7QDEKyQfVlRhjU=
+
+Name: newextracellular region.gif
+SHA1-Digest: ujJxpcSp9QcMt4s8Jozned0ZSqM=
+
+Name: org/pathvisio/core/view/VPathway.class
+SHA1-Digest: vDRvZ/3txLrffM65EgkktcGqOGQ=
+
+Name: org/pathvisio/core/Revision.class
+SHA1-Digest: EFdDRzyMRRPjjF+Qb9G8SbCc7Hk=
+
+Name: new.gif
+SHA1-Digest: shJNlhrWePuo14xF8+yVKbisGWY=
+
+Name: org/pathvisio/core/model/PathwayImporter.class
+SHA1-Digest: 5ooP/65wxnlu6CY5CaX2BnpLscs=
+
+Name: org/pathvisio/core/model/PropertyManager.class
+SHA1-Digest: OI6QY/R6Y/GdMkNXzPm1CI3zbPE=
+
+Name: newpentagon.gif
+SHA1-Digest: eUUn/3K7KnwmbSxfr2/013ez9A4=
+
+Name: newlysosome.gif
+SHA1-Digest: LsVscXNSt2Lh6UhMM4g7kJCLw+g=
+
+Name: org/pathvisio/core/view/AnchorShape.class
+SHA1-Digest: yfRm2e60SP1jP4gvS8hRWHEiirA=
+
+Name: org/pathvisio/core/biopax/BiopaxProperty.class
+SHA1-Digest: 9CJE/hedWp69n3EWKyvAzjV02dA=
+
+Name: org/pathvisio/core/view/GraphicsShape$1.class
+SHA1-Digest: SIbmGvjM5CchnjJPhpfssUFvl1M=
+
+Name: newinhibition.gif
+SHA1-Digest: sXzfh3kfYCwdxL77wuUW5HIXCyk=
+
+Name: org/pathvisio/core/gpmldiff/PwyDoc.class
+SHA1-Digest: nTnSZuDL7nLbxc6aW9T8DjOgBfo=
+
+Name: down.gif
+SHA1-Digest: hvKPJ+Qgg3svv/IyUWt21R9H6eA=
+
+Name: org/pathvisio/core/view/ViewActions.class
+SHA1-Digest: 8hAaIwHNLRTwTHzTnpzxJF/GQT0=
+
+Name: newgap.gif
+SHA1-Digest: /aKeqmujbHf4ei1mVTllK4GUNmA=
+
+Name: org/pathvisio/core/gpmldiff/BetterSim.class
+SHA1-Digest: gkBH0L3IJ+c4NI9Nm/FEW6XRTyk=
+
+Name: org/pathvisio/core/model/GpmlFormat2013a.class
+SHA1-Digest: Et7jtX2NFPMtFv5zNoslHPpGmCQ=
+
+Name: org/pathvisio/core/debug/StopWatch.class
+SHA1-Digest: pvxP6PRUXSuqAuihSZ+2ckp9S6g=
+
+Name: org/pathvisio/core/model/GpmlFormatReader.class
+SHA1-Digest: ObNmGZ38e/lR1kLOomBCN3kSVTA=
+
+Name: org/pathvisio/core/model/PropertyType.class
+SHA1-Digest: uLyKCzuTZzTaVi0oUq2aKMjfbhM=
+
+Name: org/pathvisio/core/view/ViewActions$AddAnchorAction.class
+SHA1-Digest: KjXDbGCm/oqcKOyju2u0Oo2tLFw=
+
+Name: org/pathvisio/core/model/MappFormat$1.class
+SHA1-Digest: 1zZAiB/SP1j3cYTRaUYmjfRVF4k=
+
+Name: newreceptorsquare.gif
+SHA1-Digest: FL5fuwDM099QWoHJrLNWIz6egPY=
+
+Name: org/pathvisio/core/util/FileUtils$1.class
+SHA1-Digest: IvhzR8xgYGehHieVuoBuOm67hBQ=
+
+Name: newelbow.gif
+SHA1-Digest: KXWKXnjMrlrley//kOzF4N0BOLM=
+
+Name: tree_expanded.gif
+SHA1-Digest: 87gppSdWyT6Z9KvKY9p2+6qoInY=
+
+Name: org/pathvisio/core/Engine$ApplicationEventListener.class
+SHA1-Digest: l5XIAZFP9jkat5l4a7DthXD0/Xk=
+
+Name: org/pathvisio/core/biopax/BiopaxElement.class
+SHA1-Digest: No88fwcDhi2iU3GLF7p8oU2p+JE=
+
+Name: newtranscription-translation.gif
+SHA1-Digest: t9b1luCKg1TR7NKMZ9Pa8hSBYoE=
+
+Name: org/pathvisio/core/gpmldiff/BasicOutputter.class
+SHA1-Digest: CaUqw2jXc8648hYUIIz5MN7R448=
+
+Name: org/pathvisio/core/view/ViewActions$KeyMoveAction.class
+SHA1-Digest: mt3It1K9OBq/MX87gvbLx/Xa21Q=
+
+Name: newprotein.gif
+SHA1-Digest: 0JwpFn54ZB5Bs0sGJB5XPSWvS1g=
+
+Name: org/pathvisio/core/gpmldiff/Patch$1.class
+SHA1-Digest: MgvPDJoXhSxtqcXAgDuRy+W9HCM=
+
+Name: newmim-phosphorylated.gif
+SHA1-Digest: t7Cu+bT4qcnuyNap+TX2YaSdTUM=
+

@@ -21,11 +21,9 @@
  */
 namespace WikiPathways;
 
-class Hook
-{
+class Hook {
 	// Probably better to put this in parser init hook
-	public static function pathwayViewer() 
-	{
+	public static function pathwayViewer() {
 		global $wgParser;
 		$wgParser->setHook( "pathwayBibliography", "WikiPathways\\PathwayBibliography::output" );
 		$wgParser->setHook( "Xref", "WikiPathways\\XrefPanel::renderXref" );
@@ -33,6 +31,7 @@ class Hook
 		$wgParser->setHook(
 			"batchDownload", "WikiPathways\\BatchDownloader::createDownloadLinks"
 		);
+		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
 
 		$wgParser->setFunctionHook(
 			"PathwayViewer", "WikiPathways\\PathwayViewer::enable"
@@ -64,8 +63,7 @@ class Hook
 		Pathway::registerFileType( FILETYPE_BIOPAX );
 	}
 
-	public static function pathwayMagic( &$magicWords, $langCode ) 
-	{
+	public static function pathwayMagic( &$magicWords, $langCode ) {
 		$magicWords['PathwayViewer'] = [ 0, 'PathwayViewer' ];
 		$magicWords['pwImage'] = [ 0, 'pwImage' ];
 		$magicWords['editApplet'] = [ 0, 'editApplet' ];
@@ -76,15 +74,14 @@ class Hook
 	}
 
 	/* http://developers.pathvisio.org/ticket/1559 */
-	public static function stopDisplay( $output, $sk ) 
-	{
+	public static function stopDisplay( $output, $sk ) {
 		global $wgUser;
 
 		$title = $output->getPageTitle();
-		if ('mediawiki:questycaptcha-qna' === strtolower($title)
-			|| 'mediawiki:questycaptcha-q&a' === strtolower($title)
+		if ( 'mediawiki:questycaptcha-qna' === strtolower( $title )
+			|| 'mediawiki:questycaptcha-q&a' === strtolower( $title )
 		) {
-			if (!$title->userCan("edit") ) {
+			if ( !$title->userCan( "edit" ) ) {
 				$output->clearHTML();
 
 				$wgUser->mBlock = new Block(
@@ -99,14 +96,13 @@ class Hook
 	}
 
 	/* http://www.pathvisio.org/ticket/1539 */
-	public static function externalLink( &$url, &$text, &$link, &$attribs = null ) 
-	{
+	public static function externalLink( &$url, &$text, &$link, &$attribs = null ) {
 		global $wgExternalLinkTarget, $wgNoFollowLinks, $wgNoFollowNsExceptions;
-		wfProfileIn(__METHOD__);
-		wfDebug(__METHOD__.": Looking at the link: $url\n");
+		wfProfileIn( __METHOD__ );
+		wfDebug( __METHOD__.": Looking at the link: $url\n" );
 
 		$linkTarget = "_blank";
-		if (isset($wgExternalLinkTarget) && $wgExternalLinkTarget != "" ) {
+		if ( isset( $wgExternalLinkTarget ) && $wgExternalLinkTarget != "" ) {
 			$linkTarget = $wgExternalLinkTarget;
 		}
 
@@ -114,16 +110,16 @@ class Hook
 		* Added support for opening external links as new page
 		* Usage: [http://www.genmapp.org|_new Link]
 		*/
-		if (substr($url, -5) == "|_new" ) {
-			$url = substr($url, 0, strlen($url) - 5);
+		if ( substr( $url, -5 ) == "|_new" ) {
+			$url = substr( $url, 0, strlen( $url ) - 5 );
 			$linkTarget = "new";
-		} elseif (substr($url, -7) == "%7c_new" ) {
-			$url = substr($url, 0, strlen($url) - 7);
+		} elseif ( substr( $url, -7 ) == "%7c_new" ) {
+			$url = substr( $url, 0, strlen( $url ) - 7 );
 			$linkTarget = "new";
 		}
 
 		// Hook changed to include attribs in 1.15
-		if ($attribs !== null ) {
+		if ( $attribs !== null ) {
 			$attribs["target"] = $linkTarget;
 			/* nothing else should be needed, so we can leave the rest */
 			return;
@@ -131,17 +127,17 @@ class Hook
 
 		/* ugh ... had to copy this bit from makeExternalLink */
 		$l = new Linker;
-		$style = $l->getExternalLinkAttributes($url, $text, 'external ');
-		if ($wgNoFollowLinks
-			&& !( isset($ns)
-			&& in_array($ns, $wgNoFollowNsExceptions) )
+		$style = $l->getExternalLinkAttributes( $url, $text, 'external ' );
+		if ( $wgNoFollowLinks
+			&& !( isset( $ns )
+			&& in_array( $ns, $wgNoFollowNsExceptions ) )
 		) {
 			$style .= ' rel="nofollow"';
 		}
 
 		$link = '<a href="'.$url.'" target="'.$linkTarget.'"'.$style.'>'
 		. $text.'</a>';
-		wfProfileOut(__METHOD__);
+		wfProfileOut( __METHOD__ );
 
 		return false;
 	}
@@ -151,26 +147,26 @@ class Hook
 		&$flags, $revision, &$status = null, $baseRevId = null
 	) {
 		$title = $article->getTitle();
-		if ($title->getNamespace() !== NS_PATHWAY ) {
+		if ( $title->getNamespace() !== NS_PATHWAY ) {
 			return;
 		}
 
-		if (!$title->userCan("autocurate") ) {
-			wfDebug(__METHOD__ . ": User can't autocurate\n");
+		if ( !$title->userCan( "autocurate" ) ) {
+			wfDebug( __METHOD__ . ": User can't autocurate\n" );
 			return;
 		}
 
-		wfDebug(__METHOD__ . ": Autocurating tags for {$title->getText()}\n");
-		$db = wfGetDB(DB_MASTER);
-		$tags = MetaTag::getTagsForPage($title->getArticleID());
+		wfDebug( __METHOD__ . ": Autocurating tags for {$title->getText()}\n" );
+		$db = wfGetDB( DB_MASTER );
+		$tags = MetaTag::getTagsForPage( $title->getArticleID() );
 		foreach ( $tags as $tag ) {
 			$oldRev = $tag->getPageRevision();
-			if ($oldRev ) {
+			if ( $oldRev ) {
 				wfDebug(
 					__METHOD__
 					. ": Setting {$tag->getName()} to {$revision->getId()}\n"
 				);
-				$tag->setPageRevision($revision->getId());
+				$tag->setPageRevision( $revision->getId() );
 				$tag->save();
 			} else {
 				wfDebug(
@@ -184,42 +180,41 @@ class Hook
 	/**
 	 * Handles javascript dependencies for WikiPathways extensions
 	 */
-	public static function addJavascript( &$out, $parseroutput ) 
-	{
+	public static function addJavascript( &$out, $parseroutput ) {
 		global $wgJsMimeType, $wpiJavascriptSnippets, $wpiJavascriptSources,
 		 $jsJQuery, $wgRequest;
 
 		// Array containing javascript source files to add
-		if (!isset($wpiJavascriptSources) ) {
+		if ( !isset( $wpiJavascriptSources ) ) {
 			$wpiJavascriptSources = XrefPanel::getJsDependencies();
 		}
-		$wpiJavascriptSources = array_unique($wpiJavascriptSources);
+		$wpiJavascriptSources = array_unique( $wpiJavascriptSources );
 
 		// Array containing javascript snippets to add
-		if (!isset($wpiJavascriptSnippets) ) {
+		if ( !isset( $wpiJavascriptSnippets ) ) {
 			$wpiJavascriptSnippets = XrefPanel::getJsSnippets();
 		}
-		$wpiJavascriptSnippets = array_unique($wpiJavascriptSnippets);
+		$wpiJavascriptSnippets = array_unique( $wpiJavascriptSnippets );
 
 		foreach ( $wpiJavascriptSnippets as $snippet ) {
 			$out->addScript(
 				"<script type=\"{$wgJsMimeType}\">"
-				. $snippet . "</script>\n" 
+				. $snippet . "</script>\n"
 			);
 		}
 		foreach ( $wpiJavascriptSources as $src ) {
 			$out->addScript(
 				'<script src="' . $src . '" type="' . $wgJsMimeType
-				. '"></script>' 
+				. '"></script>'
 			);
 		}
 
 		// Add firebug lite console if requested in GET
 		$bug = "http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js";
-		if ($wgRequest->getval('firebug') ) {
+		if ( $wgRequest->getval( 'firebug' ) ) {
 			$out->addScript(
 				'<script src="' . $bug . '" type="' .
-				$wgJsMimeType . '></script>' 
+				$wgJsMimeType . '></script>'
 			);
 		}
 		return true;

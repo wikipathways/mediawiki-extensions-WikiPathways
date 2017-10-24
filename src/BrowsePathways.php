@@ -26,8 +26,7 @@ use SpecialPage;
 use Title;
 use Xml;
 
-class BrowsePathways extends SpecialPage
-{
+class BrowsePathways extends SpecialPage {
 
 	protected $maxPerPage  = 960;
 	protected $name        = 'BrowsePathways';
@@ -41,26 +40,24 @@ class BrowsePathways extends SpecialPage
 	protected $tag;
 	protected $sortOrder;
 
-	public function __construct( $empty = null )
-	{
-		parent::__construct($this->name);
+	public function __construct( $empty = null ) {
+		parent::__construct( $this->name );
 	}
 
-	public function execute( $par )
-	{
+	public function execute( $par ) {
 		global $wgOut, $wgRequest;
 
-		$wgOut->setPagetitle(wfMessage("browsepathways"));
+		$wgOut->setPagetitle( wfMessage( "browsepathways" ) );
 
-		$this->species   = $wgRequest->getVal("browse", 'Homo_sapiens');
-		$this->tag       = $wgRequest->getVal("tag", CurationTag::defaultTag());
-		$this->view      = $wgRequest->getVal("view", self::$defaultView);
-		$this->sortOrder = $wgRequest->getVal("sort", 0);
+		$this->species   = $wgRequest->getVal( "browse", 'Homo_sapiens' );
+		$this->tag       = $wgRequest->getVal( "tag", CurationTag::defaultTag() );
+		$this->view      = $wgRequest->getVal( "view", self::$defaultView );
+		$this->sortOrder = $wgRequest->getVal( "sort", 0 );
 		$nsForm = $this->pathwayForm();
 
-		$wgOut->addHtml($nsForm . '<hr />');
+		$wgOut->addHtml( $nsForm . '<hr />' );
 
-		$pager = PathwaysPagerFactory::get($this->view, $this->species, $this->tag, $this->sortOrder);
+		$pager = PathwaysPagerFactory::get( $this->view, $this->species, $this->tag, $this->sortOrder );
 		$wgOut->addHTML(
 			$pager->getTopNavigationBar() .
 			$pager->getBody() .
@@ -69,72 +66,67 @@ class BrowsePathways extends SpecialPage
 		return;
 	}
 
-	protected function getSortingOptionsList()
-	{
+	protected function getSortingOptionsList() {
 		$arr = self::$sortOptions;
 
 		$sel = "\n<select onchange='this.form.submit()' name='sort' class='namespaceselector'>\n";
 		foreach ( $arr as $key => $label ) {
-			$sel .= $this->makeSelectionOption($key, $this->sortOrder, $label);
+			$sel .= $this->makeSelectionOption( $key, $this->sortOrder, $label );
 		}
 		$sel .= "</select>\n";
 		return $sel;
 	}
 
-	protected function getSpeciesSelectionList()
-	{
+	protected function getSpeciesSelectionList() {
 		$arr = Pathway::getAvailableSpecies();
-		asort($arr);
-		$all = wfMessage('browsepathways-all-species' )->plain();
+		asort( $arr );
+		$all = wfMessage( 'browsepathways-all-species' )->plain();
 		$arr[] = $all;
 		/* $arr[] = wfMessage('browsepathways-uncategorized-species' )->plain(); Don't look for uncategorized species */
 
 		$sel = "\n<select onchange='this.form.submit()' name='browse' class='namespaceselector'>\n";
 		foreach ( $arr as $label ) {
-			$value = Title::newFromText($label)->getDBKey();
-			if ($label === $all ) {
+			$value = Title::newFromText( $label )->getDBKey();
+			if ( $label === $all ) {
 				$value = "---";
 			}
-			$sel .= $this->makeSelectionOption($value, $this->species, $label);
+			$sel .= $this->makeSelectionOption( $value, $this->species, $label );
 		}
 		$sel .= "</select>\n";
 		return $sel;
 	}
 
-	protected function getTagSelectionList()
-	{
+	protected function getTagSelectionList() {
 		$sel = "<select onchange='this.form.submit()' name='tag' class='namespaceselector'>\n";
 		foreach ( CurationTag::getUserVisibleTagNames() as $display => $tag ) {
-			if (is_array($tag) ) {
+			if ( is_array( $tag ) ) {
 				$tag = "---";
 			}
-			$sel .= $this->makeSelectionOption($tag, $this->tag, $display);
+			$sel .= $this->makeSelectionOption( $tag, $this->tag, $display );
 		}
 		$sel .= "</select>\n";
 		return $sel;
 	}
 
-	protected function getViewSelectionList()
-	{
+	protected function getViewSelectionList() {
 		$sel = "\n<select onchange='this.form.submit()' name='view' class='namespaceselector'>\n";
 		foreach ( self::$views as $s ) {
-			$sel .= $this->makeSelectionOption($s, $this->view, wfMessage("browsepathways-view-" . $s )->plain());
+			$sel .= $this->makeSelectionOption( $s, $this->view, wfMessage( "browsepathways-view-" . $s )->plain() );
 		}
 		$sel .= "</select>\n";
 		return $sel;
 	}
 
-	protected function makeSelectionOption( $item, $selected, $display = null )
-	{
+	protected function makeSelectionOption( $item, $selected, $display = null ) {
 		$attr = [ "value" => $item ];
-		if (null === $display ) {
+		if ( null === $display ) {
 			$display = $item;
 		}
-		if ($item == $selected ) {
+		if ( $item == $selected ) {
 			$attr['selected'] = 1;
 		}
 
-		return "\t" . Xml::element("option", $attr, $display) . "\n";
+		return "\t" . Xml::element( "option", $attr, $display ) . "\n";
 	}
 
 	/**
@@ -143,10 +135,9 @@ class BrowsePathways extends SpecialPage
 	 * @param  string Species to show pathways for
 	 * @return string
 	 */
-	public function pathwayForm()
-	{
+	public function pathwayForm() {
 		global $wgScript;
-		$t = SpecialPage::getTitleFor($this->name);
+		$t = SpecialPage::getTitleFor( $this->name );
 
 		/**
 		 * Species Selection
@@ -162,11 +153,11 @@ class BrowsePathways extends SpecialPage
 		$out .= "
 <table id='nsselect' class='allpages'>
 	<tr>
-		<td align='right'>". wfMessage("browsepathways-select-species" )->plain() ."</td>
+		<td align='right'>". wfMessage( "browsepathways-select-species" )->plain() ."</td>
 		<td align='left'>$speciesSelect</td>
-		<td align='right'>". wfMessage("browsepathways-select-collection" )->plain() ."</td>
+		<td align='right'>". wfMessage( "browsepathways-select-collection" )->plain() ."</td>
 		<td align='left'>$tagSelect</td>
-		<td align='right'>". wfMessage("browsepathways-select-view" )->plain() ."</td>
+		<td align='right'>". wfMessage( "browsepathways-select-view" )->plain() ."</td>
 		<td align='left'>$viewSelect</td>
 		<td>$submitbutton</td>
 	</tr>

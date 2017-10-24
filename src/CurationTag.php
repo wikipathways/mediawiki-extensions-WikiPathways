@@ -36,28 +36,26 @@ use MWException;
 /**
  * API for reading/writing Curation tags
  **/
-class CurationTag
-{
+class CurationTag {
 	private static $TAG_LIST = "Curationtags-definition.xml";
 	private static $TAG_LIST_PAGE = "MediaWiki:Curationtags-definition.xml";
 
-	public static function displayCurationTags($input, $argv, $parser)
-	{
+	public static function displayCurationTags( $input, $argv, $parser ) {
 		global $wgOut, $wfCurationTagsPath, $wgJsMimeType;
 
-		//Add CSS
-		$wgOut->addStyle("wikipathways/CurationTags.css");
+		// Add CSS
+		$wgOut->addStyle( "wikipathways/CurationTags.css" );
 
 		$title = $parser->getTitle();
-		$mayEdit = $title->userCan('edit') ? true : false;
+		$mayEdit = $title->userCan( 'edit' ) ? true : false;
 		$revision = $parser->getRevisionId();
-		if(!$revision) {
+		if ( !$revision ) {
 			$parser->mTitle->getLatestRevId();
 		}
-		$helpLink = Title::newFromText("CurationTags", NS_HELP)->getFullURL();
+		$helpLink = Title::newFromText( "CurationTags", NS_HELP )->getFullURL();
 
-		//Add javascript
-		$wgOut->addScriptFile("../wikipathways/CurationTags.js");
+		// Add javascript
+		$wgOut->addScriptFile( "../wikipathways/CurationTags.js" );
 		$wgOut->addScript(
 			"<script type=\"{$wgJsMimeType}\">" .
 			"CurationTags.extensionPath=\"$wfCurationTagsPath\";" .
@@ -75,15 +73,14 @@ class CurationTag
 	/**
 	 * Processes events after a curation tag has changed
 	 */
-	public static function curationTagChanged($tag)
-	{
+	public static function curationTagChanged( $tag ) {
 		global $wgEnotifUseJobQ;
 
-		$hist = MetaTag::getHistoryForPage($tag->getPageId(), wfTimestamp(TS_MW));
+		$hist = MetaTag::getHistoryForPage( $tag->getPageId(), wfTimestamp( TS_MW ) );
 
-		if(count($hist) > 0) {
+		if ( count( $hist ) > 0 ) {
 			$taghist = $hist[0];
-			$enotif = new TagChangeNotification($taghist);
+			$enotif = new TagChangeNotification( $taghist );
 			$enotif->notifyOnTagChange();
 		}
 	}
@@ -96,9 +93,8 @@ class CurationTag
 	public static $TAG_PREFIX = "Curation:";
 	private static $tagDefinition;
 
-	private static function getTagAttr( $tag, $attr )
-	{
-		$r = self::getTagDefinition()->xpath('Tag[@name="' . $tag . '"]/@' . $attr);
+	private static function getTagAttr( $tag, $attr ) {
+		$r = self::getTagDefinition()->xpath( 'Tag[@name="' . $tag . '"]/@' . $attr );
 		$v = $r ? (string)$r[0][$attr] : null;
 		return $v !== null && $v !== "" ? $v : null;
 	}
@@ -106,67 +102,58 @@ class CurationTag
 	/**
 	 * Get the display name for the given tag name
 	 */
-	public static function getDisplayName($tagname)
-	{
-		return self::getTagAttr($tagname, "displayName");
+	public static function getDisplayName( $tagname ) {
+		return self::getTagAttr( $tagname, "displayName" );
 	}
 
 	/**
 	 * Get the drop-down name for the given tag name
 	 */
-	public static function getDropDown($tagname)
-	{
-		return self::getTagAttr($tagname, "dropDown");
+	public static function getDropDown( $tagname ) {
+		return self::getTagAttr( $tagname, "dropDown" );
 	}
 
 	/**
 	 * Get the icon for the tag.
 	 */
-	public static function getIcon( $tagname )
-	{
-		$a = self::getTagAttr($tagname, "icon");
-		return self::getTagAttr($tagname, "icon");
+	public static function getIcon( $tagname ) {
+		$a = self::getTagAttr( $tagname, "icon" );
+		return self::getTagAttr( $tagname, "icon" );
 	}
 
 	/**
 	 * Get the description for the given tag name
 	 */
-	public static function getDescription($tagname)
-	{
-		return self::getTagAttr($tagname, "description");
+	public static function getDescription( $tagname ) {
+		return self::getTagAttr( $tagname, "description" );
 	}
 
 	/**
 	 * Returns true if you the revision should be used.
 	 */
-	public static function useRevision( $tagname )
-	{
-		return self::getTagAttr($tagname, "useRevision") !== null;
+	public static function useRevision( $tagname ) {
+		return self::getTagAttr( $tagname, "useRevision" ) !== null;
 	}
 
-	public static function newEditHighlight( $tagname )
-	{
-		return self::getTagAttr($tagname, "newEditHighlight");
+	public static function newEditHighlight( $tagname ) {
+		return self::getTagAttr( $tagname, "newEditHighlight" );
 	}
 
-	public static function highlightAction( $tagname )
-	{
-		return self::getTagAttr($tagname, "highlightAction");
+	public static function highlightAction( $tagname ) {
+		return self::getTagAttr( $tagname, "highlightAction" );
 	}
 
-	public static function bureaucratOnly( $tagname )
-	{
-		return self::getTagAttr($tagname, 'bureaucrat');
+	public static function bureaucratOnly( $tagname ) {
+		return self::getTagAttr( $tagname, 'bureaucrat' );
 	}
 
-	public static function defaultTag( )
-	{
-		$r = self::getTagDefinition()->xpath('Tag[@default]');
-		if(count($r) === 0 ) {
-			throw new MWException("curationtags-no-tags");
+	public static function defaultTag() {
+		$r = self::getTagDefinition()->xpath( 'Tag[@default]' );
+		if ( count( $r ) === 0 ) {
+			throw new MWException( "curationtags-no-tags" );
 		}
-		if(count($r) > 1 ) {
-			throw new MWException("curationtags-multiple-tags");
+		if ( count( $r ) > 1 ) {
+			throw new MWException( "curationtags-multiple-tags" );
 		}
 		return (string)$r[0]['name'];
 	}
@@ -174,23 +161,21 @@ class CurationTag
 	/**
 	 * Return a list of top tags
 	 */
-	public static function topTags( )
-	{
+	public static function topTags() {
 		$r = self::topTagsWithLabels();
-		return array_values($r);
+		return array_values( $r );
 	}
 
 	/**
 	 * Return a list of top tags indexed by label.
 	 */
-	public static function topTagsWithLabels( )
-	{
-		$r = self::getTagDefinition()->xpath('Tag[@topTag]');
-		if(count($r) === 0 ) {
-			throw new MWException("No top tags specified!  Please set [[CurationTagsDefinition]] with at least one top tag.");
+	public static function topTagsWithLabels() {
+		$r = self::getTagDefinition()->xpath( 'Tag[@topTag]' );
+		if ( count( $r ) === 0 ) {
+			throw new MWException( "No top tags specified!  Please set [[CurationTagsDefinition]] with at least one top tag." );
 		}
-		$top = array();
-		foreach( $r as $tag ) {
+		$top = [];
+		foreach ( $r as $tag ) {
 			$top[(string)$tag['displayName']] = (string)$tag['name'];
 		}
 
@@ -200,12 +185,11 @@ class CurationTag
 	/**
 	 * Get the names of all available curation tags.
 	 */
-	public static function getTagNames()
-	{
+	public static function getTagNames() {
 		$xpath = 'Tag/@name';
-		$dn = self::getTagDefinition()->xpath($xpath);
-		$names = array();
-		foreach($dn as $e) { $names[] = $e['name'];
+		$dn = self::getTagDefinition()->xpath( $xpath );
+		$names = [];
+		foreach ( $dn as $e ) { $names[] = $e['name'];
 		}
 		return $names;
 	}
@@ -213,25 +197,24 @@ class CurationTag
 	/**
 	 * Returns a list of tags that the user can select.
 	 */
-	public static function getUserVisibleTagNames()
-	{
+	public static function getUserVisibleTagNames() {
 		global $wgUser;
-		$groups = array_flip($wgUser->getGroups());
-		$isBureaucrat = isset($groups['bureaucrat']);
+		$groups = array_flip( $wgUser->getGroups() );
+		$isBureaucrat = isset( $groups['bureaucrat'] );
 		$visible = self::topTagsWithLabels();
-		$top = array_flip($visible); /* Quick way to check if this is an already-visible top-tag */
-		$rest = array(); // holds all the tags, not just the visible ones
+		$top = array_flip( $visible ); /* Quick way to check if this is an already-visible top-tag */
+		$rest = []; // holds all the tags, not just the visible ones
 
 		foreach ( self::getTagNames() as $tag ) {
 			$tag = (string)$tag; /* SimpleXMLElements means lots of problems */
-			if(self::bureaucratOnly($tag) ) {
-				if(isset($top[$tag]) ) {
-					throw new MWException("Bureaucrat-only tags cannot be top tags! Choose one or the other for '$tag'");
+			if ( self::bureaucratOnly( $tag ) ) {
+				if ( isset( $top[$tag] ) ) {
+					throw new MWException( "Bureaucrat-only tags cannot be top tags! Choose one or the other for '$tag'" );
 				}
-				if($isBureaucrat ) {
-					$label = self::getDropDown($tag);
-					if(empty($label) ) {
-						$label = self::getDisplayName($tag);
+				if ( $isBureaucrat ) {
+					$label = self::getDropDown( $tag );
+					if ( empty( $label ) ) {
+						$label = self::getDisplayName( $tag );
 					}
 					$visible[$label] = $tag;
 					$rest[] = $tag; /* Also add it to the list of all tags */
@@ -240,7 +223,7 @@ class CurationTag
 				$rest[] = $tag;
 			}
 		}
-		$visible[ wfMessage('browsepathways-all-tags')->text() ] = $rest;
+		$visible[ wfMessage( 'browsepathways-all-tags' )->text() ] = $rest;
 		return $visible;
 	}
 
@@ -250,38 +233,36 @@ class CurationTag
 	 * @param  $name The tag name
 	 * @return An array with page ids
 	 */
-	public static function getPagesForTag($tagname)
-	{
-		return MetaTag::getPagesForTag($tagname);
+	public static function getPagesForTag( $tagname ) {
+		return MetaTag::getPagesForTag( $tagname );
 	}
 
 	/**
 	 * Get the SimpleXML representation of the tag definition
 	 **/
-	public static function getTagDefinition()
-	{
-		if(!self::$tagDefinition) {
-			$ref = wfMessage(self::$TAG_LIST)->plain();
-			if(!$ref) {
+	public static function getTagDefinition() {
+		if ( !self::$tagDefinition ) {
+			$ref = wfMessage( self::$TAG_LIST )->plain();
+			if ( !$ref ) {
 				throw new Exception( "No content for [[".self::$TAG_LIST_PAGE."]].  "
 									. "It must be a valid XML document." );
 			}
 			try {
-				libxml_use_internal_errors(true);
-				self::$tagDefinition = new SimpleXMLElement($ref);
-			} catch (Exception $e) {
+				libxml_use_internal_errors( true );
+				self::$tagDefinition = new SimpleXMLElement( $ref );
+			} catch ( Exception $e ) {
 				$err = "Error parsing [[".self::$TAG_LIST_PAGE."]].  It must be a valid XML document.\n";
-				$line = explode("\n", trim($ref));
-				foreach(libxml_get_errors() as $error) {
-					if(strstr($error->message, "Start tag expected") ) {
+				$line = explode( "\n", trim( $ref ) );
+				foreach ( libxml_get_errors() as $error ) {
+					if ( strstr( $error->message, "Start tag expected" ) ) {
 						$err .= "\n    " . $error->message . "\nPage content:\n    " .
-						implode("\n    ", $line);
+						implode( "\n    ", $line );
 					} else {
 						$err .= "\n    " . $error->message . "\nStart of page:\n  " .
-						substr(trim($line[0]), 0, 100);
+						substr( trim( $line[0] ), 0, 100 );
 					}
 				}
-				throw new MWException($err);
+				throw new MWException( $err );
 			}
 		}
 		return self::$tagDefinition;
@@ -290,82 +271,76 @@ class CurationTag
 	/**
 	 * Create or update the tag, based on the provided tag information
 	 */
-	public static function saveTag($pageId, $name, $text, $revision = false)
-	{
-		if(!self::isCurationTag($name)) {
-			self::errorNoCurationTag($name);
+	public static function saveTag( $pageId, $name, $text, $revision = false ) {
+		if ( !self::isCurationTag( $name ) ) {
+			self::errorNoCurationTag( $name );
 		}
 
-		$tag = new MetaTag($name, $pageId);
-		$tag->setText($text);
-		if($revision && $revision != 'false') {
-			$tag->setPageRevision($revision);
+		$tag = new MetaTag( $name, $pageId );
+		$tag->setText( $text );
+		if ( $revision && $revision != 'false' ) {
+			$tag->setPageRevision( $revision );
 		}
 		$tag->save();
-		self::curationTagChanged($tag);
+		self::curationTagChanged( $tag );
 	}
 
 	/**
 	 * Remove the given curation tag for the given page.
 	 */
-	public static function removeTag($tagname, $pageId)
-	{
-		if(!self::isCurationTag($tagname)) {
-			self::errorNoCurationTag($tagname);
+	public static function removeTag( $tagname, $pageId ) {
+		if ( !self::isCurationTag( $tagname ) ) {
+			self::errorNoCurationTag( $tagname );
 		}
 
-		$tag = new MetaTag($tagname, $pageId);
+		$tag = new MetaTag( $tagname, $pageId );
 		$tag->remove();
-		self::curationTagChanged($tag);
+		self::curationTagChanged( $tag );
 	}
 
-	public static function getCurationTags($pageId)
-	{
-		$tags = MetaTag::getTagsForPage($pageId);
-		$curTags = array();
-		foreach($tags as $t) {
-			if(self::isCurationTag($t->getName())) {
+	public static function getCurationTags( $pageId ) {
+		$tags = MetaTag::getTagsForPage( $pageId );
+		$curTags = [];
+		foreach ( $tags as $t ) {
+			if ( self::isCurationTag( $t->getName() ) ) {
 				$curTags[$t->getName()] = $t;
 			}
 		}
 		return $curTags;
 	}
 
-	public static function getCurationImagesForTitle( $title )
-	{
+	public static function getCurationImagesForTitle( $title ) {
 		$pageId = $title->getArticleId();
-		$tags = self::getCurationTags($pageId);
+		$tags = self::getCurationTags( $pageId );
 
-		$icon = array();
-		foreach( $tags as $tag ) {
-			if($i =  self::getIcon($tag->getName()) ) {
-				$icon[self::getDisplayName($tag->getName())] =
-				array(
+		$icon = [];
+		foreach ( $tags as $tag ) {
+			if ( $i = self::getIcon( $tag->getName() ) ) {
+				$icon[self::getDisplayName( $tag->getName() )] =
+				[
 				"img" => $i,
 				"tag" => $tag->getName()
-				);
+				];
 			}
 		}
 		return $icon;
 	}
 
-	public static function getCurationTagsByName($tagname)
-	{
-		if(!self::isCurationTag($tagname)) {
-			self::errorNoCurationTag($tagname);
+	public static function getCurationTagsByName( $tagname ) {
+		if ( !self::isCurationTag( $tagname ) ) {
+			self::errorNoCurationTag( $tagname );
 		}
-		return MetaTag::getTags($tagname);
+		return MetaTag::getTags( $tagname );
 	}
 
 	/**
 	 * Get tag history for the given page
 	 */
-	public static function getHistory($pageId, $fromTime = 0)
-	{
-		$allhist = MetaTag::getHistoryForPage($pageId, $fromTime);
-		$hist = array();
-		foreach($allhist as $h) {
-			if(self::isCurationTag($h->getTagName())) {
+	public static function getHistory( $pageId, $fromTime = 0 ) {
+		$allhist = MetaTag::getHistoryForPage( $pageId, $fromTime );
+		$hist = [];
+		foreach ( $allhist as $h ) {
+			if ( self::isCurationTag( $h->getTagName() ) ) {
 				$hist[] = $h;
 			}
 		}
@@ -375,12 +350,11 @@ class CurationTag
 	/**
 	 * Get the curation tag history for all pages
 	 **/
-	public static function getAllHistory($fromTime = 0)
-	{
-		$allhist = MetaTag::getAllHistory('', $fromTime);
-		$hist = array();
-		foreach($allhist as $h) {
-			if(self::isCurationTag($h->getTagName())) {
+	public static function getAllHistory( $fromTime = 0 ) {
+		$allhist = MetaTag::getAllHistory( '', $fromTime );
+		$hist = [];
+		foreach ( $allhist as $h ) {
+			if ( self::isCurationTag( $h->getTagName() ) ) {
 				$hist[] = $h;
 			}
 		}
@@ -390,44 +364,40 @@ class CurationTag
 	/**
 	 * Checks if the tagname is a curation tag
 	 **/
-	public static function isCurationTag($tagName)
-	{
-		$expr = "/^" . CurationTag::$TAG_PREFIX . "/";
-		return preg_match($expr, $tagName);
+	public static function isCurationTag( $tagName ) {
+		$expr = "/^" . self::$TAG_PREFIX . "/";
+		return preg_match( $expr, $tagName );
 	}
 
-	private static function errorNoCurationTag($tagName)
-	{
-		throw new Exception("Tag '$tagName' is not a curation tag!");
+	private static function errorNoCurationTag( $tagName ) {
+		throw new Exception( "Tag '$tagName' is not a curation tag!" );
 	}
 }
 
 /**
  * Ajax API for reading/writing curation tags
  **/
-class CurationTagsAjax
-{
+class CurationTagsAjax {
 	/**
 	 * Get the tag names for the given page.
 	 *
 	 * @return an XML snipped containing a list of tag names of the form:
 	 * <TagNames><Name>tag1</Name><Name>tag2</Name>...<Name>tagn</Name></TagNames>
 	 */
-	public static function getTagNames($pageId)
-	{
-		$tags = CurationTag::getCurationTags($pageId);
+	public static function getTagNames( $pageId ) {
+		$tags = CurationTag::getCurationTags( $pageId );
 		$doc = new DOMDocument();
-		$root = $doc->createElement("TagNames");
-		$doc->appendChild($root);
+		$root = $doc->createElement( "TagNames" );
+		$doc->appendChild( $root );
 
-		foreach($tags as $t) {
-			$e = $doc->createElement("Name");
-			$e->appendChild($doc->createTextNode($t->getName()));
-			$root->appendChild($e);
+		foreach ( $tags as $t ) {
+			$e = $doc->createElement( "Name" );
+			$e->appendChild( $doc->createTextNode( $t->getName() ) );
+			$root->appendChild( $e );
 		}
 
-		$resp = new AjaxResponse(trim($doc->saveXML()));
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( trim( $doc->saveXML() ) );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 
@@ -437,17 +407,16 @@ class CurationTagsAjax
 	 * @return an XML snipped containing the tagname of the removed tag:
 	 * <Name>tagname</Name>
 	 */
-	public static function removeTag($name, $pageId)
-	{
-		CurationTag::removeTag($name, $pageId);
+	public static function removeTag( $name, $pageId ) {
+		CurationTag::removeTag( $name, $pageId );
 
 		$doc = new DOMDocument();
-		$root = $doc->createElement("Name");
-		$root->appendChild($doc->createTextNode($name));
-		$doc->appendChild($root);
+		$root = $doc->createElement( "Name" );
+		$root->appendChild( $doc->createTextNode( $name ) );
+		$doc->appendChild( $root );
 
-		$resp = new AjaxResponse(trim($doc->saveXML()));
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( trim( $doc->saveXML() ) );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 
@@ -457,17 +426,16 @@ class CurationTagsAjax
 	 * @return an XML snipped containing the tagname of the created tag:
 	 * <Name>tagname</Name>
 	 */
-	public static function saveTag($name, $pageId, $text, $revision = false)
-	{
-		CurationTag::saveTag($pageId, $name, $text, $revision);
+	public static function saveTag( $name, $pageId, $text, $revision = false ) {
+		CurationTag::saveTag( $pageId, $name, $text, $revision );
 
 		$doc = new DOMDocument();
-		$root = $doc->createElement("Name");
-		$root->appendChild($doc->createTextNode($name));
-		$doc->appendChild($root);
+		$root = $doc->createElement( "Name" );
+		$root->appendChild( $doc->createTextNode( $name ) );
+		$doc->appendChild( $root );
 
-		$resp = new AjaxResponse(trim($doc->saveXML()));
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( trim( $doc->saveXML() ) );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 
@@ -483,61 +451,59 @@ class CurationTagsAjax
 	 *        ...
 	 * </History>
 	 */
-	public static function getTagHistory($pageId, $fromTime = '0')
-	{
+	public static function getTagHistory( $pageId, $fromTime = '0' ) {
 		global $wgLang, $wgUser;
 
-		$hist = CurationTag::getHistory($pageId, $fromTime);
+		$hist = CurationTag::getHistory( $pageId, $fromTime );
 
 		$doc = new DOMDocument();
-		$root = $doc->createElement("History");
-		$doc->appendChild($root);
+		$root = $doc->createElement( "History" );
+		$doc->appendChild( $root );
 
-		foreach($hist as $h) {
-			$elm = $doc->createElement("HistoryRow");
-			$elm->setAttribute('tag_name', $h->getTagName());
-			$elm->setAttribute('page_id', $h->getPageId());
-			$elm->setAttribute('action', $h->getAction());
-			$elm->setAttribute('user', $h->getUser());
-			$elm->setAttribute('time', $h->getTime());
+		foreach ( $hist as $h ) {
+			$elm = $doc->createElement( "HistoryRow" );
+			$elm->setAttribute( 'tag_name', $h->getTagName() );
+			$elm->setAttribute( 'page_id', $h->getPageId() );
+			$elm->setAttribute( 'action', $h->getAction() );
+			$elm->setAttribute( 'user', $h->getUser() );
+			$elm->setAttribute( 'time', $h->getTime() );
 
-			$timeText = $wgLang->timeanddate($h->getTime());
-			$elm->setAttribute('timeText', $timeText);
+			$timeText = $wgLang->timeanddate( $h->getTime() );
+			$elm->setAttribute( 'timeText', $timeText );
 
 			$uid = $h->getUser();
 			$nm = $uid;
-			$u = User::newFromId($uid);
-			if($u) {
+			$u = User::newFromId( $uid );
+			if ( $u ) {
 				$nm = $u->getName();
 			}
-			$userText = $wgUser->getSkin()->userLink($uid, $nm);
-			$elm->setAttribute('userText', $userText);
+			$userText = $wgUser->getSkin()->userLink( $uid, $nm );
+			$elm->setAttribute( 'userText', $userText );
 
-			$root->appendChild($elm);
+			$root->appendChild( $elm );
 		}
 
-		$resp = new AjaxResponse(trim($doc->saveXML()));
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( trim( $doc->saveXML() ) );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 
 	/**
 	 * Get all curation tags (and their contents) at once.
 	 */
-	public static function getTags($pageId, $pageRev = 0)
-	{
-		$tags = CurationTag::getCurationTags($pageId);
+	public static function getTags( $pageId, $pageRev = 0 ) {
+		$tags = CurationTag::getCurationTags( $pageId );
 		$doc = new DOMDocument();
-		$root = $doc->createElement("Tags");
-		$doc->appendChild($root);
+		$root = $doc->createElement( "Tags" );
+		$doc->appendChild( $root );
 
-		foreach($tags as $t) {
-			$elm = self::getTagXml($doc, $t, $pageRev);
-			$root->appendChild($elm);
+		foreach ( $tags as $t ) {
+			$elm = self::getTagXml( $doc, $t, $pageRev );
+			$root->appendChild( $elm );
 		}
 
-		$resp = new AjaxResponse(trim($doc->saveXML()));
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( trim( $doc->saveXML() ) );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 
@@ -550,25 +516,23 @@ class CurationTagsAjax
 	 *         <Text>the tag text</text>
 	 *     </Tag>
 	 */
-	public static function getTagData($name, $pageId, $pageRev = 0)
-	{
-		$tag = new MetaTag($name, $pageId);
+	public static function getTagData( $name, $pageId, $pageRev = 0 ) {
+		$tag = new MetaTag( $name, $pageId );
 
 		$doc = new DOMDocument();
-		$elm = self::getTagXML($doc, $tag, $pageRev);
-		$doc->appendChild($elm);
+		$elm = self::getTagXML( $doc, $tag, $pageRev );
+		$doc->appendChild( $elm );
 
-		$resp = new AjaxResponse($doc->saveXML());
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( $doc->saveXML() );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 
-	public static function getTagXML($doc, $tag, $pageRev = 0)
-	{
-		//Create a template call and use the parser to
-		//convert this to HTML
-		$userAdd = User::newFromId($tag->getUserAdd());
-		$userMod = User::newFromId($tag->getUserMod());
+	public static function getTagXML( $doc, $tag, $pageRev = 0 ) {
+		// Create a template call and use the parser to
+		// convert this to HTML
+		$userAdd = User::newFromId( $tag->getUserAdd() );
+		$userMod = User::newFromId( $tag->getUserMod() );
 
 		$name = $tag->getName();
 		$pageId = $tag->getPageId();
@@ -586,34 +550,34 @@ class CurationTagsAjax
 		$tmp .= "|time_mod={$tag->getTimeMod()}";
 		$tmp .= "|page_revision={$pageRev}";
 
-		if($tag->getPageRevision()) {
+		if ( $tag->getPageRevision() ) {
 			$tmp .= "|tag_revision={$tag->getPageRevision()}";
 		}
 
 		$tmp = "{{Template:" . $tmp . "}}";
 
 		$parser = new Parser();
-		$title = Title::newFromID($pageId);
-		$out = $parser->parse($tmp, $title, new ParserOptions());
+		$title = Title::newFromID( $pageId );
+		$out = $parser->parse( $tmp, $title, new ParserOptions() );
 		$html = $out->getText();
 
-		$elm = $doc->createElement("Tag");
-		$elm->setAttribute('name', $tag->getName());
-		$elm->setAttribute('page_id', $tag->getPageId());
-		$elm->setAttribute('user_add', $tag->getUserAdd());
-		$elm->setAttribute('time_add', $tag->getTimeAdd());
-		$elm->setAttribute('user_mod', $tag->getUserMod());
-		$elm->setAttribute('time_mod', $tag->getTimeMod());
-		if($tag->getPageRevision()) {
-			$elm->setAttribute('revision', $tag->getPageRevision());
+		$elm = $doc->createElement( "Tag" );
+		$elm->setAttribute( 'name', $tag->getName() );
+		$elm->setAttribute( 'page_id', $tag->getPageId() );
+		$elm->setAttribute( 'user_add', $tag->getUserAdd() );
+		$elm->setAttribute( 'time_add', $tag->getTimeAdd() );
+		$elm->setAttribute( 'user_mod', $tag->getUserMod() );
+		$elm->setAttribute( 'time_mod', $tag->getTimeMod() );
+		if ( $tag->getPageRevision() ) {
+			$elm->setAttribute( 'revision', $tag->getPageRevision() );
 		}
-		$elm_text = $doc->createElement("Text");
-		$elm_text->appendChild($doc->createTextNode($tag->getText()));
-		$elm->appendChild($elm_text);
+		$elm_text = $doc->createElement( "Text" );
+		$elm_text->appendChild( $doc->createTextNode( $tag->getText() ) );
+		$elm->appendChild( $elm_text );
 
-		$elm_html = $doc->createElement("Html");
-		$elm_html->appendChild($doc->createTextNode($html));
-		$elm->appendChild($elm_html);
+		$elm_html = $doc->createElement( "Html" );
+		$elm_html->appendChild( $doc->createTextNode( $html ) );
+		$elm->appendChild( $elm_html );
 
 		return $elm;
 	}
@@ -624,11 +588,10 @@ class CurationTagsAjax
 	 * @return An xml document containing the list of tags on the
 	 * CurationTagsDefinition wiki page
 	 */
-	public static function getAvailableTags()
-	{
+	public static function getAvailableTags() {
 		$td = CurationTag::getTagDefinition();
-		$resp = new AjaxResponse($td->asXML());
-		$resp->setContentType("text/xml");
+		$resp = new AjaxResponse( $td->asXML() );
+		$resp->setContentType( "text/xml" );
 		return $resp;
 	}
 }

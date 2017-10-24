@@ -4,17 +4,16 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 	print "This script must be run from the command line\n";
 	exit();
 }
-chdir("../");
+chdir( "../" );
 
-chdir(dirname(__FILE__));
+chdir( __DIR__ );
 
 /* Tables for web service logging */
 echo "*** Changing tag_text in tag to TEXT ***\n";
 
-$dbw =& wfGetDB(DB_MASTER);
+$dbw =& wfGetDB( DB_MASTER );
 $dbw->immediateBegin();
 
-
-$dbw->query("ALTER TABLE `tag` CHANGE `tag_text` `tag_text` TEXT NULL DEFAULT NULL");
-$dbw->query("ALTER TABLE `tag_history` CHANGE `text` `text` TEXT NULL DEFAULT NULL");
+$dbw->query( "ALTER TABLE `tag` CHANGE `tag_text` `tag_text` TEXT NULL DEFAULT NULL" );
+$dbw->query( "ALTER TABLE `tag_history` CHANGE `text` `text` TEXT NULL DEFAULT NULL" );
 $dbw->immediateCommit();

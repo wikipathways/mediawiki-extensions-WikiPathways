@@ -10,9 +10,10 @@
  * @ingroup Maintenance
  */
 
-if( !isset($IP) ) $IP = dirname( dirname( dirname( __FILE__ ) ) );
-require_once( "$IP/maintenance/commandLine.inc" );
-require_once( "$IP/wpi/extensions/BrowsePathways/BrowsePathways_body.php");
+if ( !isset( $IP ) ) { $IP = dirname( dirname( __DIR__ ) );
+}
+require_once "$IP/maintenance/commandLine.inc";
+require_once "$IP/wpi/extensions/BrowsePathways/BrowsePathways_body.php";
 
 $wgAutoloadClasses['PagerIterator']    = "$IP/wpi/extensions/Pager/PagerIterator.php";
 $wgAutoloadClasses['CliPathwaysPager'] = "$IP/wpi/extensions/Pager/CliPathwaysPager.php";
@@ -22,17 +23,17 @@ $wgAutoloadClasses['CliPathwaysPager'] = "$IP/wpi/extensions/Pager/CliPathwaysPa
 function needsDeletion( $pathway ) {
 	$title = Title::newFromText( $pathway, NS_PATHWAY );
 	$page = Revision::loadFromTitle( wfGetDB(), $title );
-	if( $page && substr( $page->getText(), 0, 10 ) === "{{deleted|" ) {
+	if ( $page && substr( $page->getText(), 0, 10 ) === "{{deleted|" ) {
 		return $title;
 	}
 }
 
-function main()  {
+function main() {
 	$pager = new PagerIterator( 'CliPathwaysPager' );
 
-	foreach( $pager as $k => $v ) {
+	foreach ( $pager as $k => $v ) {
 		echo "$k\n";
-		if( $title = needsDeletion( $k ) ){
+		if ( $title = needsDeletion( $k ) ) {
 			echo "Deleting $k\n";
 
 			$article = new Article( $title );

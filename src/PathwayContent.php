@@ -56,7 +56,9 @@ class PathwayContent extends AbstractContent {
 	 * @todo: test that this actually works
 	 * @todo: make sure this also works with LuceneSearch / WikiSearch
 	 */
-	public function getTextForSearchIndex() { return ""; }
+	public function getTextForSearchIndex() {
+ return "";
+ }
 
 	/**
 	 * @since 1.21
@@ -70,7 +72,9 @@ class PathwayContent extends AbstractContent {
 	 * @todo used in WikiPage and MessageCache to get message text. Not so
 	 *    nice. What should we use instead?!
 	 */
-	public function getWikitextForTransclusion() { return false; }
+	public function getWikitextForTransclusion() {
+ return false;
+ }
 
 	/**
 	 * Returns a textual representation of the content suitable for use in edit
@@ -81,7 +85,9 @@ class PathwayContent extends AbstractContent {
 	 * @param int $maxLength Maximum length of the summary text
 	 * @return string The summary text
 	 */
-	public function getTextForSummary( $maxLength = 250 ) { return "basic log message"; }
+	public function getTextForSummary( $maxLength = 250 ) {
+ return "basic log message";
+ }
 
 	public function serialize( $format = null ) {
 		return $this->mText;
@@ -99,7 +105,7 @@ class PathwayContent extends AbstractContent {
 	 *
 	 * @note Caller must be aware of content model!
 	 */
-	public function getNativeData( ) {
+	public function getNativeData() {
 		return $this->mText;
 	}
 
@@ -108,7 +114,9 @@ class PathwayContent extends AbstractContent {
 	 *
 	 * @return int
 	 */
-	public function getSize() { return 0; }
+	public function getSize() {
+ return 0;
+ }
 
 	/**
 	 * Return a copy of this Content object. The following must be true for the
@@ -126,9 +134,11 @@ class PathwayContent extends AbstractContent {
 	 *
 	 * @since 1.21
 	 *
-	 * @return Content. A copy of this object
+	 * @return Content A copy of this object
 	 */
-	public function copy() { return clone( $this ); }
+	public function copy() {
+ return clone $this;
+ }
 
 	/**
 	 * Returns true if this content is countable as a "real" wiki page, provided
@@ -140,12 +150,16 @@ class PathwayContent extends AbstractContent {
 	 * @param bool $hasLinks If it is known whether this content contains
 	 *    links, provide this information here, to avoid redundant parsing to
 	 *    find out.
-	 * @return boolean
+	 * @return bool
 	 */
-	public function isCountable( $hasLinks = null ) { return true; }
+	public function isCountable( $hasLinks = null ) {
+ return true;
+ }
 
 	/* No redirects on pathways */
-	public function getRedirectTarget() { return null; }
+	public function getRedirectTarget() {
+ return null;
+ }
 
 	/**
 	 * Parse the Content object and generate a ParserOutput from the result.
@@ -176,10 +190,10 @@ class PathwayContent extends AbstractContent {
 					 ->makeParserOptions( 'canonical' );
 		}
 
-		$id = Pathway::parseIdentifier($title);
+		$id = Pathway::parseIdentifier( $title );
 		$pathway = new Pathway( $id );
-		if($revId) {
-			$pathway->setActiveRevision($revId);
+		if ( $revId ) {
+			$pathway->setActiveRevision( $revId );
 		}
 
 		// title editor
@@ -193,8 +207,8 @@ class PathwayContent extends AbstractContent {
 		$pp = $pathway->getPermissionManager()->getPermissions();
 		if ( $pp ) {
 			$expdate = $pp->getExpires();
-			$expdate = $wgLang->date($expdate, true);
-			$msg = str_replace('$DATE', $expdate, $msg);
+			$expdate = $wgLang->date( $expdate, true );
+			$msg = str_replace( '$DATE', $expdate, $msg );
 			$out .= "<div class='private_warn'>$msg</div>";
 		}
 
@@ -208,7 +222,7 @@ class PathwayContent extends AbstractContent {
 
 		// ontologytags
 		global $wpiEnableOtag;
-		if($wpiEnableOtag) {
+		if ( $wpiEnableOtag ) {
 			$out .= "\n== Ontology Tags ==\n" .
 				 "<OntologyTags></OntologyTags>\n";
 		}

@@ -35,10 +35,9 @@ class XrefPanel {
 		self::addXrefPanelScripts();
 	}
 
-	public static function renderXref( $input, $argv, Parser $parser )
-	{
-		var_dump($input);
-		var_dump($argv);
+	public static function renderXref( $input, $argv, Parser $parser ) {
+		var_dump( $input );
+		var_dump( $argv );
 		exit;
 		return self::getXrefHTML(
 			$argv['id'], $argv['datasource'], $input, $argv['species']
@@ -48,10 +47,10 @@ class XrefPanel {
 	public static function getXrefHTML(
 		$id, $datasource, $label, $text, $species
 	) {
-		$datasource = json_encode($datasource);
-		$label = json_encode($label);
-		$id = json_encode($id);
-		$species = json_encode($species);
+		$datasource = json_encode( $datasource );
+		$label = json_encode( $label );
+		$id = json_encode( $id );
+		$species = json_encode( $species );
 		$url = SITE_URL . '/skins/common/images/info.png';
 		$fun = 'XrefPanel.registerTrigger(this, '
 		. "$id, $datasource, $species, $label);";
@@ -61,8 +60,7 @@ class XrefPanel {
 		return $html;
 	}
 
-	public static function getJsDependencies()
-	{
+	public static function getJsDependencies() {
 		global $jsJQueryUI, $wgScriptPath;
 
 		$js = [ "$wgScriptPath/wpi/js/xrefpanel.js", $jsJQueryUI ];
@@ -70,8 +68,7 @@ class XrefPanel {
 		return $js;
 	}
 
-	public static function getJsSnippets()
-	{
+	public static function getJsSnippets() {
 		global $wpiXrefPanelDisableAttributes, $wpiBridgeUrl,
 		$wpiBridgeUseProxy;
 
@@ -80,15 +77,15 @@ class XrefPanel {
 		$js[] = 'XrefPanel_searchUrl = "' . SITE_URL
 		. '/index.php?title=Special:SearchPathways'
 		. '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
-		if ($wpiXrefPanelDisableAttributes ) {
+		if ( $wpiXrefPanelDisableAttributes ) {
 			$js[] = 'XrefPanel_lookupAttributes = false;';
 		}
 
 		$bridge = "XrefPanel_dataSourcesUrl = '" . WPI_CACHE_URL
 		. "/datasources.txt';\n";
 
-		if ($wpiBridgeUrl !== false ) {
-			if (!isset($wpiBridgeUrl) || $wpiBridgeUseProxy ) {
+		if ( $wpiBridgeUrl !== false ) {
+			if ( !isset( $wpiBridgeUrl ) || $wpiBridgeUseProxy ) {
 				// Point to bridgedb proxy by default
 				$bridge .= "XrefPanel_bridgeUrl = '" . WPI_URL
 				. '/extensions/bridgedb.php' . "';\n";
@@ -101,8 +98,7 @@ class XrefPanel {
 		return $js;
 	}
 
-	public static function addXrefPanelScripts()
-	{
+	public static function addXrefPanelScripts() {
 		global $wpiJavascriptSources, $wpiJavascriptSnippets,
 		$cssJQueryUI, $wgScriptPath, $wgStylePath, $wgOut,
 		$jsRequireJQuery;
@@ -111,8 +107,8 @@ class XrefPanel {
 
 		// Hack to add a css that's not in the skins directory
 		$oldStylePath = $wgStylePath;
-		$wgStylePath = dirname($cssJQueryUI);
-		$wgOut->addStyle(basename($cssJQueryUI));
+		$wgStylePath = dirname( $cssJQueryUI );
+		$wgOut->addStyle( basename( $cssJQueryUI ) );
 		$wgStylePath = $oldStylePath;
 	}
 }
