@@ -77,7 +77,6 @@ require_once "CheckGpmlOnSave.php";
 require_once "CreateUserPage.php";
 require_once "AuthorInfo/AuthorInfo.php";
 require_once "CurationTags/SpecialCurationTags/SpecialCurationTags.php";
-require_once "UserLoginLog/UserLoginLog.php";
 require_once "ShowError/ShowError.php";
 require_once "pathwayParserFunctions.php";
 require_once "PrivatePathways/PrivatePathways.php";
