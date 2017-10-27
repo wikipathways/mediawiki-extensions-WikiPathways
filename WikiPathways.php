@@ -33,6 +33,7 @@ wfLoadExtensions( [
 	"InputBox",
 	"Interwiki",
 	"LabeledSectionTransclusion",
+	"MostEditedPathways",
 	"Nuke",
 	"ParserFunctions",
 	"PopularPathways",
@@ -56,7 +57,6 @@ require_once "globals.php";
 require_once "wpi.php";
 require_once "siteStats.php";
 require_once "imageSize.php";
-require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
 require_once "NewPathwaysPage/NewPathwaysPage.php";
 require_once "CreatePathwayPage/CreatePathwayPage.php";
 require_once "LabeledSectionTransclusion/compat.php";
@@ -408,5 +408,5 @@ $wpiEnableOtag = true;
 // Enable RSS feeds from front page
 $wgRSSUrlWhitelist = [
 	"https://wikipathways.github.io/academy/curators/curators_list.xml",
-	"https://groups.google.com/group/wikipathways-discuss/feed/rss_v2_0_msgs.xml"
+	"https://groups.google.com/forum/feed/wikipathways-discuss/msgs/rss_v2_0.xml"
 ];
