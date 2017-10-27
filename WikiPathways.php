@@ -35,6 +35,7 @@ wfLoadExtensions( [
 	"LabeledSectionTransclusion",
 	"Nuke",
 	"ParserFunctions",
+	"PopularPathways",
 	"Renameuser",
 	"RSS",
 	"SyntaxHighlight_GeSHi",
@@ -42,7 +43,7 @@ wfLoadExtensions( [
 	"UserLoginLog",
 	"UserSnoop",
 	"WikiEditor",
-    "WikiPathways"
+	"WikiPathways"
 ] );
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
@@ -55,7 +56,6 @@ require_once "globals.php";
 require_once "wpi.php";
 require_once "siteStats.php";
 require_once "imageSize.php";
-require_once "PopularPathwaysPage2/PopularPathwaysPage.php";
 require_once "MostEditedPathwaysPage/MostEditedPathwaysPage.php";
 require_once "NewPathwaysPage/NewPathwaysPage.php";
 require_once "CreatePathwayPage/CreatePathwayPage.php";
