@@ -1,11 +1,30 @@
 <?php
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
+namespace WikiPathways;
 
-class TissueAnalyzer extends SpecialPage {
+class TissueAnalyzer extends \SpecialPage {
 	protected $name = 'TissueAnalyzer';
 
-	function TissueAnalyzer() {
-		SpecialPage::SpecialPage( $this->name );
-		self::loadMessages();
+	function __construct() {
+		parent::__construct( $this->name );
 	}
 
 	function execute( $par ) {
@@ -85,7 +104,7 @@ class TissueAnalyzer extends SpecialPage {
 							if( msg.innerHTML == expand ) {
 									msg.innerHTML = collapse;
 									$("#check").prop("checked", true);
-									checkGeneric();	
+									checkGeneric();
 							} else {
 									msg.innerHTML = expand;
 									$("#check").prop("checked", false);check();
@@ -121,30 +140,30 @@ class TissueAnalyzer extends SpecialPage {
 					}
 				</script>' );
 		 $wgOut->addScript( '<script type="text/javascript">
-    			function updateTextInput(val) {
-    			  document.getElementById("cutoff_label").innerHTML=val; 
-					}				
+				function updateTextInput(val) {
+				  document.getElementById("cutoff_label").innerHTML=val;
+					}
 				$(function() {
 					checkGeneric();
 					$("#dataSelect").change(function() {
 						$("#tissueSelect").load("/wpi/bin/TissueAnalyzer/datasets/"+$(this).val()+"_tissues_opt.txt");
 					});
-				
+
 					$("#speciesSelect").change(function() {
 						var speciesValue = $(this).val();
 						var hash = '.$hash.';
 						var dataSelect = document.getElementById("dataSelect");
-						dataSelect.options.length = 0;//empty the drop-down;			
+						dataSelect.options.length = 0;//empty the drop-down;
 						var i = 0;
 						var id = "";
-						$.each(hash,function(index, value){							
+						$.each(hash,function(index, value){
 							if (value["species"]==speciesValue){
 								//console.log("index: " + index + ",value: " + value + value["species"] + speciesValue);
 								dataSelect.options[dataSelect.options.length] = new Option(index, index);
 								if (i==0){ // get the first dataset s id;
 									id = index;
 								}
-								i++;						
+								i++;
 							}
 						});
 						$("#tissueSelect").load("/wpi/bin/TissueAnalyzer/datasets/"+id+"_tissues_opt.txt"); //update the tissue drop down with the new first id;
@@ -182,31 +201,31 @@ class TissueAnalyzer extends SpecialPage {
 			<INPUT type="submit" name="button" value="Apply" style="cursor:pointer;font-weight:900" >
 HTML;
 
-		$slide = '		
-				<input type="range" id="cutoff_id" name="cutoff" min="4" max="6" value="'.$cutoff.'" step="1" onchange="updateTextInput(this.value);">                                                       
-   				<label id="cutoff_label">'.$cutoff.'</label>';
+		$slide = '
+				<input type="range" id="cutoff_id" name="cutoff" min="4" max="6" value="'.$cutoff.'" step="1" onchange="updateTextInput(this.value);">
+				<label id="cutoff_label">'.$cutoff.'</label>';
 
 		$out = <<<HTML
 			<div style="display:inline-block;width:100%;">
-			<div style="width:800px;display:inline-block;overflow:visible;border: 3px solid blue;">	
+			<div style="width:800px;display:inline-block;overflow:visible;border: 3px solid blue;">
 			<b>Select your criteria and then click on Apply:</b>
 			<table id='nsselect' class='allpages'>
 				<tr>
 					<td align='bottom'>Species:</td>
-					<td align='bottom'>Dataset:</td>		
+					<td align='bottom'>Dataset:</td>
 
 					<td align='bottom' style='width:270px'>Tissue:</td>
-					<td align='bottom'>Active gene expression cutoff:</td>					
+					<td align='bottom'>Active gene expression cutoff:</td>
 				</tr>
 				<tr>
 					<td align='left'>{$speciesSelect}</td>
 					<td align='left'>{$datasetSelect}</td>
 
 					<td align='left'>{$tissueSelect}</td>
-					<td align='left'>{$slide}</td>	
-					<td align='right'>{$button}</td>						
-				</tr>		
-			</table>			
+					<td align='left'>{$slide}</td>
+					<td align='right'>{$button}</td>
+				</tr>
+			</table>
 HTML;
 
 		$wgOut->addHTML( $out );
@@ -221,16 +240,16 @@ HTML;
 
 		$out = <<<HTML
 			<div style="display:inline-block;overflow:visible;width:100%;">
-				<label style='float:right'>	
+				<label style='float:right'>
 					<a target="_blank" href="http://projects.bigcat.unimaas.nl/tissueanalyzer/quick-start/">Quick start</a>
 				</label>
-				<label style='float:right'>	
+				<label style='float:right'>
 					<a target="_blank" href="http://projects.bigcat.unimaas.nl/tissueanalyzer/quick-start/">Datasets</a>
 				</label>
-				<label style='float:right'>	
+				<label style='float:right'>
 					<a target="_blank" href="http://projects.bigcat.unimaas.nl/tissueanalyzer/documentation/">Documentation</a>
 				</label>
-				
+
 			</div></div>
 HTML;
 		$out = <<<HTML
@@ -250,10 +269,10 @@ HTML;
 					.navi a:hover {
 							background-color: #555;
 							color: white;
-					}			
+					}
 			</style>
 			<div style="display:inline-block;overflow:visible;">
-				<ul class='navi'>						
+				<ul class='navi'>
 					<li><a target="_blank" href="http://projects.bigcat.unimaas.nl/tissueanalyzer/quick-start/">Quick start</a></li>
 					<li><a target="_blank" href="http://projects.bigcat.unimaas.nl/tissueanalyzer/datasets/">Datasets</a></li>
 					<li><a target="_blank" href="http://projects.bigcat.unimaas.nl/tissueanalyzer/documentation/">Documentation</a></li>
@@ -337,43 +356,43 @@ HTML;
 		$html = "<div style='display:block;overflow:visible;width:100%'>
 				<style type='text/css'>
 				.scale-title {
-				    text-align: left;
-				    font-weight: bold;
-				    font-size: 90%;
-				    }
+					text-align: left;
+					font-weight: bold;
+					font-size: 90%;
+					}
 				  .scale-labels {
-				    margin: 0;
-				    padding: 0;
-				    float: left;
-				    list-style: none;
-				    }
+					margin: 0;
+					padding: 0;
+					float: left;
+					list-style: none;
+					}
 				  .scale-labels li {
-				    display: block;
-				    float: left;
-				    width: 50px;
-				    margin-bottom: 6px;
-				    text-align: center;
-				    font-size: 80%;
-				    list-style: none;
-				    }
+					display: block;
+					float: left;
+					width: 50px;
+					margin-bottom: 6px;
+					text-align: center;
+					font-size: 80%;
+					list-style: none;
+					}
 				  .scale-labels li span {
-				    display: block;
-				    float: left;
-				    height: 15px;
-				    width: 50px;
-				    }
+					display: block;
+					float: left;
+					height: 15px;
+					width: 50px;
+					}
 				#gradient{
 				display:inline !important;
-				}	
-				</style>					
+				}
+				</style>
 				$button
 				<ul class='scale-labels' style='display:inline-block;float:right'>
-				    <li><span style='background:#8c8cb9;'></span>0 - 3</li>
-				    <li><span style='background:#7676c3;'></span>3 - 5 </li>
-				    <li><span style='background:#5151d6;'></span>5 - 7</li>
-				    <li><span style='background:#3e3edf;'></span>7 - 10 </li>
-				    <li><span style='background:#0000FE;'></span> >10 </li>
-				</ul>			
+					<li><span style='background:#8c8cb9;'></span>0 - 3</li>
+					<li><span style='background:#7676c3;'></span>3 - 5 </li>
+					<li><span style='background:#5151d6;'></span>5 - 7</li>
+					<li><span style='background:#3e3edf;'></span>7 - 10 </li>
+					<li><span style='background:#0000FE;'></span> >10 </li>
+				</ul>
 				</div>";
 
 		$html .= "
@@ -514,10 +533,10 @@ HTML;
 				<td align='center' >$median[$i]</td>
 				<td bgcolor='$hex' > </td>
 				<td align='center' >$number[0]</td>
-				<td align='center' >$number[1]</td>	
-				<td align='center' >$perc[$i]</td>		
+				<td align='center' >$number[1]</td>
+				<td align='center' >$perc[$i]</td>
 				<td align='center' >
-						<a  id="inline" file="$jsonPath" pathway="$pathway_name" measured="$number[1]" tissue="$select" href="#data">$average</a></td>			
+						<a  id="inline" file="$jsonPath" pathway="$pathway_name" measured="$number[1]" tissue="$select" href="#data">$average</a></td>
 HTML;
 		}
 		fclose( $tissue );
@@ -565,18 +584,18 @@ HTML;
 									}
 							</style>
 				</div>
-				
+
 				<div class="my-legend" id="my-legend" '.$styleViewer.' >
 					<div class="legend-title" id="legend-title" style="display:inline-block;width:100%">Highlighting legend</div>
 						<div class="legend-scale" style="display:inline-block">
 							<ul class="legend-labels">
 								<li><span style="background:#6A03B2;"></span>Active gene (expression > '.$cutoff.')</li>
-				    		<li><span style="background:#B0B0B0;"></span>Not-active gene (expression < '.$cutoff.')</li>
-							</ul>				
+							<li><span style="background:#B0B0B0;"></span>Not-active gene (expression < '.$cutoff.')</li>
+							</ul>
 						</div>
-				</div>								
+				</div>
 				<div id="pwyname" '.$styleViewer.'><b>Selected pathway:</b> Fatty Acid Biosynthesis</div>
-				<div style="display:inline-block;overflow:visible;width:100%"><iframe id="path_viewer" 
+				<div style="display:inline-block;overflow:visible;width:100%"><iframe id="path_viewer"
 					src ="http://www.wikipathways.org/wpi/PathwayWidget.php?id=WP357&label[]=ACSL4&label[]=ACSL3
 								&label[]=ACACA&label[]=ECHDC1&label[]=PECR&label[]=MECR&label[]=ACSL6&label[]=ECHDC2&label[]=ACSL5&label[]=DECR
 								1&label[]=ACAA2&label[]=ACLY&label[]=ACSL1&label[]=ECH1&label[]=ACACB&label[]=ECHS1&label[]=PC&label[]=ACAS2&label[]=FASN
@@ -588,20 +607,5 @@ HTML;
 				<div style="display:none"><div style="height:600px;width:1400px" id="data"></div></div>';
 
 		$wgOut->addHTML( $html );
-	}
-
-	static function loadMessages() {
-		static $messagesLoaded = false;
-		global $wgMessageCache;
-		if ( $messagesLoaded ) {
-			return true;
-		}
-		$messagesLoaded = true;
-
-		require __DIR__ . '/TissueAnalyzer.i18n.php';
-		foreach ( $allMessages as $lang => $langMessages ) {
-			$wgMessageCache->addMessages( $langMessages, $lang );
-		}
-		return true;
 	}
 }

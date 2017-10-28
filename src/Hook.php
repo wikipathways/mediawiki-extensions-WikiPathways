@@ -25,9 +25,10 @@ class Hook {
 	// Probably better to put this in parser init hook
 	public static function pathwayViewer() {
 		global $wgParser;
+		$wgParser->setHook( "wishlist", "WikiPathways\\TopWishes::renderWishlist" );
 		$wgParser->setHook(
-            "pathwayBibliography", "WikiPathways\\PathwayBibliography::output"
-        );
+			"pathwayBibliography", "WikiPathways\\PathwayBibliography::output"
+		);
 		$wgParser->setHook( "Xref", "WikiPathways\\XrefPanel::renderXref" );
 		$wgParser->setHook( "pathwayHistory", "WikiPathways\\PathwayHistory::history" );
 		$wgParser->setHook(
@@ -37,6 +38,9 @@ class Hook {
 
 		$wgParser->setFunctionHook(
 			"PathwayViewer", "WikiPathways\\PathwayViewer::enable"
+		);
+		$wgParser->setFunctionHook(
+			"searchPathwaysBox", "WikiPathways\\SearchPathways::renderSearchPathwaysBox"
 		);
 		$wgParser->setFunctionHook(
 			"pwImage", "WikiPathways\\PathwayThumb::renderPathwayImage"
@@ -73,6 +77,7 @@ class Hook {
 		$magicWords['pathwayInfo'] = [ 0, 'pathwayInfo' ];
 		$magicWords['siteStats'] = [ 0, 'siteStats' ];
 		$magicWords['Statistics'] = [ 0, 'Statistics' ];
+		$magicWords['searchPathwaysBox'] = [ 0, 'searchPathwaysBox' ];
 	}
 
 	/* http://developers.pathvisio.org/ticket/1559 */

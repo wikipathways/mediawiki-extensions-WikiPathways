@@ -1,15 +1,32 @@
 <?php
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
+namespace WikiPathways;
 
-require_once "PathwayWishList.php";
-
-class SpecialWishList extends SpecialPage {
+class SpecialWishList extends \SpecialPage {
 	private $wishlist;
 
 	private $this_url;
 
-	function SpecialWishList() {
-		SpecialPage::SpecialPage( "SpecialWishList" );
-		self::loadMessages();
+	function __construct() {
+		parent::__construct( "SpecialWishList" );
 	}
 
 	function execute( $par ) {
@@ -414,17 +431,4 @@ HELP;
 		return "<a href='{$this->this_url}&wishaction=$action&id=$id' title='$title'>$label</a>";
 	}
 
-	static function loadMessages() {
-		static $messagesLoaded = false;
-		global $wgMessageCache;
-		if ( $messagesLoaded ) { return true;
-		}
-		$messagesLoaded = true;
-
-		require __DIR__ . '/SpecialWishList.i18n.php';
-		foreach ( $allMessages as $lang => $langMessages ) {
-			$wgMessageCache->addMessages( $langMessages, $lang );
-		}
-		return true;
-	}
 }

@@ -1,23 +1,42 @@
 <?php
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
+namespace WikiPathways;
 
-
-class DiffAppletPage extends SpecialPage {
-	function __construct() {
+class DiffApplet extends \SpecialPage {
+	public function __construct() {
 		parent::__construct( "DiffAppletPage" );
-		self::loadMessages();
 	}
 
-	function execute( $par ) {
-		global $wgRequest, $wgOut;
+	public function execute( $par ) {
 		$this->setHeaders();
+		$request = $this->getRequest();
+		$out = $this->getOutput();
 
 		try {
-			$revOld = $wgRequest->getVal( 'old' );
-			$revNew = $wgRequest->getVal( 'new' );
-			$pwTitle = $wgRequest->getVal( 'pwTitle' );
+			$revOld = $request->getVal( 'old' );
+			$revNew = $request->getVal( 'new' );
+			$pwTitle = $request->getVal( 'pwTitle' );
 			$pathway = Pathway::newFromTitle( $pwTitle );
 		} catch ( Exception $e ) {
-			$wgOut->addHTML(
+			$out->addHTML(
 				'<H2>Error</H2><P>The given title is not a pathway page!</P>'
 			);
 			return;
@@ -30,25 +49,11 @@ class DiffAppletPage extends SpecialPage {
 <TD>{$pwName}, revision {$revNew}
 </TBODY></TABLE>
 TABLE;
-		$wgOut->addHTML( $headerTable );
-		$wgOut->addHTML( self::createDiffApplet( $pathway, $revOld, $revNew ) );
+		$out->addHTML( $headerTable );
+		$out->addHTML( self::createDiffApplet( $pathway, $revOld, $revNew ) );
 	}
 
-	static function loadMessages() {
-		static $messagesLoaded = false;
-		global $wgMessageCache;
-		if ( $messagesLoaded ) { return true;
-		}
-		$messagesLoaded = true;
-
-		require __DIR__ . '/DiffAppletPage.i18n.php';
-		foreach ( $allMessages as $lang => $langMessages ) {
-			$wgMessageCache->addMessages( $langMessages, $lang );
-		}
-		return true;
-	}
-
-	static function createDiffApplet( $pathway, $revOld, $revNew ) {
+	public static function createDiffApplet( $pathway, $revOld, $revNew ) {
 		$pathway->setActiveRevision( $revOld );
 		$file1 = $pathway->getFileURL( FILETYPE_GPML );
 

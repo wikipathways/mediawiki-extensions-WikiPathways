@@ -76,7 +76,7 @@ class PagePuller {
 					$msg = Status::newGood();
 				} catch ( MWException $e ) {
 					$msg = Status::newFatal( "pagepuller-get-error",
-						wfMsg( $e->getMessage() ) );
+						wfMessage( $e->getMessage() ) );
 				}
 			}
 		} else {
@@ -111,7 +111,7 @@ class PagePuller {
 				$this->cookies = "{$pref}UserId=$uid; {$pref}UserName=$username; {$pref}_session=$sess";
 			}
 		}
-		throw new Exception( wfMsg( 'pagepull-login-failed' ) );
+		throw new Exception( wfMessage( 'pagepull-login-failed' ) );
 	}
 
 	public function pullFile( $page, $contents ) {

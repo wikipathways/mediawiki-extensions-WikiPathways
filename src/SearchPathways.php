@@ -1,14 +1,30 @@
 <?php
-class SearchPathways extends SpecialPage {
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
+namespace WikiPathways;
+
+class SearchPathways extends \SpecialPage {
 	private $this_url;
 
 	function __construct( $empty = null ) {
 		parent::__construct( "SearchPathways" );
-		self::initMsg();
-	}
-
-	static function initMsg() {
-		# Need this called in hook early on so messages load... maybe a bug in old MW?
 	}
 
 	function execute( $par ) {
@@ -16,7 +32,7 @@ class SearchPathways extends SpecialPage {
 
 		$this->setHeaders();
 		$this->this_url = SITE_URL . '/index.php';
-		$wgOut->setPagetitle( wfMsg( "searchpathways" ) );
+		$wgOut->setPagetitle( wfMessage( "searchpathways" ) );
 
 		$query   = isset( $_GET['query'] ) ? $_GET['query'] : null;
 		$species = isset( $_GET['species'] ) ? $_GET['species'] : null;
@@ -169,7 +185,7 @@ class SearchPathways extends SpecialPage {
 		}
 		$oboxwidth = $boxwidth + 2;
 
-		$more = htmlspecialchars( wfMsg( 'thumbnail-more' ) );
+		$more = htmlspecialchars( wfMessage( 'thumbnail-more' ) );
 		$magnifyalign = $wgContLang->isRTL() ? 'left' : 'right';
 		$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
 
@@ -195,5 +211,26 @@ class SearchPathways extends SpecialPage {
 		}
 		$s .= '  <div class="thumbcaption"'.$textalign.'>'.$label."</div></div></div>";
 		return str_replace( "\n", ' ', $s );
+	}
+
+	# The callback function for converting the input text to HTML output
+	public static function renderSearchPathwaysBox( &$parser ) {
+		global $siteURL;
+
+		$parser->disableCache();
+		$output = <<<SEARCH
+<form id="searchbox_cref" action="$siteURL/index.php">
+<table width="190" frame="void" border="0">
+<tr>
+<td align="center" bgcolor="#eeeeee" border="0">
+<input name="query" type="text" size="20%" />
+<input type='hidden' name='title' value='Special:SearchPathways'>
+<input type='hidden' name='doSearch' value='1'>
+<tr><td valign="top" align="center" border="0"><input type="submit" name="sa" value="Search" />
+</tr>
+</table></form>
+SEARCH;
+
+		return [ $output, 'isHTML' => 1, 'noparse' => 1 ];
 	}
 }

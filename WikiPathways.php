@@ -33,10 +33,8 @@ wfLoadExtensions( [
 	"InputBox",
 	"Interwiki",
 	"LabeledSectionTransclusion",
-	"MostEditedPathways",
 	"Nuke",
 	"ParserFunctions",
-	"PopularPathways",
 	"Renameuser",
 	"RSS",
 	"SyntaxHighlight_GeSHi",
@@ -57,27 +55,19 @@ require_once "globals.php";
 require_once "wpi.php";
 require_once "siteStats.php";
 require_once "imageSize.php";
-require_once "NewPathwaysPage/NewPathwaysPage.php";
-require_once "CreatePathwayPage/CreatePathwayPage.php";
-require_once "LabeledSectionTransclusion/compat.php";
-require_once "LabeledSectionTransclusion/lst.php";
-require_once "LabeledSectionTransclusion/lsth.php";
-require_once "SearchPathways/SearchPathways.php";
-require_once "SearchPathways/searchPathwaysBox.php";
+require_once "search.php";
 require_once "button.php";
 require_once "imageLink.php";
 require_once "listPathways.php";
 require_once "movePathway.php";
 require_once "deletePathway.php";
-require_once "SpecialWishList/SpecialWishList.php";
-require_once "SpecialWishList/TopWishes.php";
-require_once "DiffAppletPage/DiffAppletPage.php";
-require_once "DiffViewer/DiffViewer.php";
 require_once "CheckGpmlOnSave.php";
 require_once "CreateUserPage.php";
+require_once "LabeledSectionTransclusion/compat.php";
+require_once "LabeledSectionTransclusion/lst.php";
+require_once "LabeledSectionTransclusion/lsth.php";
+require_once "DiffViewer/DiffViewer.php";
 require_once "AuthorInfo/AuthorInfo.php";
-require_once "CurationTags/SpecialCurationTags/SpecialCurationTags.php";
-require_once "ShowError/ShowError.php";
 require_once "pathwayParserFunctions.php";
 require_once "PrivatePathways/PrivatePathways.php";
 require_once "PrivatePathways/ListPrivatePathways.php";
@@ -88,9 +78,8 @@ require_once "StubManager/StubManager.php";
 require_once "SecureHTML/SecureHTML.php";
 require_once "PageEditor/PageEditor.php";
 require_once "PullPages/PullPages.php";
-require_once "search.php";
-require_once "TissueAnalyzer/TissueAnalyzer.php";
 
+$wfSearchPagePath = WPI_URL . "/extensions/SearchPathways";
 $wgCaptchaClass = 'QuestyCaptcha';
 
 // Set to true if you want to exclude Bots from the reporting - Can be omitted.

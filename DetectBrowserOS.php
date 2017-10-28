@@ -44,49 +44,49 @@ This change will will NOT break your existing programming or browser detection f
    safaris, konquerors
 5. ie_version - tests to see what general IE it is.
    Possible return values:
-     ie9x - all new msie 9 or greater - note that if in compat mode, 7,8,9 all show as 7
-     ie7x - all new msie 7 or greater
-     ie5x - msie 5 and 6, not mac
-     ieMac - msie 5.x mac release
-     ie4 - msie 4
-     old - pre msie 4
+	 ie9x - all new msie 9 or greater - note that if in compat mode, 7,8,9 all show as 7
+	 ie7x - all new msie 7 or greater
+	 ie5x - msie 5 and 6, not mac
+	 ieMac - msie 5.x mac release
+	 ie4 - msie 4
+	 old - pre msie 4
 6. full - returns this array, listed by array index number:
-     0 - $browser_working
-     1 - $browser_number
-     2 - $ie_version
-     3 - $b_dom_browser
-     4 - $b_safe_browser
-     5 - $os_type
-     6 - $os_number
-     7 - $browser_name
-     8 - $ua_type
-     9 - $browser_math_number
-     10 - $a_moz_data
-     11 - $a_webkit_data
-     12 - $mobile_test (null or string value)
-     13 - $a_mobile_data (null or array of mobile data)
-     14 - $true_ie_number
-     15 - $run_time
+	 0 - $browser_working
+	 1 - $browser_number
+	 2 - $ie_version
+	 3 - $b_dom_browser
+	 4 - $b_safe_browser
+	 5 - $os_type
+	 6 - $os_number
+	 7 - $browser_name
+	 8 - $ua_type
+	 9 - $browser_math_number
+	 10 - $a_moz_data
+	 11 - $a_webkit_data
+	 12 - $mobile_test (null or string value)
+	 13 - $a_mobile_data (null or array of mobile data)
+	 14 - $true_ie_number
+	 15 - $run_time
    Note that moz/webkit_data are arrays which could contain null data, so always test first before
    assuming the moz/webkit arrays contain any data, ie, if moz or if webkit, then...
 7. full_assoc - returns all relevant browser information in an associative array, same as above
    only with string indexes instead of numeric:
-     'browser_working' => $browser_working,
-     'browser_number' => $browser_number,
-     'ie_version' => $ie_version,
-     'dom' => $b_dom_browser,
-     'safe' => $b_safe_browser,
-     'os' => $os_type,
-     'os_number' => $os_number,
-     'browser_name_' => $browser_name,
-     'ua_type' => $ua_type,
-     'browser_math_number' => $browser_math_number,
-     'moz_data' => $a_moz_data,
-     'webkit_data' => $a_webkit_data,
-     'mobile_test' => $mobile_test,
-     'mobile_data' => $a_mobile_data,
-     'true_ie_number' => $true_ie_number
-     'run_time' => $run_time
+	 'browser_working' => $browser_working,
+	 'browser_number' => $browser_number,
+	 'ie_version' => $ie_version,
+	 'dom' => $b_dom_browser,
+	 'safe' => $b_safe_browser,
+	 'os' => $os_type,
+	 'os_number' => $os_number,
+	 'browser_name_' => $browser_name,
+	 'ua_type' => $ua_type,
+	 'browser_math_number' => $browser_math_number,
+	 'moz_data' => $a_moz_data,
+	 'webkit_data' => $a_webkit_data,
+	 'mobile_test' => $mobile_test,
+	 'mobile_data' => $a_mobile_data,
+	 'true_ie_number' => $true_ie_number
+	 'run_time' => $run_time
 8. mobile_test - returns a string of various mobile id methods, from device to os to browser.
    If string is not null, should be a mobile. Also see 15, 'type', which will be 'mobile'
    if handheld.
@@ -94,58 +94,58 @@ This change will will NOT break your existing programming or browser detection f
    unreliable so don't count on that. No blackberry version handling done explicitly.
    Make sure to test if this is an array because if it's not mobile it will be null, not an array
    listed by array index number:
-     0 - $mobile_device
-     1 - $mobile_browser
-     2 - $mobile_browser_number
-     3 - $mobile_os
-     4 - $mobile_os_number
-     5 - $mobile_server
-     6 - $mobile_server_number
-     7 - $mobile_device_number (this was added so has to be end of list to not break existing code)
-    Note: $mobile_browser only returns if a specifically mobile browser is detected, like minimo.
-    Same for mobile os, with the exception of linux. Otherwise the standard script os/browser data
-    is used. $mobile_server is a handheld service like docomo, novarro-vision, etc. Sometimes the
-    string will contain no other usable data than this to determine if it's handheld or not.
+	 0 - $mobile_device
+	 1 - $mobile_browser
+	 2 - $mobile_browser_number
+	 3 - $mobile_os
+	 4 - $mobile_os_number
+	 5 - $mobile_server
+	 6 - $mobile_server_number
+	 7 - $mobile_device_number (this was added so has to be end of list to not break existing code)
+	Note: $mobile_browser only returns if a specifically mobile browser is detected, like minimo.
+	Same for mobile os, with the exception of linux. Otherwise the standard script os/browser data
+	is used. $mobile_server is a handheld service like docomo, novarro-vision, etc. Sometimes the
+	string will contain no other usable data than this to determine if it's handheld or not.
 10. moz_data [deprecated: moz_version] - returns array of mozilla / gecko information
-    Return Array listed by index number:
-      0 - $moz_type [moz version - the specific brand name that is, eg: firefox)
-      1 - $moz_number - the full version number of $moz_type (eg: for firefox: 3.6+2b)
-      2 - $moz_rv - the Mozilla rv version number, math comparison version. This tells you what
-          gecko engine is running in the browser (eg rv: 1.8)
-      3 - $moz_rv_full - rv number (for full rv, including alpha and beta versions: 1.8.1-b3)
-      4 - $moz_release_date - release date of the browser
+	Return Array listed by index number:
+	  0 - $moz_type [moz version - the specific brand name that is, eg: firefox)
+	  1 - $moz_number - the full version number of $moz_type (eg: for firefox: 3.6+2b)
+	  2 - $moz_rv - the Mozilla rv version number, math comparison version. This tells you what
+		  gecko engine is running in the browser (eg rv: 1.8)
+	  3 - $moz_rv_full - rv number (for full rv, including alpha and beta versions: 1.8.1-b3)
+	  4 - $moz_release_date - release date of the browser
 11. os - returns which os is being used - win, nt, mac, OR iphone, blackberry, palmos, palmsource,
-    symbian, beos, os2, amiga, webtv, linux, unix.
+	symbian, beos, os2, amiga, webtv, linux, unix.
 12. os_number - returns windows versions, 95, 98, ce, me, nt: 4; 5 [windows 2000];
-    5.1 [windows xp]; 5.2 [Server 2003]; 6.0 [Windows Vista], 6.1 [Windows 7].
-    Only win, nt, mac, iphone return os numbers (mac/iphone return 10 if OS X.)
-    OR returns linux distro/unix release name, otherwise returns null
+	5.1 [windows xp]; 5.2 [Server 2003]; 6.0 [Windows Vista], 6.1 [Windows 7].
+	Only win, nt, mac, iphone return os numbers (mac/iphone return 10 if OS X.)
+	OR returns linux distro/unix release name, otherwise returns null
 13. run_time - the time it takes this script to execute from start to point of returning value
-    Requires PHP 5 or greater. Returns time in seconds to 8 decimal places: 0.00245687
-    Run time does not count the time used by PHP to include/parse the file initially. That total
-    time is about 5-10x longer. Because subsequent script run throughs go VERY fast, you will see
-    the seconds go from something like 0.00115204 for first time, to something like 0.00004005
-    for second and more runs.
+	Requires PHP 5 or greater. Returns time in seconds to 8 decimal places: 0.00245687
+	Run time does not count the time used by PHP to include/parse the file initially. That total
+	time is about 5-10x longer. Because subsequent script run throughs go VERY fast, you will see
+	the seconds go from something like 0.00115204 for first time, to something like 0.00004005
+	for second and more runs.
 14. safe - returns true/false, you can determine what makes the browser be safe lower down,
-    currently it's set for ns4 and pre version 1 mozillas not being safe, plus all older browsers
+	currently it's set for ns4 and pre version 1 mozillas not being safe, plus all older browsers
 15. true_ie_number - [deprecated: true_msie_version] returns the true version of msie running,
-    ignoring the compat mode version.
-    Note that php will turn 7.0 to 8 when adding 1, so keep that in mind in your tests. 7.1
-    will become 8.1 as expected, however. This test currently only tests for 7.x -> 8.x
-    FYI: in PHP, 7.0 == 7 is true but 7.0 === 7 is NOT true.
-    If this is null but set, then it is NOT running in compatibility mode.
+	ignoring the compat mode version.
+	Note that php will turn 7.0 to 8 when adding 1, so keep that in mind in your tests. 7.1
+	will become 8.1 as expected, however. This test currently only tests for 7.x -> 8.x
+	FYI: in PHP, 7.0 == 7 is true but 7.0 === 7 is NOT true.
+	If this is null but set, then it is NOT running in compatibility mode.
 16. ua_type [deprecated: type] - returns one of the following:
-      bot (web bot)
-      bro (normal browser)
-      bbro (simple browser)
-      mobile (handheld)
-      dow (downloading agent)
-      lib (http library)
+	  bot (web bot)
+	  bro (normal browser)
+	  bbro (simple browser)
+	  mobile (handheld)
+	  dow (downloading agent)
+	  lib (http library)
 17. webkit_data - [deprecated: webkit_version] returns array of webkit data.
-    Return Array listed by index number:
-      0 - $webkit_type [webkit version name (Eg. chrome)]
-      1 - $webkit_type_number [webkit version number (Eg. Chrome's: 1.2)]
-      2 - $browser_number [the actual webkit version number (Eg. Webkit's: 436)]
+	Return Array listed by index number:
+	  0 - $webkit_type [webkit version name (Eg. chrome)]
+	  1 - $webkit_type_number [webkit version number (Eg. Chrome's: 1.2)]
+	  2 - $browser_number [the actual webkit version number (Eg. Webkit's: 436)]
 ******************************************
 Optional second script parameter, to turn off features if not required. These would be the second
 argument used in the function call if used, like: browser_detection( 'full', '1' );
@@ -475,39 +475,39 @@ function browser_detection( $which_test, $test_excludes='', $external_ua_string=
 								$true_ie_number = $browser_number + 3;
 							}
 							// construct the proper real number if it's in compat mode and msie 8.0/9.0
- elseif ( strstr( $browser_user_agent, 'trident/5' ) ) {
+							elseif ( strstr( $browser_user_agent, 'trident/5' ) ) {
 								// note that 7.0 becomes 9 when adding 2, but if it's 7.1 it will be 9.1
 								$true_ie_number = $browser_number + 2;
-	} elseif ( strstr( $browser_user_agent, 'trident/4' ) ) {
+							} elseif ( strstr( $browser_user_agent, 'trident/4' ) ) {
 								// note that 7.0 becomes 8 when adding 1, but if it's 7.1 it will be 8.1
 								$true_ie_number = $browser_number + 1;
-	}
+							}
 						}
 						// the 9 series is finally standards compatible, html 5 etc, so worth a new id
 						if ( $browser_number >= 9 ) {
 							$ie_version = 'ie9x';
 						}
 						// 7/8 were not yet quite to standards levels but getting there
- elseif ( $browser_number >= 7 ) {
+						elseif ( $browser_number >= 7 ) {
 							$ie_version = 'ie7x';
-	}
+						}
 						// then test for IE 5x mac, that's the most problematic IE out there
- elseif ( strstr( $browser_user_agent, 'mac' ) ) {
+						elseif ( strstr( $browser_user_agent, 'mac' ) ) {
 							$ie_version = 'ieMac';
-	}
+						}
 						// ie 5/6 are both very weak in standards compliance
- elseif ( $browser_number >= 5 ) {
+						elseif ( $browser_number >= 5 ) {
 							$ie_version = 'ie5x';
-	} elseif ( ( $browser_number > 3 ) && ( $browser_number < 5 ) ) {
+						} elseif ( ( $browser_number > 3 ) && ( $browser_number < 5 ) ) {
 							$b_dom_browser = false;
 							$ie_version = 'ie4';
 							// this depends on what you're using the script for, make sure this fits your needs
 							$b_safe_browser = true;
-	} else {
+						} else {
 							$ie_version = 'old';
 							$b_dom_browser = false;
 							$b_safe_browser = false;
-	}
+						}
 						break;
 					case 'op':
 						$browser_number = get_item_version( $browser_user_agent, $browser_name );

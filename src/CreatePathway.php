@@ -1,49 +1,75 @@
 <?php
+/**
+ * Copyright (C) 2017  J. David Gladstone Institutes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author
+ * @author Mark A. Hershberger
+ */
+namespace WikiPathways;
 
+use Title;
 
-class CreatePathwayPage extends SpecialPage {
+class CreatePathway extends \SpecialPage {
 	private $this_url;
 	private $create_priv_msg;
 
-	function CreatePathwayPage() {
-		SpecialPage::SpecialPage( "CreatePathwayPage" );
-		self::loadMessages();
+	function __construct() {
+		parent::__construct( "CreatePathwayPage" );
 	}
 
 	function execute( $par ) {
-		global $wgRequest, $wgOut, $wpiScriptURL, $wgUser, $wgParser;
+		global $wgParser;
 		$this->setHeaders();
 		$this->this_url = SITE_URL . '/index.php';
 
+		$out = $this->getOutput();
+		$request = $this->getRequest();
+		$user = $this->getUser();
+		$wgParser->mStripState = new \StripState;
+		$wgParser->mOptions = new \ParserOptions;
+		$wgParser->mTitle = Title::newFromText( wfMessage( 'createpathwaypage' )->plain() );
 		$wgParser->clearState();
-		$wgParser->mStripState = new StripState;
-		$wgParser->mOptions = new ParserOptions;
-		$wgParser->mTitle = Title::newFromText( wfMsg( 'createpathwaypage' ) );
 
-		$this->create_priv_msg = $wgParser->recursiveTagParse( wfMsg( 'create_private' ) );
+		$this->create_priv_msg = $wgParser->recursiveTagParse( wfMessage( 'create_private' )->plain() );
 		$wgParser->replaceLinkHolders( $this->create_priv_msg );
 
 		if ( wfReadOnly() ) {
-			$wgOut->readOnlyPage( "" );
+			$out->readOnlyPage( "" );
 		}
 
-		if ( !$wgUser->isAllowed( 'createpathway' ) ) {
-			if ( !$wgUser->isLoggedIn() ) { /* Two different messages so we can keep the old error */				$wgOut->showPermissionsErrorPage( [ [ 'wpi-createpage-not-logged-in' ] ] );
+		if ( !$user->isAllowed( 'createpathway' ) ) {
+			if ( !$user->isLoggedIn() ) {
+				/* Two different messages so we can keep the old error */
+				$out->showPermissionsErrorPage( [ [ 'wpi-createpage-not-logged-in' ] ] );
 			} else {
-				$wgOut->showPermissionsErrorPage( [ [ 'wpi-createpage-permission' ] ] );
+				$out->showPermissionsErrorPage( [ [ 'wpi-createpage-permission' ] ] );
 			}
 			return;
 		}
 
-		$pwName = $wgRequest->getVal( 'pwName' );
+		$pwName = $request->getVal( 'pwName' );
 		$pwNameLen = strlen( $pwName );
-		$pwSpecies = $wgRequest->getVal( 'pwSpecies' );
-		$override = $wgRequest->getVal( 'override' );
-		$private = $wgRequest->getVal( 'private' );
-		$uploading = $wgRequest->getVal( 'upload' );
-		$private2 = $wgRequest->getVal( 'private2' );
+		$pwSpecies = $request->getVal( 'pwSpecies' );
+		$override = $request->getVal( 'override' );
+		$private = $request->getVal( 'private' );
+		$uploading = $request->getVal( 'upload' );
+		$private2 = $request->getVal( 'private2' );
 
-		if ( $wgRequest->getVal( 'create' ) == '1' ) { // Submit button pressed
+		if ( $request->getVal( 'create' ) == '1' ) {
+			// Submit button pressed
 			// Check for pathways with the same name and species
 			$exist = Pathway::getPathwaysByName( $pwName, $pwSpecies );
 			if ( count( $exist ) > 0 && !$override ) {
@@ -52,30 +78,31 @@ class CreatePathwayPage extends SpecialPage {
 				if ( count( $exist ) > 1 ) {
 					$pre = "Pathways";
 				}
-				$wgOut->addWikiText( "== Warning ==\n<font color='red'>$pre with the name '$pwName' already exist on WikiPathways:</font>\n" );
+				$out->addWikiText( "== Warning ==\n<font color='red'>$pre with the name '$pwName' already exist on WikiPathways:</font>\n" );
 				foreach ( $exist as $p ) {
-					$wgOut->addWikiText(
+					$out->addWikiText(
 						"* [[Pathway:" . $p->getIdentifier() . "|" . $p->getName() . " (" . $p->getSpecies() . ")]]"
 					);
 				}
-				$wgOut->addWikiText( "'''You may consider editing the existing pathway instead of creating a new one.'''\n" );
-				$wgOut->addWikiText( "'''If you still want to create a new pathway, please use a unique name.'''\n" );
-				$wgOut->addWikiText( "----\n" );
+				$out->addWikiText( "'''You may consider editing the existing pathway instead of creating a new one.'''\n" );
+				$out->addWikiText( "'''If you still want to create a new pathway, please use a unique name.'''\n" );
+				$out->addWikiText( "----\n" );
 				$this->showForm( $pwName, $pwSpecies, true, $private );
 			} elseif ( !$pwName ) {
-				$wgOut->addWikiText( "== Warning ==\n<font color='red'>No pathway name given!</font>\n'''Please specify a name for the pathway'''\n----\n" );
+				$out->addWikiText( "== Warning ==\n<font color='red'>No pathway name given!</font>\n'''Please specify a name for the pathway'''\n----\n" );
 				$this->showForm( $pwName, $pwSpecies, true, $private );
 			} elseif ( !$pwSpecies ) {
-				$wgOut->addWikiText( "== Warning ==\n<font color='red'>No species given!</font>\n'''Please specify a species for the pathway'''\n----\n" );
+				$out->addWikiText( "== Warning ==\n<font color='red'>No species given!</font>\n'''Please specify a species for the pathway'''\n----\n" );
 				$this->showForm( $pwName, $pwSpecies, true, $private );
 			} elseif ( $pwNameLen > 200 ) {
-				$wgOut->addWikiText( "== Warning ==\n<font color='red'>Your pathway name is too long! ''($pwNameLen characters)''</font>\n" );
-				$wgOut->addWikiText( "'''Please specify a name with less than 200 characters.'''\n----\n" );
+				$out->addWikiText( "== Warning ==\n<font color='red'>Your pathway name is too long! ''($pwNameLen characters)''</font>\n" );
+				$out->addWikiText( "'''Please specify a name with less than 200 characters.'''\n----\n" );
 				$this->showForm( $pwName, $pwSpecies, false, $private );
 			} else {
 				$this->createPage( $pwName, $pwSpecies, $private );
 			}
-		} elseif ( $uploading == '1' ) { // Upload button pressed
+		} elseif ( $uploading == '1' ) {
+			// Upload button pressed
 			$this->doUpload( $uploading, $private2 );
 		} else {
 			$this->showForm();
@@ -83,23 +110,26 @@ class CreatePathwayPage extends SpecialPage {
 	}
 
 	function doUpload( $uploading, $private2 ) {
+		$out = $this->getOutput();
+		$request = $this->getRequest();
+		$user = $this->getUser();
+
 		try {
-			global $wgRequest, $wgOut, $wpiScriptURL, $wgUser;
 			// Check for something... anything
 			if ( !empty( $_FILES['gpml']['name'] ) ) {
 				$size = $_FILES['gpml']['size'];
 				// Check file size
 				if ( $size > 1000000 ) {
 					$size = $size / 1000000;
-					$wgOut->addWikiText( "== Warning ==\n<font color='red'>File too large! ''($size MB)''</font>\n'''Please select a GPML file under 1MB.'''\n----\n" );
-					$wgOut->addWikiText( "----\n" );
+					$out->addWikiText( "== Warning ==\n<font color='red'>File too large! ''($size MB)''</font>\n'''Please select a GPML file under 1MB.'''\n----\n" );
+					$out->addWikiText( "----\n" );
 					$this->showForm( '', '', false, '', $uploading, $private2 );
 				}
 				$file = $_FILES['gpml']['name'];
 				// Check for gpml extension
 				if ( !eregi( ".gpml$", $file ) ) {
-					$wgOut->addWikiText( "== Warning ==\n<font color='red'>Not a GPML file!</font>\n'''Please select a GPML file for upload.'''\n----\n" );
-					$wgOut->addWikiText( "----\n" );
+					$out->addWikiText( "== Warning ==\n<font color='red'>Not a GPML file!</font>\n'''Please select a GPML file for upload.'''\n----\n" );
+					$out->addWikiText( "----\n" );
 					$this->showForm( '', '', false, '', $uploading, $private2 );
 				} else {
 					// It looks good, let's create a new pathway!
@@ -110,23 +140,22 @@ class CreatePathwayPage extends SpecialPage {
 					$pathway = Pathway::createNewPathway( $gpmlData );
 					$title = $pathway->getTitleObject();
 					$name = $pathway->getName();
-					if ( $private2 ) { $pathway->makePrivate( $wgUser );
+					if ( $private2 ) { $pathway->makePrivate( $user );
 					}
-					$wgOut->addWikiText( "'''<font color='green'>Pathway successfully upload!</font>'''\n'''Check it out:  [[$title|$name]]'''\n----\n" );
+					$out->addWikiText( "'''<font color='green'>Pathway successfully upload!</font>'''\n'''Check it out:  [[$title|$name]]'''\n----\n" );
 					$this->showForm( '', '', false, '', $uploading, $private2 );
 				}
 			} else {
-				$wgOut->addWikiText( "== Warning ==\n<font color='red'>No file detected!</font>\n'''Please try again.'''\n----\n" );
+				$out->addWikiText( "== Warning ==\n<font color='red'>No file detected!</font>\n'''Please try again.'''\n----\n" );
 				$this->showForm( '', '', false, '', $uploading, $private2 );
 			}
 		} catch ( Exception $e ) {
-			$wgOut->addWikiText( "== Error ==\n<b><font color='red'>{$e->getMessage()}</font></b>\n\n<pre>$e</pre>\n'''Please try again.'''\n----\n" );
+			$out->addWikiText( "== Error ==\n<b><font color='red'>{$e->getMessage()}</font></b>\n\n<pre>$e</pre>\n'''Please try again.'''\n----\n" );
 			$this->showForm( '', '', false, '', $uploading, $private2 );
 		}
 	}
 
 	function createPage( $pwName, $pwSpecies, $private ) {
-		global $wgRequest, $wgOut, $wpiScriptURL;
 		$backlink = '<a href="javascript:history.back(-1)">Back</a>';
 		try {
 						$gpmlData = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
@@ -137,18 +166,16 @@ class CreatePathwayPage extends SpecialPage {
 						$pathway = Pathway::createNewPathway( $gpmlData );
 						$title = $pathway->getTitleObject();
 						$name = $pathway->getName();
-						if ( $private2 ) { $pathway->makePrivate( $wgUser );
+						if ( $private2 ) { $pathway->makePrivate( $user );
 						}
-						$wgOut->addWikiText( "'''<font color='green'>Pathway successfully created!</font>'''\n'''Check it out:  [[$title|$name]]'''\n----\n" );
+						$out->addWikiText( "'''<font color='green'>Pathway successfully created!</font>'''\n'''Check it out:  [[$title|$name]]'''\n----\n" );
 		} catch ( Exception $e ) {
-			$wgOut->addHTML( "<B>Error:</B><P>{$e->getMessage()}</P><BR>$backlink</BR>" );
+			$out->addHTML( "<B>Error:</B><P>{$e->getMessage()}</P><BR>$backlink</BR>" );
 			return;
 		}
 	}
 
 	function showForm( $pwName = '', $pwSpecies = '', $override = '', $private = '', $uploading = 0, $private2 = '' ) {
-		global $wgRequest, $wgOut, $wpiScriptURL;
-
 		$form_method = null;
 		$form_extra = null;
 		$upload_check = null;
@@ -159,12 +186,14 @@ class CreatePathwayPage extends SpecialPage {
 			$form_method = "post";
 			$form_extra = "enctype='multipart/form-data'";
 			$upload_check = 'CHECKED';
-			$editor_vis = 'style="display:none;"'; // switch the other one off
+			// switch the other one off
+			$editor_vis = 'style="display:none;"';
 		} else {
 			$form_method = "get";
 			$form_extra = "";
 			$editor_check = 'CHECKED';
-			$upload_vis = 'style="display:none;"'; // switch the other one off
+			// switch the other one off
+			$upload_vis = 'style="display:none;"';
 		}
 		if ( $private2 ) { $private2 = 'CHECKED';
 		}
@@ -193,14 +222,16 @@ class CreatePathwayPage extends SpecialPage {
 					$html_editor .= "<input type='hidden' name='override' value='1'>";
 				}
 
-				if ( $private ) { $private = 'CHECKED'; // private is array? array to string conversion notice
+				if ( $private ) {
+					// private is array? array to string conversion notice
+					$private = 'CHECKED';
 				}
 				$html_editor .= "<tr><td colspan='2'><input type='checkbox' name='private' value='1' $private> $this->create_priv_msg
 				<input type='hidden' name='create' value='1'>
 				<input type='hidden' name='title' value='Special:CreatePathwayPage'>
 				<tr><td><input type='submit' value='Create pathway'> </table></FORM><BR>";
 
-					$wgOut->addHTML( "
+					$out->addHTML( "
 			<P>Select to either use the pathway editor or upload a gpml file:<P>
 						<FORM>
 						<TABLE width='100%'><TBODY>
@@ -217,7 +248,7 @@ class CreatePathwayPage extends SpecialPage {
 						"
 					);
 
-					$wgOut->addScript( "
+					$out->addScript( "
 <script type='text/javascript'>
 				function showEditor() {
 						var elm = document.getElementById('editor');
@@ -235,19 +266,5 @@ class CreatePathwayPage extends SpecialPage {
 </script>
 
 		" );
-	}
-
-	static function loadMessages() {
-		static $messagesLoaded = false;
-		global $wgMessageCache;
-		if ( $messagesLoaded ) { return true;
-		}
-		$messagesLoaded = true;
-
-		require __DIR__ . '/CreatePathwayPage.i18n.php';
-		foreach ( $allMessages as $lang => $langMessages ) {
-			$wgMessageCache->addMessages( $langMessages, $lang );
-		}
-		return true;
 	}
 }
