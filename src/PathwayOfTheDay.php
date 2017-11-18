@@ -90,7 +90,7 @@ class PathwayOfTheDay {
 		Parser $parser, $date, $listpage = 'FeaturedPathways', $isTag = false
 	) {
 		$parser->disableCache();
-		wfDebug( "GETTING PATHWAY OF THE DAY for date: $date\n" );
+		wfDebugLog( __METHOD__, "GETTING PATHWAY OF THE DAY for date: $date\n" );
 		try {
 			if ( $isTag ) {
 				$potd = new TaggedPathway( $listpage, $date, $listpage );
@@ -98,10 +98,10 @@ class PathwayOfTheDay {
 				$potd = new FeaturedPathway( $listpage, $date, $listpage );
 			}
 			$out = $potd->getWikiOutput();
-			wfDebug( "END GETTING PATHWAY OF THE DAY for date: $date\n" );
+			wfDebugLog( __METHOD__, "END GETTING PATHWAY OF THE DAY for date: $date\n" );
 		} catch ( Exception $e ) {
 			$out = "Unable to get pathway of the day: {$e->getMessage()}";
-			wfDebug( "Couldn't make pathway of the day: {$e->getMessage()}" );
+			wfDebugLog( __METHOD__, "Couldn't make pathway of the day: {$e->getMessage()}" );
 		}
 		$out = $parser->recursiveTagParse( $out );
 		return [ $out, 'isHTML' => true, 'noparse' => true, 'nowiki' => true ];
@@ -168,34 +168,34 @@ class PathwayOfTheDay {
 	private static function setupDB() {
 		$tbl = self::$table;
 		$dbw = wfGetDB( DB_MASTER );
-		wfDebug( "\tCreating tables\n" );
+		wfDebugLog( __METHOD__, "\tCreating tables\n" );
 		$dbw->query(
 			"CREATE TABLE IF NOT EXISTS $tbl ( pathway varchar(255), day varchar(50) )", DB_MASTER
 		);
-		wfDebug( "\tDone!\n" );
+		wfDebugLog( __METHOD__, "\tDone!\n" );
 	}
 
 	/**
 	 * 	A brand new day, fetch new random pathway that we haven't had before
 	 */
 	private function brandNewDay() {
-		wfDebug( "\tA brand new day....refreshing pathway of the day\n" );
+		wfDebugLog( __METHOD__, "\tA brand new day....refreshing pathway of the day\n" );
 		$this->findFreshPathway();
 	}
 
 	private function findFreshPathway() {
-		wfDebug( "\tSearching for fresh pathway\n" );
+		wfDebugLog( __METHOD__, "\tSearching for fresh pathway\n" );
 		$pw = $this->fetchRandomPathway();
-		wfDebug( "\t\tPathway in cache: '$pw'\n" );
+		wfDebugLog( __METHOD__, "\t\tPathway in cache: '$pw'\n" );
 		$tried = 0;
 		while ( $this->hadBefore( $pw ) ) {
 			// Keep on searching until we found one that we haven't had before
 			$pw = $this->fetchRandomPathway();
-			wfDebug( "\t\tTrying: '$pw'\n" );
+			wfDebugLog( __METHOD__, "\t\tTrying: '$pw'\n" );
 			$tried++;
-			wfDebug( "\t\t\t$tried attempt\n" );
+			wfDebugLog( __METHOD__, "\t\t\t$tried attempt\n" );
 			if ( $tried > 100 ) {
-				wfDebug( "\tTried too often, clearing history\n" );
+				wfDebugLog( __METHOD__, "\tTried too often, clearing history\n" );
 				// However, if we tried too often, just pick a pathway and reset the pathway list
 				// TODO: 'too often' needs to be the number of pathways...
 				$this->clearHistory();
@@ -207,9 +207,9 @@ class PathwayOfTheDay {
 	}
 
 	private function hadBefore( $pathway ) {
-		wfDebug( "\tDid we have $pathway before? " );
+		wfDebugLog( __METHOD__, "\tDid we have $pathway before? " );
 		if ( !$pathway ) {
-			wfDebug( " we don't have a pathway\n" );
+			wfDebugLog( __METHOD__, " we don't have a pathway\n" );
 			return true;
 		}
 		$dbr = wfGetDB( DB_SLAVE );
@@ -217,17 +217,18 @@ class PathwayOfTheDay {
 		$row = $dbr->fetchRow( $res );
 		$dbr->freeResult( $res );
 		$had = $row ? true : false;
-		wfDebug( " $had\n" );
+		wfDebugLog( __METHOD__, " $had\n" );
 		return $had;
 	}
 
 	private function clearHistory() {
 		$dbw = wfGetDB( DB_MASTER );
-		wfDebug( "\tClearing history\n" );
+		wfDebugLog( __METHOD__, "\tClearing history\n" );
 		$dbw->query( "TRUNCATE TABLE " . self::$table, DB_MASTER );
 	}
 
 	private function updateHistory() {
+		wfDebugLog( __METHOD__, "Fetching random pathway...\n" );
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->insert( self::$table, [ 'pathway' => $this->todaysPw, 'day' => $this->id . $this->today ] );
 	}
@@ -237,7 +238,7 @@ class PathwayOfTheDay {
 	 * @return a page title
 	 */
 	protected function fetchRandomPathway() {
-		wfDebug( "Fetching random pathway...\n" );
+		wfDebugLog( __METHOD__, "Fetching random pathway...\n" );
 		$dbr = wfGetDB( DB_SLAVE );
 		// Pick a random pathway from all articles in namespace NS_PATHWAY
 		// FIXME: RAND() only works in MySQL?
@@ -245,7 +246,7 @@ class PathwayOfTheDay {
 			"SELECT page_title FROM page WHERE page_namespace = " . NS_PATHWAY .
 				" AND page_is_redirect = 0 ORDER BY RAND() LIMIT 1", DB_SLAVE );
 		$row = $dbr->fetchRow( $res );
-		wfDebug( "Resulting pathway: " . $row[0] . "\n" );
+		wfDebugLog( __METHOD__, "Resulting pathway: " . $row[0] . "\n" );
 		return $row[0];
 	}
 }
