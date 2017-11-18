@@ -75,8 +75,6 @@
 		"WikiPathways\\TissueAnalyzer": "src/TissueAnalyzer.php",
 		"WikiPathways\\Wish": "src/Wish.php",
 		"WikiPathways\\Xref": "src/Xref.php",
-
-
 		"WikiPathways\\MetaTag": "src/MetaTag.php",
 		"WikiPathways\\CurationTag": "src/CurationTag.php",
 		"WikiPathways\\DiffApplet": "src/DiffApplet.php",
