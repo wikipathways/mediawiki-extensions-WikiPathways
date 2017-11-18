@@ -2,6 +2,10 @@
 /**
  * MetaTag API
  *
+ * This class represents a single metatag, providing support for
+ * reading and writing tags. This class also takes care of updating
+ * the tag history.
+ *
  * Copyright (C) 2017  J. David Gladstone Institutes
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,10 +23,6 @@
  *
  * @author
  * @author Mark A. Hershberger <mah@nichework.com>
- *
- * This class represents a single metatag, providing support
- * for reading and writing tags. This class also takes care of
- * updating the tag history.
  */
 namespace WikiPathways;
 
@@ -190,20 +190,15 @@ class MetaTag {
 
 		wfDebug( __METHOD__ . ": $query\n" );
 		$res = $dbr->query( $query );
-		$row = $dbr->fetchObject( $res );
-		if ( $row ) {
-			do {
-				$title = Title::newFromId( $row->page_id );
-				if ( !$title || $title->isRedirect() || $title->isDeleted() ) {
-					// Skip redirects and deleted
-					continue;
-				}
-				$pages[] = $row->page_id;
-				$row = $dbr->fetchObject( $res );
-			} while ( $row );
+		foreach ( $res as $row ) {
+			$title = Title::newFromId( $row->page_id );
+			if ( !$title || $title->isRedirect() || $title->isDeleted() ) {
+				// Skip redirects and deleted
+				continue;
+			}
+			$pages[] = $row->page_id;
+			$row = $dbr->fetchObject( $res );
 		}
-
-		$dbr->freeResult( $res );
 		return $pages;
 	}
 

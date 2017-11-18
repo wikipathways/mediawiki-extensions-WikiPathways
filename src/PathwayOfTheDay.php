@@ -55,13 +55,16 @@ class PathwayOfTheDay {
 	// Id to support multiple pathway of the day caches
 	protected $id;
 
+	// The arg passed in
+	protected $arg;
+
 	/**
 	 * el constructor
 	 *
 	 * @param string $id of pathway
 	 * @param int $date (optional) time since epoch
 	 */
-	public function __construct( $id, $date = null ) {
+	public function __construct( $id, $date = null, $arg = null ) {
 		// TODO: Move to update schema hook
 		self::setupDB();
 		$this->id = $id;
@@ -70,6 +73,7 @@ class PathwayOfTheDay {
 		} else {
 			$this->today = date( "l j F Y" );
 		}
+		$this->arg = $arg;
 		$this->todaysPw = $this->fetchTodaysPathway();
 	}
 

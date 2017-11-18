@@ -24,20 +24,6 @@ use MWException;
 use Title;
 
 class TaggedPathway extends PathwayOfTheDay {
-	private $tag;
-
-	/**
-	 * Ye ole constructor
-	 *
-	 * @param string $id pathway id
-	 * @param int $date seconds since epoch
-	 * @param string $tag the tag
-	 */
-	function __construct( $id, $date, $tag ) {
-		$this->tag = $tag;
-		parent::__construct( $id, $date );
-	}
-
 	/**
 	 * Select a random pathway from all pathways with the given tag
 	 *
@@ -45,9 +31,9 @@ class TaggedPathway extends PathwayOfTheDay {
 	 */
 	protected function fetchRandomPathway() {
 		wfDebug( "Fetching random pathway...\n" );
-		$pages = MetaTag::getPagesForTag( $this->tag );
+		$pages = MetaTag::getPagesForTag( $this->arg );
 		if ( count( $pages ) == 0 ) {
-			throw new MWException( "There are no pathways tagged with '{$this->tag}'!" );
+			throw new MWException( "There are no pathways tagged with '{$this->arg}'!" );
 		}
 		$pathways = [];
 		foreach ( $pages as $p ) {
