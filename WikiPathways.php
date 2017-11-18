@@ -399,3 +399,14 @@ $wgRSSUrlWhitelist = [
 	"https://wikipathways.github.io/academy/curators/curators_list.xml",
 	"https://groups.google.com/forum/feed/wikipathways-discuss/msgs/rss_v2_0.xml"
 ];
+
+$wfCurationTagsPath = WPI_URL . "/extensions/CurationTags";
+
+//Register AJAX functions
+$wgAjaxExportList[] = "CurationTagsAjax::getTagNames";
+$wgAjaxExportList[] = "CurationTagsAjax::getTagData";
+$wgAjaxExportList[] = "CurationTagsAjax::saveTag";
+$wgAjaxExportList[] = "CurationTagsAjax::removeTag";
+$wgAjaxExportList[] = "CurationTagsAjax::getAvailableTags";
+$wgAjaxExportList[] = "CurationTagsAjax::getTagHistory";
+$wgAjaxExportList[] = "CurationTagsAjax::getTags";

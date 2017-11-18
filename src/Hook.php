@@ -35,6 +35,10 @@ class Hook {
 			"batchDownload", "WikiPathways\\BatchDownloader::createDownloadLinks"
 		);
 		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
+		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
+		$wgParser->setHook(
+			"CurationTags", "WikiPathways\\CurationTag::displayCurationTags"
+		);
 
 		$wgParser->setFunctionHook(
 			"PathwayViewer", "WikiPathways\\PathwayViewer::enable"

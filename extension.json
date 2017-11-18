@@ -35,6 +35,8 @@
 	"AutoloadClasses": {
 		"WikiPathways\\BasePathwaysPager": "src/BasePathwaysPager.php",
 		"WikiPathways\\BatchDownloader": "src/BatchDownloader.php",
+		"WikiPathways\\CurationTag": "src/CurationTag.php",
+		"WikiPathways\\CurationTagsAjax": "src/CurationTagsAjax.php",
 		"WikiPathways\\DataSource": "src/DataSource.php",
 		"WikiPathways\\DataSourcesCache": "src/DataSourcesCache.php",
 		"WikiPathways\\EditApplet": "src/EditApplet.php",
