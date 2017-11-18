@@ -319,20 +319,20 @@ When you watch an item from the wishlist, you will recieve an email notification
 <tr>
 <td colspan="2"><b>Resolve:</b>
 <tr>
-<td><img align='right' style='border:1' src='$wgScriptPath/skins/common/images/apply.gif'/>
+<td><img align='right' style='border:1' src='$wgScriptPath/extensions/WikiPathways/images/apply.gif'/>
 <td>Use this button to resolve an item when the requested pathway is created. The item will
 be transfered to the 'resolved items' list.
 <tr>
-<td><img align='right' style='border:1' src='$wgScriptPath/skins/common/images/cancel.gif'/>
+<td><img align='right' style='border:1' src='$wgScriptPath/extensions/WikiPathways/images/cancel.gif'/>
 <td>Removes the item from the list, it will not show up in the 'resolved items' list. You can only remove
 items that you created yourself.
 <tr>
 <td colspan="2"><b>Votes:</b>
 <tr>
-<td><img align='right' style='border:1' src='$wgScriptPath/skins/common/images/plus.png'/>
+<td><img align='right' style='border:1' src='$wgScriptPath/extensions/WikiPathways/images/plus.png'/>
 <td>Vote for the pathway</td>
 <tr>
-<td><img align='right' style='border:1' src='$wgScriptPath/skins/common/images/minus.png'/>
+<td><img align='right' style='border:1' src='$wgScriptPath/extensions/WikiPathways/images/minus.png'/>
 <td>Remove your vote</td>
 </tbody></table></div>
 HELP;
@@ -422,7 +422,7 @@ HELP;
 	function createButton( $image, $action, $title, $id ) {
 		global $wgScriptPath;
 		return "<a href='{$this->this_url}&wishaction=$action&id=$id'>
-						<img align='right' style='border:1' src='$wgScriptPath/skins/common/images/$image'
+						<img align='right' style='border:1' src='$wgScriptPath/extensions/WikiPathways/images/$image'
 						title='$title'/></a>";
 	}
 

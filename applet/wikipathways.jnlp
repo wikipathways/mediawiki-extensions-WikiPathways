@@ -4,7 +4,7 @@
 		 <title>PathVisio - WikiPathways</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
-		 <icon href="../../skins/common/images/earth_or_pathway.png"/>
+		 <icon href="../../extensions/WikiPathways/images/earth_or_pathway.png"/>
 	</information>
 	<resources>
 		 <j2se version="1.5+"/>

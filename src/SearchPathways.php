@@ -121,7 +121,7 @@ class SearchPathways extends \SpecialPage {
 		$wgOut->addScript( "<script type=\"{$wgJsMimeType}\" src=\"$wfSearchPagePath/SearchPathways.js\"></script>\n" );
 		$wgOut->addHTML( "<DIV id='searchResults'></DIV>" );
 		$wgOut->addHTML(
-			"<DIV id='loading'><IMG src='$wgScriptPath/skins/common/images/progress.gif'/> Loading...</DIV>"
+			"<DIV id='loading'><IMG src='$wgScriptPath/extensions/WikiPathways/images/progress.gif'/> Loading...</DIV>"
 		);
 		$wgOut->addHTML( "<DIV id='more'></DIV>" );
 		$wgOut->addHTML( "<DIV id='error'></DIV>" );

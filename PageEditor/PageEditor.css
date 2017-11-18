@@ -8,7 +8,7 @@ textarea.pageEditText {
 }
 
 div.editblock {
-	background-image:url("/skins/common/images/progress.gif");
+	background-image:url("/extensions/WikiPathways/images/progress.gif");
 	background-repeat:no-repeat;
 	background-position: top center;
 	display: block;

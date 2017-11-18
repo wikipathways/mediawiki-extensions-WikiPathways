@@ -8,9 +8,9 @@ function PageEditor(targetId, type, content, pwId, userCanEdit) {
 }
 
 PageEditor.images = {
-	edit:  '/skins/common/images/edit.png',
-	ok:  '/skins/common/images/apply.png',
-	cancel:  '/skins/common/images/cancel.png'
+	edit:  '/extensions/WikiPathways/images/edit.png',
+	ok:  '/extensions/WikiPathways/images/apply.png',
+	cancel:  '/extensions/WikiPathways/images/cancel.png'
 };
 
 PageEditor.prototype.addEditButton = function() {

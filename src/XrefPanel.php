@@ -51,7 +51,7 @@ class XrefPanel {
 		$label = json_encode( $label );
 		$id = json_encode( $id );
 		$species = json_encode( $species );
-		$url = SITE_URL . '/skins/common/images/info.png';
+		$url = SITE_URL . '/extensions/WikiPathways/images/info.png';
 		$fun = 'XrefPanel.registerTrigger(this, '
 		. "$id, $datasource, $species, $label);";
 		$title = "Show additional info and linkouts";

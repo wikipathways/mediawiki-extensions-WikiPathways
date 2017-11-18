@@ -31,7 +31,7 @@ function GraphBuilder() { }
 GraphBuilder.dataPath = '';
 if(typeof(wgScriptPath) != 'undefined') { //Loaded from MW page
 	GraphBuilder.dataPath = wgServer + wgScriptPath + '/wpi/statistics/';
-	GraphBuilder.errorImg = wgServer + wgScriptPath + '/skins/common/images/cancel.gif';
+	GraphBuilder.errorImg = wgServer + wgScriptPath + '/extensions/WikiPathways/images/cancel.gif';
 }
 
 GraphBuilder.prototype.drawVisualizations = function() {

@@ -49,7 +49,7 @@ You can include a pathway viewer in another website using an iframe:
 // Initialize javascript
 echo '<script type="text/javascript" src="' . $jsJQuery . '"></script>' . "\n";
 
-$imgPath = "$wgServer/$wgScriptPath/skins/common/images/";
+$imgPath = "$wgServer/$wgScriptPath/extensions/WikiPathways/images/";
 
 $jsSrc = PathwayViewer::getJsDependencies();
 foreach ( $jsSrc as $js ) {
@@ -131,7 +131,7 @@ $gpml = $pathway->getFileURL( FILETYPE_GPML );
 		<div id="logolink">
 			<?php
 				echo "<a id='wplink' target='top' href='{$pathway->getFullUrl()}'>View at ";
-				echo "<img style='border:none' src='$wgScriptPath/skins/common/images/wikipathways_name.png' /></a>";
+				echo "<img style='border:none' src='$wgScriptPath/extensions/WikiPathways/images/wikipathways_name.png' /></a>";
 			?>
 		</div>
 	</div>

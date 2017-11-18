@@ -13,7 +13,7 @@ if (typeof(XrefPanel_lookupAttributes) == "undefined")
  * different than the page root.
  */
 if (typeof(XrefPanel_imgPath) == "undefined") 
-    var XrefPanel_imgPath = wgServer + '/' + wgScriptPath + '/skins/common/images/';
+    var XrefPanel_imgPath = wgServer + '/' + wgScriptPath + '/extensions/WikiPathways/images/';
     
 /**
  * A panel that displays information for an xref.
