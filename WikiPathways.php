@@ -362,7 +362,7 @@ $wgPasswordSender = "no-reply@wikipathways.com";
 $wgContentHandlerTextFallback = 'serialize';
 $wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_PATHWAY;
 $wgContentHandlers[CONTENT_MODEL_PATHWAY] = 'WikiPathways\\PathwayHandler';
-
+$wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
 if ( !isset( $wpiJavascriptSnippets ) ) {
 	$wpiJavascriptSnippets = [];
 }
@@ -370,17 +370,17 @@ if ( !isset( $wpiJavascriptSources ) ) {
 	$wpiJavascriptSources = [];
 }
 if ( !isset( $jsJQuery ) ) {
-	$jsJQuery = "$wgScriptPath/skins/wikipathways/jquery-1.8.3.min.js";
+	$jsJQuery = "$wpiModulePath/jquery-1.8.3.min.js";
 }
 if ( !isset( $jsJQueryUI ) ) {
-	$jsJQueryUI = "$wgScriptPath/wpi/js/jquery-ui/jquery-ui-1.8.10.custom.min.js";
+	$jsJQueryUI = "$wpiModulePath/jquery-ui-1.8.10.custom.min.js";
 }
 if ( !isset( $cssJQueryUI ) ) {
-	$cssJQueryUI = "$wgScriptPath/wpi/js/jquery-ui/jquery-ui-1.8.10.custom.css";
+	$cssJQueryUI = "$wpiModulePath/jquery-ui-1.8.10.custom.css";
 }
 if ( !isset( $jsSvgWeb ) ) {
-	$jsSvgWeb = "$wgScriptPath/wpi/js/svgweb/svg-uncompressed.js\""
-			  . "data-path=\"$wgScriptPath/wpi/js/svgweb";
+	$jsSvgWeb = "$wpiModulePath/svgweb/svg-uncompressed.js\""
+			  . "data-path=\"$wpiModulePath/svgweb";
 }
 // Only load jquery when required by extension
 $jsRequireJQuery = false;
