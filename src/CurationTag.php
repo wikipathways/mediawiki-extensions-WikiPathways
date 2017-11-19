@@ -24,6 +24,8 @@ namespace WikiPathways;
 use SimpleXMLElement;
 use Exception;
 use MWException;
+use OutputPage;
+use RequestContext;
 use Title;
 
 /**
@@ -33,34 +35,35 @@ class CurationTag {
 	private static $TAG_LIST = "Curationtags-definition.xml";
 	private static $TAG_LIST_PAGE = "MediaWiki:Curationtags-definition.xml";
 
-	public static function displayCurationTags( $input, $argv, $parser ) {
-		global $wgOut, $wfCurationTagsPath, $wgJsMimeType;
+	private static $mayEdit;
 
-		// Add CSS
-		$wgOut->addStyle( "wikipathways/CurationTags.css" );
+	public static function onMakeGlobalVariablesScript(
+		array &$vars, OutputPage $outputPage
+	) {
+		global $wgScriptPath;
 
-		$title = $parser->getTitle();
-		$mayEdit = $title->userCan( 'edit' ) ? true : false;
-		$revision = $parser->getRevisionId();
-		if ( !$revision ) {
-			$parser->mTitle->getLatestRevId();
-		}
 		$helpLink = Title::newFromText( "CurationTags", NS_HELP )->getFullURL();
 
+		// Add CSS
+		$outputPage->addModuleScripts( "wpi.CurationTags", "top" );
 		// Add javascript
-		$wgOut->addScriptFile( "../wikipathways/CurationTags.js" );
-		$wgOut->addScript(
-			"<script type=\"{$wgJsMimeType}\">" .
-			"CurationTags.extensionPath=\"$wfCurationTagsPath\";" .
-			"CurationTags.mayEdit=\"$mayEdit\";" .
-			"CurationTags.pageRevision=\"$revision\";" .
-			"CurationTags.helpLink=\"$helpLink\";" .
-			"</script>\n"
-		);
+		$vars["CurationTags.extensionPath"] = $wgScriptPath . "/extensions/WikiPathways/";
+		$vars["CurationTags.mayEdit"] = self::$mayEdit;
+		$vars["CurationTags.helpLink"] = $helpLink;
+	}
+
+	public static function displayCurationTags( $input, $argv, $parser ) {
+		$title = $parser->getTitle();
+		$mayEdit = $title->userCan( 'edit' ) ? true : false;
+		if ( !$parser->getRevisionId() ) {
+			$parser->mTitle->getLatestRevId();
+		}
 
 		$pageId = $parser->mTitle->getArticleID();
 		$elementId = 'curationTagDiv';
-		return "<div id='$elementId'></div><script type=\"{$wgJsMimeType}\">CurationTags.insertDiv('$elementId', '$pageId');</script>\n";
+		return "<div id='$elementId'></div>"
+			. "<script type='text/javascript'>"
+			. "CurationTags.insertDiv('$elementId', '$pageId');</script>\n";
 	}
 
 	/**

@@ -39,6 +39,7 @@ class Hook {
 		$wgParser->setHook(
 			"CurationTags", "WikiPathways\\CurationTag::displayCurationTags"
 		);
+		$wgParser->setHook( "AuthorInfo", "WikiPathways\\AuthorInfo::render" );
 
 		$wgParser->setFunctionHook(
 			"PathwayViewer", "WikiPathways\\PathwayViewer::enable"
@@ -189,45 +190,41 @@ class Hook {
 	}
 
 	/**
-	 * Handles javascript dependencies for WikiPathways extensions
+	 * Special user permissions once a pathway is deleted.
+	 * TODO: Disable this hook for running script to transfer to stable ids
 	 */
-	public static function addJavascript( &$out, $parseroutput ) {
-		global $wgJsMimeType, $wpiJavascriptSnippets, $wpiJavascriptSources,
-		 $jsJQuery, $wgRequest;
+	function checkDeleted( $title, $user, $action, &$result ) {
+		if ( $action == 'edit' && $title->getNamespace() == NS_PATHWAY ) {
+			$pathway = Pathway::newFromTitle( $title );
+			if ( $pathway->isDeleted() ) {
+				if ( MwUtils::isOnlyAuthor( $user, $title->getArticleId() ) ) {
+					// Users that are sole author of a pathway can always revert deletion
+					$result = true;
+					return false;
+				} else {
+					// Only users with 'delete' permission can revert deletion
+					// So disable edit for all other users
+					$result = $title->getUserPermissionsErrors( 'delete', $user ) == [];
+					return false;
+				}
+			}
+		}
+		$result = null;
+		return true;
+	}
 
-		// Array containing javascript source files to add
-		if ( !isset( $wpiJavascriptSources ) ) {
-			$wpiJavascriptSources = XrefPanel::getJsDependencies();
+	/*
+	 * Special delete permissions for pathways if user is sole author
+	 */
+	function checkSoleAuthor( $title, $user, $action, &$result ) {
+		// Users are allowed to delete their own pathway
+		if ( $action == 'delete' && $title->getNamespace() == NS_PATHWAY ) {
+			if ( MWUtils::isOnlyAuthor( $user, $title->getArticleId() ) && $title->userCan( 'edit' ) ) {
+				$result = true;
+				return false;
+			}
 		}
-		$wpiJavascriptSources = array_unique( $wpiJavascriptSources );
-
-		// Array containing javascript snippets to add
-		if ( !isset( $wpiJavascriptSnippets ) ) {
-			$wpiJavascriptSnippets = XrefPanel::getJsSnippets();
-		}
-		$wpiJavascriptSnippets = array_unique( $wpiJavascriptSnippets );
-
-		foreach ( $wpiJavascriptSnippets as $snippet ) {
-			$out->addScript(
-				"<script type=\"{$wgJsMimeType}\">"
-				. $snippet . "</script>\n"
-			);
-		}
-		foreach ( $wpiJavascriptSources as $src ) {
-			$out->addScript(
-				'<script src="' . $src . '" type="' . $wgJsMimeType
-				. '"></script>'
-			);
-		}
-
-		// Add firebug lite console if requested in GET
-		$bug = "http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js";
-		if ( $wgRequest->getval( 'firebug' ) ) {
-			$out->addScript(
-				'<script src="' . $bug . '" type="' .
-				$wgJsMimeType . '></script>'
-			);
-		}
+		$result = null;
 		return true;
 	}
 }

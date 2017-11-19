@@ -60,14 +60,6 @@ class XrefPanel {
 		return $html;
 	}
 
-	public static function getJsDependencies() {
-		global $jsJQueryUI, $wgScriptPath;
-
-		$js = [ "$wgScriptPath/wpi/js/xrefpanel.js", $jsJQueryUI ];
-
-		return $js;
-	}
-
 	public static function getJsSnippets() {
 		global $wpiXrefPanelDisableAttributes, $wpiBridgeUrl,
 		$wpiBridgeUseProxy;
@@ -105,10 +97,6 @@ class XrefPanel {
 
 		$jsRequireJQuery = true;
 
-		// Hack to add a css that's not in the skins directory
-		$oldStylePath = $wgStylePath;
-		$wgStylePath = dirname( $cssJQueryUI );
-		$wgOut->addStyle( basename( $cssJQueryUI ) );
-		$wgStylePath = $oldStylePath;
+		$wgOut->addModules( "wpi.XrefPanel" );
 	}
 }

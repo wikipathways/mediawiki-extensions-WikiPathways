@@ -60,14 +60,12 @@ require_once "button.php";
 require_once "imageLink.php";
 require_once "listPathways.php";
 require_once "movePathway.php";
-require_once "deletePathway.php";
 require_once "CheckGpmlOnSave.php";
 require_once "CreateUserPage.php";
 require_once "LabeledSectionTransclusion/compat.php";
 require_once "LabeledSectionTransclusion/lst.php";
 require_once "LabeledSectionTransclusion/lsth.php";
 require_once "DiffViewer/DiffViewer.php";
-require_once "AuthorInfo/AuthorInfo.php";
 require_once "pathwayParserFunctions.php";
 require_once "PrivatePathways/PrivatePathways.php";
 require_once "PrivatePathways/ListPrivatePathways.php";
@@ -110,9 +108,9 @@ $wgGoogleAnalyticsIgnoreSysops = false;
 // Set enotif for watch page changes to true by default
 $wgDefaultUserOptions ['enotifwatchlistpages'] = 1;
 
-# Cascading Style Sheets
-# Default is {$wgScriptPath}/skins
-
+$wgScriptPath = "";
+$wgArticlePath = "/$1";
+$wgUsePathInfo = true;
 $wgShowExceptionDetails = true;
 $wgShowSQLErrors = true;
 
@@ -363,21 +361,6 @@ $wgContentHandlerTextFallback = 'serialize';
 $wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_PATHWAY;
 $wgContentHandlers[CONTENT_MODEL_PATHWAY] = 'WikiPathways\\PathwayHandler';
 $wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
-if ( !isset( $wpiJavascriptSnippets ) ) {
-	$wpiJavascriptSnippets = [];
-}
-if ( !isset( $wpiJavascriptSources ) ) {
-	$wpiJavascriptSources = [];
-}
-if ( !isset( $jsJQuery ) ) {
-	$jsJQuery = "$wpiModulePath/jquery-1.8.3.min.js";
-}
-if ( !isset( $jsJQueryUI ) ) {
-	$jsJQueryUI = "$wpiModulePath/jquery-ui-1.8.10.custom.min.js";
-}
-if ( !isset( $cssJQueryUI ) ) {
-	$cssJQueryUI = "$wpiModulePath/jquery-ui-1.8.10.custom.css";
-}
 if ( !isset( $jsSvgWeb ) ) {
 	$jsSvgWeb = "$wpiModulePath/svgweb/svg-uncompressed.js\""
 			  . "data-path=\"$wpiModulePath/svgweb";
@@ -403,10 +386,11 @@ $wgRSSUrlWhitelist = [
 $wfCurationTagsPath = WPI_URL . "/extensions/CurationTags";
 
 //Register AJAX functions
-$wgAjaxExportList[] = "CurationTagsAjax::getTagNames";
-$wgAjaxExportList[] = "CurationTagsAjax::getTagData";
-$wgAjaxExportList[] = "CurationTagsAjax::saveTag";
-$wgAjaxExportList[] = "CurationTagsAjax::removeTag";
-$wgAjaxExportList[] = "CurationTagsAjax::getAvailableTags";
-$wgAjaxExportList[] = "CurationTagsAjax::getTagHistory";
-$wgAjaxExportList[] = "CurationTagsAjax::getTags";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagNames";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagData";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::saveTag";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::removeTag";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getAvailableTags";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagHistory";
+$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTags";
+$wgAjaxExportList[] = "WikiPathways\AuthorInfo::jsGetAuthors";

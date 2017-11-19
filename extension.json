@@ -17,6 +17,47 @@
 			"i18n"
 		]
 	},
+	"ResourceModules": {
+		"wpi.otags": {
+			"styles": [
+				"modules/otag.css"
+			]
+		},
+		"wpi.CurationTags": {
+			"position": "top",
+			"scripts": [
+				"modules/CurationTags.js"
+			],
+			"styles": [
+				"modules/CurationTags.css"
+			]
+		},
+		"wpi.AuthorInfo": {
+			"scripts": [
+				"modules/AuthorInfo.js"
+			],
+			"styles": [
+				"modules/AuthorInfo.css"
+			]
+		},
+		"wpi.XrefPanel": {
+			"scripts": [
+				"modules/xrefpanel.js"
+			],
+			"dependencies": [
+				"wpi.JQuery"
+			]
+		},
+		"wpi.JQuery": {
+			"scripts": [
+				"modules/jquery-1.8.3.min.js",
+				"modules/jquery-ui-1.8.10.custom.min.js"
+			],
+			"styles": [
+				"modules/jquery-ui-1.8.10.custom.css"
+			]
+		}
+	},
 	"SpecialPages": {
 		"CreatePathwayPage": "WikiPathways\\CreatePathway",
 		"CurationTags": "WikiPathways\\SpecialCurationTags",
@@ -33,6 +74,8 @@
 		"TissueAnalyzer": "WikiPathways\\TissueAnalyzer"
 	},
 	"AutoloadClasses": {
+		"WikiPathways\\AuthorInfoList": "src/AuthorInfoList.php",
+		"WikiPathways\\AuthorInfo": "src/AuthorInfo.php",
 		"WikiPathways\\BasePathwaysPager": "src/BasePathwaysPager.php",
 		"WikiPathways\\BatchDownloader": "src/BatchDownloader.php",
 		"WikiPathways\\CurationTag": "src/CurationTag.php",
@@ -52,6 +95,7 @@
 		"WikiPathways\\PagePermission": "src/PagePermission.php",
 		"WikiPathways\\PathwayBibliography": "src/PathwayBibliography.php",
 		"WikiPathways\\PathwayContent": "src/PathwayContent.php",
+		"WikiPathways\\PathwayContributionsByAuthor": "src/PathwayContributionsByAuthor.php",
 		"WikiPathways\\PathwayData": "src/PathwayData.php",
 		"WikiPathways\\PathwayHandler": "src/PathwayHandler.php",
 		"WikiPathways\\PathwayHistory": "src/PathwayHistory.php",
@@ -102,6 +146,10 @@
 	],
 	"Hooks": {
 		"ArticleSaveComplete":  "WikiPathways\\Hook::updateTags",
+		"userCan": [
+			"WikiPathways\\Hook::checkDeleted",
+			"WikiPathways\\Hook::checkSoleAuthor"
+		],
 		"LanguageGetMagic": [
 			"WikiPathways\\MagicWord::onLanguageGetMagic",
 			"WikiPathways\\Hook::pathwayMagic"
@@ -109,14 +157,14 @@
 		"LinkerMakeExternalLink":  "WikiPathways\\Hook::externalLink",
 		"MagicWordMagicWords": "WikiPathways\\MagicWord::onMagicWordMagicWords",
 		"MagicWordwgVariableIDs":  "WikiPathways\\MagicWord::onMagicWordwgVariableIDs",
-		"OutputPageParserOutput": "WikiPathways\\Hook::addJavascript",
 		"PageDisplay": "WikiPathways\\Hook::stopDisplay",
 		"ParserGetVariableValueSwitch":  "WikiPathways\\MagicWord::onParserGetVariableValueSwitch",
 		"userCan": "WikiPathways\\PermissionManager::checkRestrictions",
 		"SkinTemplateContentActions": "WikiPathways\\PermissionManager::addPermissionTab",
 		"UnknownAction": "WikiPathways\\PermissionManager::permissionTabAction",
 		"ParserBeforeStrip": "WikiPathways\\PathwayPage::render",
-		"BeforePageDisplay": "WikiPathways\\PathwayPage::addPreloaderScript"
+		"BeforePageDisplay": "WikiPathways\\PathwayPage::addPreloaderScript",
+		"MakeGlobalVariablesScript": "WikiPathways\\CurationTag::onMakeGlobalVariablesScript"
 	},
 	"GroupPermissions": {
 		"sysop": {

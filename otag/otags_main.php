@@ -23,7 +23,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	echo "This file is part of MediaWiki, it is not a valid entry point.\n";
 	exit( 1 );
 }
-$opath = WPI_URL . "/extensions/otag";
+$opath = WPI_URL . "/extensions/WikiPathways/otag";
 $wgExtensionFunctions[] = "wfotag";
 
 function wfotag() {
@@ -58,7 +58,9 @@ function ofunction( $input, $argv, $parser ) {
 		$wgOut->addScript( '<script type="text/javascript" src="' . $opath . '/js/yui2.7.0.mincomponents.js"></script>' );
 	}
 
-	$wgOut->addStyle( "otag.css" );
+	$wgOut->addModules( [
+        'wpi.CurationTags', 'wpi.AuthorInfo', 'wpi.XrefPanel', 'wpi.otags'
+    ] );
 	$wgStylePath = $oldStylePath;
 
 	$wgOut->addScript(
