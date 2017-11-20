@@ -27,6 +27,7 @@ wfLoadExtensions( [
 	"Cite",
 	"ConfirmEdit",
 	"ConfirmEdit/QuestyCaptcha",
+	"CodeEditor",
 	"EmbedVideo",
 	"Gadgets",
 	"ImageMap",
