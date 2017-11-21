@@ -43,7 +43,8 @@ wfLoadExtensions( [
 	"UserLoginLog",
 	"UserSnoop",
 	"WikiEditor",
-	"WikiPathways"
+	"WikiPathways",
+	"WikiPathways/GPML"
 ] );
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
@@ -229,21 +230,17 @@ $wgOntologiesExpiryTime = 3600 * 24 * 7;
 
 # Custom namespaces
 // NS_PATHWAY is same as NS_GPML since refactoring
-define( "NS_PATHWAY", 102 );
-define( "NS_PATHWAY_TALK", 103 );
-define( "NS_GPML", 102 );
-define( "NS_GPML_TALK", 103 );
-define( "NS_WISHLIST", 104 );
 define( "NS_WISHLIST_TALK", 105 );
 define( "NS_PORTAL", 106 );
 define( "NS_PORTAL_TALK", 107 );
 define( "NS_QUESTION", 108 );
 define( "NS_QUESTION_TALK", 109 );
 
+define( "NS_GPML", 102 );
+define( "NS_GPML_TALK", 103 );
+define( "NS_WISHLIST", 104 );
 $wgExtraNamespaces[100]              = "Pw_Old";
 $wgExtraNamespaces[101]              = "Pw_Old_Talk";
-$wgExtraNamespaces[NS_PATHWAY]       = "Pathway";
-$wgExtraNamespaces[NS_PATHWAY_TALK]  = "Pathway_Talk";
 $wgExtraNamespaces[NS_WISHLIST]      = "Wishlist";
 $wgExtraNamespaces[NS_WISHLIST_TALK] = "Wishlist_Talk";
 $wgExtraNamespaces[NS_PORTAL]        = "Portal";
@@ -254,13 +251,14 @@ $wgNamespacesToBeSearchedDefault[101] = false;
 $wgNamespacesToBeSearchedDefault[NS_PATHWAY]      = true;
 $wgNamespacesToBeSearchedDefault[NS_PATHWAY_TALK] = true;
 
-$wgContentNamespaces += [ NS_PATHWAY, NS_PATHWAY_TALK ];
+// using "pathway" b/c of back compat issues
+define( 'CONTENT_MODEL_GPML', 'pathway' );
+define( 'CONTENT_FORMAT_GPML', 'gpml' );
+$wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_GPML;
 
 # Protecting non-pathway namespaces from user edits
 $wgNamespaceProtection[NS_HELP]          = [ 'help-edit' ];
 $wgNamespaceProtection[NS_HELP_TALK]     = [ 'help-talk-edit' ];
-$wgNamespaceProtection[NS_PATHWAY]       = [ 'pathway-edit' ];
-$wgNamespaceProtection[NS_PATHWAY_TALK]  = [ 'pathway-talk-edit' ];
 $wgNamespaceProtection[NS_WISHLIST]      = [ 'wishlist-edit' ];
 $wgNamespaceProtection[NS_WISHLIST_TALK] = [ 'wishlist-talk-edit' ];
 $wgNamespaceProtection[NS_PORTAL]        = [ 'portal-edit' ];
@@ -359,8 +357,7 @@ $wgEmergencyContact = "wikipathways@gladstone.ucsf.edu";
 $wgPasswordSender = "no-reply@wikipathways.com";
 
 $wgContentHandlerTextFallback = 'serialize';
-$wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_PATHWAY;
-$wgContentHandlers[CONTENT_MODEL_PATHWAY] = 'WikiPathways\\PathwayHandler';
+
 $wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
 if ( !isset( $jsSvgWeb ) ) {
 	$jsSvgWeb = "$wpiModulePath/svgweb/svg-uncompressed.js\""
