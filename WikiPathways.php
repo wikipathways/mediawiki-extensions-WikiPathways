@@ -241,6 +241,8 @@ define( "NS_GPML_TALK", 103 );
 define( "NS_WISHLIST", 104 );
 $wgExtraNamespaces[100]              = "Pw_Old";
 $wgExtraNamespaces[101]              = "Pw_Old_Talk";
+$wgExtraNamespaces[NS_GPML]       = "Pathway";
+$wgExtraNamespaces[NS_GPML_TALK]  = "Pathway_Talk";
 $wgExtraNamespaces[NS_WISHLIST]      = "Wishlist";
 $wgExtraNamespaces[NS_WISHLIST_TALK] = "Wishlist_Talk";
 $wgExtraNamespaces[NS_PORTAL]        = "Portal";
@@ -248,13 +250,18 @@ $wgExtraNamespaces[NS_PORTAL_TALK]   = "Portal_Talk";
 
 $wgNamespacesToBeSearchedDefault[100] = false;
 $wgNamespacesToBeSearchedDefault[101] = false;
-$wgNamespacesToBeSearchedDefault[NS_PATHWAY]      = true;
-$wgNamespacesToBeSearchedDefault[NS_PATHWAY_TALK] = true;
+$wgNamespacesToBeSearchedDefault[NS_GPML]      = true;
+$wgNamespacesToBeSearchedDefault[NS_GPML_TALK] = true;
+
+$wgContentNamespaces += [ NS_GPML, NS_GPML_TALK ];
+
+$wgNamespaceProtection[NS_GPML]       = [ 'pathway-edit' ];
+$wgNamespaceProtection[NS_GPML_TALK]  = [ 'pathway-talk-edit' ];
 
 // using "pathway" b/c of back compat issues
 define( 'CONTENT_MODEL_GPML', 'pathway' );
 define( 'CONTENT_FORMAT_GPML', 'gpml' );
-$wgNamespaceContentModels[NS_PATHWAY]     = CONTENT_MODEL_GPML;
+$wgNamespaceContentModels[NS_GPML]     = CONTENT_MODEL_GPML;
 
 # Protecting non-pathway namespaces from user edits
 $wgNamespaceProtection[NS_HELP]          = [ 'help-edit' ];
