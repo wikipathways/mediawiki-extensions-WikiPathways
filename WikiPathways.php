@@ -41,6 +41,7 @@ wfLoadExtensions( [
 	"CodeEditor",
 	"EmbedVideo",
 	"Gadgets",
+	"GPML",
 	"ImageMap",
 	"InputBox",
 	"Interwiki",
@@ -54,8 +55,7 @@ wfLoadExtensions( [
 	"UserLoginLog",
 	"UserSnoop",
 	"WikiEditor",
-	"WikiPathways",
-	"WikiPathways/GPML"
+	"WikiPathways"
 ] );
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
