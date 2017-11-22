@@ -23,6 +23,17 @@
 # Passwords and secrets and such
 require_once "$IP/../pass.php";
 
+ini_set( 'memory_limit', '2048M' );
+$wgDBname = "wikipathways";
+$wgDBuser = "wikiuser";
+
+$wgScriptPath = "";
+$wgExtensionAssetsPath = "{$wgScriptPath}/extensions";
+$wgStylePath = "{$wgScriptPath}/skins";
+$wgUploadPath = "{$wgScriptPath}/images";
+$wgResourceBasePath = $wgScriptPath;
+$wgUsePathInfo = false;
+
 wfLoadExtensions( [
 	"Cite",
 	"ConfirmEdit",
@@ -241,8 +252,6 @@ define( "NS_GPML_TALK", 103 );
 define( "NS_WISHLIST", 104 );
 $wgExtraNamespaces[100]              = "Pw_Old";
 $wgExtraNamespaces[101]              = "Pw_Old_Talk";
-$wgExtraNamespaces[NS_GPML]       = "Pathway";
-$wgExtraNamespaces[NS_GPML_TALK]  = "Pathway_Talk";
 $wgExtraNamespaces[NS_WISHLIST]      = "Wishlist";
 $wgExtraNamespaces[NS_WISHLIST_TALK] = "Wishlist_Talk";
 $wgExtraNamespaces[NS_PORTAL]        = "Portal";
@@ -252,16 +261,6 @@ $wgNamespacesToBeSearchedDefault[100] = false;
 $wgNamespacesToBeSearchedDefault[101] = false;
 $wgNamespacesToBeSearchedDefault[NS_GPML]      = true;
 $wgNamespacesToBeSearchedDefault[NS_GPML_TALK] = true;
-
-$wgContentNamespaces += [ NS_GPML, NS_GPML_TALK ];
-
-$wgNamespaceProtection[NS_GPML]       = [ 'pathway-edit' ];
-$wgNamespaceProtection[NS_GPML_TALK]  = [ 'pathway-talk-edit' ];
-
-// using "pathway" b/c of back compat issues
-define( 'CONTENT_MODEL_GPML', 'pathway' );
-define( 'CONTENT_FORMAT_GPML', 'gpml' );
-$wgNamespaceContentModels[NS_GPML]     = CONTENT_MODEL_GPML;
 
 # Protecting non-pathway namespaces from user edits
 $wgNamespaceProtection[NS_HELP]          = [ 'help-edit' ];
