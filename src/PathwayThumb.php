@@ -149,7 +149,7 @@ class PathwayThumb {
 			. " });</script></div>";
 		} else {
 			if ( !$wgUser->isLoggedIn() ) {
-				$hrefbtn = SITE_URL . "/index.php?title=Special:Userlogin&"
+				$hrefbtn = 'Special:Userlogin?'
 				. "returnto=$pathwayURL";
 				$label = "Log in to edit pathway";
 			} elseif ( wfReadOnly() ) {
@@ -211,7 +211,7 @@ class PathwayThumb {
 			$boxheight = $height;
 			$thumbUrl  = $img->getViewURL();
 		} else {
-            $param[ 'width' ] = $boxwidth;
+			$param[ 'width' ] = $boxwidth;
 			if ( $boxheight !== false ) {
 				$param[ 'height' ] = $boxheight;
 			}
@@ -255,7 +255,7 @@ class PathwayThumb {
 	}
 
 	/* Modified from makeThumbLinkObj() above to handle pathway
-    * rendering on Pathway Pages */
+	* rendering on Pathway Pages */
 	public static function makePvjsObj(
 		$pathway, $latestRevision=0, $label = '', $href = '', $alt,
 		$align = 'right', $id = 'thumb', $boxwidth = 180, $boxheight=false,

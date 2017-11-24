@@ -774,7 +774,8 @@ class Pathway {
 		if ( $updateCache ) {
 			$this->updateCache( $fileType );
 		}
-		return "http://" . $_SERVER['HTTP_HOST']
+		global $wgScriptPath;
+		return $wgScriptPath
 						 . wfLocalFile(
 							 $this->getFileName( $fileType )
 						 )->getUrl();

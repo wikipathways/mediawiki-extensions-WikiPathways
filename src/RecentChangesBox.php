@@ -155,17 +155,17 @@ class RecentChangesBox {
 		$titleLink = $this->titleLink($title);
 
 		if( $row->rc_new ) {
-			$icon = SITE_URL . "/extensions/WikiPathways/images/comment_add.png";
+			$icon = "/extensions/WikiPathways/images/comment_add.png";
 		} else if( substr( $row->rc_comment, 0, strlen( Pathway::$DELETE_PREFIX ) ) ==
-                   Pathway::$DELETE_PREFIX ) {
-			$icon = SITE_URL . "/extensions/WikiPathways/images/comment_remove.png";
+				   Pathway::$DELETE_PREFIX ) {
+			$icon = "/extensions/WikiPathways/images/comment_remove.png";
 		} else {
-			$icon = SITE_URL . "/extensions/WikiPathways/images/comment_edit.png";
+			$icon = "/extensions/WikiPathways/images/comment_edit.png";
 		}
 		$comment = htmlentities($row->rc_comment);
 		$img = "<img src=\"$icon\" title=\"{$comment}\"></img>";
 		return "<TR><TD>$img<TD>$titleLink by <a href=\"$userUrl\" "
-            . "title=\"{$comment}\">{$this->getDisplayName($user)}</a>";
+			. "title=\"{$comment}\">{$this->getDisplayName($user)}</a>";
 	}
 
 	private function getDisplayName($user) {
@@ -173,8 +173,8 @@ class RecentChangesBox {
 
 		//Filter out email addresses
 		if(preg_match("/^[-_a-z0-9\'+*$^&%=~!?{}]++(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*"
-                      . "+@(?:(?![-.])[-a-z0-9.]+(?<![-.])\.[a-z]{2,6}|\d{1,3}"
-                      . "(?:\.\d{1,3}){3})(?::\d++)?$/iD", $name)) {
+					  . "+@(?:(?![-.])[-a-z0-9.]+(?<![-.])\.[a-z]{2,6}|\d{1,3}"
+					  . "(?:\.\d{1,3}){3})(?::\d++)?$/iD", $name)) {
 			$name = ''; //use username instead
 		}
 		if(!$name) $name = $user->getName();

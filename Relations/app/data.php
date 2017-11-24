@@ -43,7 +43,8 @@ else
 			{
 				if(move_uploaded_file( $_FILES['Filedata']['tmp_name'], "$dir/$fileName"))
 				{
-					echo "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/" . $dir . "/" . $fileName;
+					global $wgScriptPath
+					echo $wgScriptPath . dirname($_SERVER['PHP_SELF']) . "/" . $dir . "/" . $fileName;
 				}
 				else
 				{
