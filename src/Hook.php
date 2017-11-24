@@ -39,7 +39,6 @@ class Hook {
 		$wgParser->setHook(
 			"CurationTags", "WikiPathways\\CurationTag::displayCurationTags"
 		);
-		$wgParser->setHook( "AuthorInfo", "WikiPathways\\AuthorInfo::render" );
 
 		$wgParser->setFunctionHook(
 			"PathwayViewer", "WikiPathways\\PathwayViewer::enable"
