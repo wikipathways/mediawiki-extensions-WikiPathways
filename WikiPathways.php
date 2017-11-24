@@ -389,7 +389,7 @@ $wgRSSUrlWhitelist = [
 
 $wfCurationTagsPath = WPI_URL . "/extensions/CurationTags";
 
-//Register AJAX functions
+// Register AJAX functions
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagNames";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagData";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::saveTag";
@@ -397,4 +397,8 @@ $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::removeTag";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getAvailableTags";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagHistory";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTags";
-$wgAjaxExportList[] = "WikiPathways\AuthorInfo::jsGetAuthors";
+
+// FIXME this is here because the shim needs to be in a global context
+function jsGetAuthors( $pageId, $limit = '', $includeBots = false ) {
+	return \WikiPathways\GPML\AuthorInfoList::jsGetAuthors( $pageId, $limit, $includeBots );
+}

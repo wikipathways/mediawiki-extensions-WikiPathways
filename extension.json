@@ -17,6 +17,10 @@
 			"i18n"
 		]
 	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "WikiPathways"
+	},
 	"ResourceModules": {
 		"wpi.otags": {
 			"styles": [
@@ -30,14 +34,6 @@
 			],
 			"styles": [
 				"modules/CurationTags.css"
-			]
-		},
-		"wpi.AuthorInfo": {
-			"scripts": [
-				"modules/AuthorInfo.js"
-			],
-			"styles": [
-				"modules/AuthorInfo.css"
 			]
 		},
 		"wpi.XrefPanel": {
@@ -74,8 +70,6 @@
 		"TissueAnalyzer": "WikiPathways\\TissueAnalyzer"
 	},
 	"AutoloadClasses": {
-		"WikiPathways\\AuthorInfoList": "src/AuthorInfoList.php",
-		"WikiPathways\\AuthorInfo": "src/AuthorInfo.php",
 		"WikiPathways\\BasePathwaysPager": "src/BasePathwaysPager.php",
 		"WikiPathways\\BatchDownloader": "src/BatchDownloader.php",
 		"WikiPathways\\CurationTag": "src/CurationTag.php",

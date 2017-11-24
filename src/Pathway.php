@@ -122,7 +122,7 @@ class Pathway {
 	 * Get the active revision in the modification
 	 * history for this instance. The active revision
 	 * is the latest revision by default.
-	 * \see Pathway::setActiveRevision(revision)
+	 * @see Pathway::setActiveRevision(revision)
 	 */
 	public function getActiveRevision() {
 		return $this->revision;
@@ -131,7 +131,7 @@ class Pathway {
 	/**
 	 * Get the revision number of the latest version
 	 * of this pathway
-	 **/
+	 */
 	public function getLatestRevision() {
 		return Title::newFromText($this->getIdentifier(), NS_PATHWAY)->getLatestRevID();
 	}
@@ -288,15 +288,15 @@ class Pathway {
 	}
 
 	/**
-	   Create a new Pathway from the given title
-	   \param Title The full title of the pathway page (e.g. Pathway:Human:Apoptosis),
+	 * Create a new Pathway from the given title
+	 * @param Title $title MW title 
 	   or the MediaWiki Title object
 	*/
 	static public function newFromTitle($title, $checkCache = false) {
 		//Remove url and namespace from title
 		$id = self::parseIdentifier($title);
 		if(!$id) {
-			throw new Exception("Couldn't parse pathway identifier from title " . $title);
+			throw new Exception("Couldn't parse pathway identifier from title: " . $title);
 		}
 		return new Pathway($id, $checkCache);
 	}
