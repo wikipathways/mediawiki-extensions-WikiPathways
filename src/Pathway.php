@@ -1489,6 +1489,10 @@ class Pathway {
 	public static function convert( $gpmlFile, $outFile ) {
 		global $wgMaxShellMemory;
 
+		$dir = dirname( $outFile );
+		if ( !file_exists( $dir ) ) {
+			wfMkdirParents( $dir );
+		};
 		$basePath = WPI_SCRIPT_PATH;
 		// Max script memory on java program in megabytes
 		$maxMemoryM = intval( $wgMaxShellMemory / 1024 );
