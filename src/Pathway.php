@@ -23,9 +23,10 @@
  */
 namespace WikiPathways;
 
+use Exception;
 use Revision;
 use Title;
-use Exception;
+use UnregisteredLocalFile;
 
 class Pathway {
 	public static $ID_PREFIX = 'WP';
@@ -742,8 +743,9 @@ class Pathway {
 	 */
 	public function getFileLocation( $fileType, $updateCache = true ) {
 		global $wgUploadDirectory;
-		return $wgUploadDirectory
-			.'/'. $this->getFileObj( $fileType, $updateCache )->getURLRel();
+		$loc = $wgUploadDirectory
+			 .'/'. $this->getFileObj( $fileType, $updateCache )->getURLRel();
+		return $loc;
 	}
 
 	/**
@@ -1377,14 +1379,25 @@ class Pathway {
 	}
 
 	/**
+	 * Get the MW image
+	 *
+	 * @return UnregisteredLocalFile
+	 */
+	protected function getImgObject( $type ) {
+		return UnregisteredLocalFile::newFromTitle(
+			$this->getFileTitle( $type ),
+			\RepoGroup::singleton()->getLocalRepo()
+		);
+	}
+
+	/**
 	 * Get the file object for a pathway
 	 *
 	 * @return LocalFile
 	 */
 	public function getImage() {
-		$img = wfLocalFile( $this->getFileTitle( FILETYPE_IMG ) );
-		$img->loadFromFile();
-
+		// This makes it more in a wiki way.
+		$img = $this->getImgObject( FILETYPE_IMG );
 		if ( !$img->exists() ) {
 			/* Avoid calling this unless we need to */
 			$this->updateCache( FILETYPE_IMG );
@@ -1432,6 +1445,16 @@ class Pathway {
 			$fmt = wfTimestamp( TS_MW, filemtime( $file ) );
 			wfDebug( "\tFile exists, cache: $fmt, gpml: $gpmlDate\n" );
 			return $fmt < $gpmlDate;
+		} elseif ( $fileType === FILETYPE_GPML ) {
+			$output = $this->getFileLocation( FILETYPE_GPML, false );
+			$rev = Revision::newFromTitle(
+				$this->getTitleObject(), false, Revision::READ_LATEST
+			);
+			if ( !is_object( $rev ) ) {
+				return true;
+			}
+			file_put_contents( $output, $rev->getContent()->getNativeData() );
+			return false;
 		} else {
 			// No cached version yet, so definitely out of date
 			wfDebug( "\tFile doesn't exist\n" );
@@ -1460,9 +1483,9 @@ class Pathway {
 	 * from GPML
 	 */
 	private function saveConvertedCache( $fileType ) {
-		if ( $filetype === FILETYPE_PNG ) {
+		if ( $fileType === FILETYPE_PNG ) {
 			return $this->savePngCache();
-		} elseif ( $filetype === FILETYPE_GPML ) {
+		} elseif ( $fileType === FILETYPE_GPML ) {
 			return $this->saveGpmlCache();
 		} else {
 			# Convert gpml to fileType

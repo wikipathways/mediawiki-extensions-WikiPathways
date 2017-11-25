@@ -234,7 +234,7 @@ class PathwayThumb {
 		. "<div class=\"thumbinner\" style=\"width:{$oboxwidth}px;\">";
 		if ( $thumbUrl == '' ) {
 			// Couldn't generate thumbnail? Scale the image client-side.
-			$thumbUrl = $img->getViewURL();
+			$thumbUrl = $img->getURL();
 			if ( $boxheight == -1 ) {
 				// Approximate...
 				$boxheight = intval( $height * $boxwidth / $width );
