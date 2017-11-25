@@ -1372,17 +1372,7 @@ class Pathway {
 		}
 		if ( $this->isOutOfDate( $fileType ) ) {
 			wfDebug( "\t->Updating cached file for $fileType\n" );
-			switch ( $fileType ) {
-				case FILETYPE_PNG:
-					$this->savePngCache();
-					break;
-				case FILETYPE_GPML:
-					$this->saveGpmlCache();
-					break;
-				default:
-					$this->saveConvertedCache( $fileType );
-					break;
-			}
+			$this->saveConvertedCache( $fileType );
 		}
 	}
 
@@ -1470,12 +1460,18 @@ class Pathway {
 	 * from GPML
 	 */
 	private function saveConvertedCache( $fileType ) {
-		# Convert gpml to fileType
-		$gpmlFile = $this->getFileLocation( FILETYPE_GPML );
-		wfDebug( "Saving $gpmlFile to $fileType" );
-		$conFile = $this->getFileLocation( $fileType, false );
-		self::convert( $gpmlFile, $conFile );
-		return $conFile;
+		if ( $filetype === FILETYPE_PNG ) {
+			return $this->savePngCache();
+		} elseif ( $filetype === FILETYPE_GPML ) {
+			return $this->saveGpmlCache();
+		} else {
+			# Convert gpml to fileType
+			$gpmlFile = $this->getFileLocation( FILETYPE_GPML );
+			wfDebug( "Saving $gpmlFile to $fileType" );
+			$conFile = $this->getFileLocation( $fileType, false );
+			self::convert( $gpmlFile, $conFile );
+			return $conFile;
+		}
 	}
 
 	/**
