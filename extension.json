@@ -88,10 +88,8 @@
 		"WikiPathways\\Organism": "src/Organism.php",
 		"WikiPathways\\PagePermission": "src/PagePermission.php",
 		"WikiPathways\\PathwayBibliography": "src/PathwayBibliography.php",
-		"WikiPathways\\PathwayContent": "src/PathwayContent.php",
 		"WikiPathways\\PathwayContributionsByAuthor": "src/PathwayContributionsByAuthor.php",
 		"WikiPathways\\PathwayData": "src/PathwayData.php",
-		"WikiPathways\\PathwayHandler": "src/PathwayHandler.php",
 		"WikiPathways\\PathwayHistory": "src/PathwayHistory.php",
 		"WikiPathways\\PathwayInfo": "src/PathwayInfo.php",
 		"WikiPathways\\PathwayOfTheDay": "src/PathwayOfTheDay.php",
@@ -139,7 +137,9 @@
 		"WikiPathways\\Hook::pathwayViewer"
 	],
 	"Hooks": {
-		"ArticleSaveComplete":  "WikiPathways\\Hook::updateTags",
+		"ArticleSaveComplete":  [
+			"WikiPathways\\Hook::updateTags"
+		],
 		"userCan": [
 			"WikiPathways\\Hook::checkDeleted",
 			"WikiPathways\\Hook::checkSoleAuthor"

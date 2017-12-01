@@ -6,7 +6,7 @@ chdir( $dir );
 
 class OntologyFunctions {
 	public static function removeOntologyTag( $tagId, $pwTitle ) {
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		$comment = "Ontology Term : '$tagId' removed !";
 		$pathway = Pathway::newFromTitle( $pwTitle );
 		$gpml = $pathway->getGpml();
@@ -62,8 +62,8 @@ class OntologyFunctions {
 
 		try {
 			$pathway->updatePathway( $gpml, $comment );
-			$dbw =& wfGetDB( DB_MASTER );
-			$dbw->immediateBegin();
+			$dbw = wfGetDB( DB_MASTER );
+			$dbw->begin();
 			$dbw->insert( 'ontology', [
 					'term_id' => $tagId,
 					'term'    => $tag,
@@ -72,7 +72,7 @@ class OntologyFunctions {
 					'term_path'  => $path ],
 				$fname,
 				'IGNORE' );
-			$dbw->immediateCommit();
+			$dbw->commit();
 			return "SUCCESS";
 		}
 		catch ( Exception $e ) {
@@ -84,7 +84,7 @@ class OntologyFunctions {
 		$count = 0;
 		$title = $pwId;
 		$resultArray = [];
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		# $query = "SELECT * FROM `ontology` " . "WHERE `pw_id` = '$title' ORDER BY `ontology`";
 		# $res = $dbr->query($query);
 		## Replacing with parameterized SQL to resolve critical security issue

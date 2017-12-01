@@ -11,9 +11,9 @@ chdir( __DIR__ );
 /* Tables for web service logging */
 echo "*** Changing tag_text in tag to TEXT ***\n";
 
-$dbw =& wfGetDB( DB_MASTER );
-$dbw->immediateBegin();
+$dbw = wfGetDB( DB_MASTER );
+$dbw->begin();
 
 $dbw->query( "ALTER TABLE `tag` CHANGE `tag_text` `tag_text` TEXT NULL DEFAULT NULL" );
 $dbw->query( "ALTER TABLE `tag_history` CHANGE `text` `text` TEXT NULL DEFAULT NULL" );
-$dbw->immediateCommit();
+$dbw->commit();

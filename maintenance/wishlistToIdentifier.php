@@ -7,7 +7,7 @@ require_once "Maintenance.php";
 
 // Get all resolved wishlist pages
 $wishTitles = [];
-$dbr =& wfGetDB( DB_SLAVE );
+$dbr = wfGetDB( DB_SLAVE );
 $ns = NS_WISHLIST;
 $query = "SELECT page_id FROM page
 		WHERE page_namespace = $ns AND page_is_redirect = 1";
@@ -35,12 +35,12 @@ foreach ( $wishTitles as $wishTitle ) {
 			$txt = "#REDIRECT [[{$newTitle->getFullText()}]]";
 			$txt_id = $rev->getTextID();
 
-			$dbw =& wfGetDB( DB_MASTER );
-			$dbw->immediateBegin();
+			$dbw = wfGetDB( DB_MASTER );
+			$dbw->begin();
 			$sql = "UPDATE text SET old_text='$txt' WHERE old_id = $txt_id";
 			$dbw->query( $sql );
 
-			$dbw->immediateCommit();
+			$dbw->commit();
 		}
 	}
 }

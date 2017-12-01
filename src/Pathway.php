@@ -23,6 +23,7 @@
  */
 namespace WikiPathways;
 
+use DOMDocument;
 use Exception;
 use Revision;
 use Title;
@@ -1140,6 +1141,18 @@ class Pathway {
 	];
 
 	/**
+	 * Validate a file
+	 *
+	 * @param string $file with content to validate
+	 * @return null if GPML is valid, error string if its invalid
+	 */
+	static function validateGPMLFile( $file ) {
+		if ( file_exists( $file ) ) {
+			return self::validateGpml( file_get_contents( $file ) );
+		}
+	}
+
+	/**
 	 * Validates the GPML code and returns the error if it's invalid
 	 *
 	 * @param string $gpml content to validate
@@ -1361,7 +1374,7 @@ class Pathway {
 	public function updateCache( $fileType = null ) {
 		wfDebug( "updateCache called for filetype $fileType\n" );
 		// Make sure to update GPML cache first
-		if ( !$fileType == FILETYPE_GPML ) {
+		if ( $fileType !== FILETYPE_GPML ) {
 			$this->updateCache( FILETYPE_GPML );
 		}
 
@@ -1427,6 +1440,13 @@ class Pathway {
 		}
 	}
 
+	private function ensureDir ( $filename ) {
+		$dir = dirname( $filename );
+		if ( !file_exists( $dir ) ) {
+			wfMkdirParents( $dir );
+		};
+	}
+
 	// Check if the cached version of the GPML data derived file is out of date
 	private function isOutOfDate( $fileType ) {
 		wfDebug( "isOutOfDate for $fileType\n" );
@@ -1453,6 +1473,8 @@ class Pathway {
 			if ( !is_object( $rev ) ) {
 				return true;
 			}
+
+			self::ensureDir( $output );
 			file_put_contents( $output, $rev->getContent()->getNativeData() );
 			return false;
 		} else {
@@ -1509,13 +1531,11 @@ class Pathway {
 	public static function convert( $gpmlFile, $outFile ) {
 		global $wgMaxShellMemory;
 
-		$dir = dirname( $outFile );
-		if ( !file_exists( $dir ) ) {
-			wfMkdirParents( $dir );
-		};
+		self::ensureDir( $outFile );
 		$basePath = WPI_SCRIPT_PATH;
 		// Max script memory on java program in megabytes
 		$maxMemoryM = intval( $wgMaxShellMemory / 1024 );
+
 		$cmd = "java -Xmx{$maxMemoryM}M -jar "
 			 . "$basePath/bin/pathvisio_core.jar "
 			 . "'$gpmlFile' '$outFile' 2>&1";

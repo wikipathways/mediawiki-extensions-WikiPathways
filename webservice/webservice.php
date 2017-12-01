@@ -23,14 +23,14 @@ if ( preg_match( "/Body>(.*?)>/us", $HTTP_RAW_POST_DATA, $match ) ) {
 $timestamp = wfTimestamp( TS_MW );
 $ip = $_SERVER['REMOTE_ADDR'];
 // write the log entry
-$dbw =& wfGetDB( DB_MASTER );
+$dbw = wfGetDB( DB_MASTER );
 $values = [
 	"ip" => $ip,
 	"operation" => $operation,
 	"request_timestamp" => $timestamp,
 ];
 $dbw->insert( "webservice_log", $values );
-$dbw->immediateCommit();
+$dbw->commit();
 
 // Prevent errors/warnings from messing up the xml response
 ini_set( "display_errors", "0" );
@@ -250,7 +250,7 @@ function getPathwayHistory( $pwId, $timestamp ) {
 	try {
 		$pathway = new Pathway( $pwId );
 		$id = $pathway->getTitleObject()->getArticleId();
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select(
 			"revision",
 			[ "rev_id", "rev_user_text", "rev_timestamp", "rev_comment" ],
@@ -400,7 +400,7 @@ function getRecentChanges( $timestamp ) {
 		throw new WSFault( "Sender", "Invalid timestamp " . htmlentities( $timestamp ) );
 	}
 
-	$dbr =& wfGetDB( DB_SLAVE );
+	$dbr = wfGetDB( DB_SLAVE );
 	$forceclause = $dbr->useIndexClause( "rc_timestamp" );
 	$recentchanges = $dbr->tableName( 'recentchanges' );
 
@@ -513,7 +513,7 @@ function findPathwaysByLiterature( $query ) {
 			] );
 			$source = $r->getFieldValue( PathwayIndex::$f_source );
 			if ( $combined[$source] ) {
-				$wsr =& $combined[$source];
+				$wsr = $combined[$source];
 				foreach ( array_keys( $wsr->fields ) as $fn ) {
 					if ( $nwsr->fields[$fn] ) {
 						$newvalues = array_merge(

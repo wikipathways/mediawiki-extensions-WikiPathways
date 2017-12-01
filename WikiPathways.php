@@ -73,7 +73,6 @@ require_once "button.php";
 require_once "imageLink.php";
 require_once "listPathways.php";
 require_once "movePathway.php";
-require_once "CheckGpmlOnSave.php";
 require_once "CreateUserPage.php";
 require_once "LabeledSectionTransclusion/compat.php";
 require_once "LabeledSectionTransclusion/lst.php";
