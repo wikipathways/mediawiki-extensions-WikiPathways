@@ -30,19 +30,42 @@ class Organism {
 	private static $byLatinName = [];
 	private static $byCode = [];
 
+	/**
+	 * Get the latin name for this organism
+	 *
+	 * @return string
+	 */
 	public function getLatinName() {
- return $this->latinName;
- }
-	public function getCode() {
- return $this->code;
- }
+		return $this->latinName;
+	}
 
+	/**
+	 * Get the short code for this organism
+	 *
+	 * @return string
+	 */
+	public function getCode() {
+		return $this->code;
+	}
+
+	/**
+	 * Get an organism by latin name
+	 *
+	 * @param string $name latin name
+	 * @return Organism|null
+	 */
 	public static function getByLatinName( $name ) {
 		return isset( self::$byLatinName["$name"] )
 			? self::$byLatinName["$name"]
 			: null;
 	}
 
+	/**
+	 * Get an organism by the short code
+	 *
+	 * @param string $code short code for organism
+	 * @return Organism|null
+	 */
 	public static function getByCode( $code ) {
 		return isset( self::$byCode["$code"] )
 			? self::$byCode["$code"]
@@ -51,7 +74,8 @@ class Organism {
 
 	/**
 	 * List all registered organisms.
-	 * @return An array where the keys are the latin names and the values
+	 *
+	 * @return array keys are the latin names and the values
 	 * are instances of class Organism.
 	 */
 	public static function listOrganisms() {
@@ -60,6 +84,9 @@ class Organism {
 
 	/**
 	 * Register a new organism for which pathways can be created.
+	 *
+	 * @param string $latinName the latin name
+	 * @param string $code the organism's short code
 	 */
 	public static function register( $latinName, $code ) {
 		$org = new Organism();
@@ -71,8 +98,10 @@ class Organism {
 
 	/**
 	 * Remove an organism from the registry.
+	 *
+	 * @param Organism $org to de-register
 	 */
-	public static function remove( $org ) {
+	public static function remove( Organism $org ) {
 		unset( self::$byLatinName[$org->latinName] );
 		unset( self::$byCode[$org->code] );
 	}
@@ -85,7 +114,7 @@ class Organism {
 		self::register( 'Arabidopsis thaliana', 'At' );
 		self::register( 'Bacillus subtilis', 'Bs' );
 		self::register( 'Beta vulgaris', 'Bv' );
-				self::register( 'Bos taurus', 'Bt' );
+		self::register( 'Bos taurus', 'Bt' );
 		self::register( 'Caenorhabditis elegans', 'Ce' );
 		self::register( 'Canis familiaris', 'Cf' );
 		self::register( 'Clostridium thermocellum', 'Ct' );
