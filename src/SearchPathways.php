@@ -23,54 +23,57 @@ namespace WikiPathways;
 class SearchPathways extends \SpecialPage {
 	private $this_url;
 
-	function __construct( $empty = null ) {
+	public function __construct( $empty = null ) {
 		parent::__construct( "SearchPathways" );
 	}
 
-	function execute( $par ) {
-		global $wgRequest, $wgOut, $wpiScriptURL, $wgUser, $wfSearchPagePath;
+	public function execute( $par ) {
+		global $wfSearchPagePath;
 
+		$out = $this->getOutput();
+		$req = $this->getRequest();
 		$this->setHeaders();
 		$this->this_url = SITE_URL . '/index.php';
-		$wgOut->setPagetitle( wfMessage( "searchpathways" ) );
+		$out->setPagetitle( wfMessage( "searchpathways" ) );
 
-		$query   = isset( $_GET['query'] ) ? $_GET['query'] : null;
-		$species = isset( $_GET['species'] ) ? $_GET['species'] : null;
-		$ids     = isset( $_GET['ids'] ) ? $_GET['ids'] : null;
-		$codes   = isset( $_GET['codes'] ) ? $_GET['codes'] : null;
-		$type    = isset( $_GET['type'] ) ? $_GET['type'] : null;
+		$query   = $req->getVal( 'query' );
+		$species = $req->getVal( 'species' );
+		$ids     = $req->getVal( 'ids' );
+		$codes   = $req->getVal( 'codes' );
+		$type    = $req->getVal( 'type' );
 
 		// SET DEFAULTS
-		if ( !$type || $type == '' ) { $type = 'query';
+		if ( !$type || $type == '' ) {
+			$type = 'query';
 		}
-		if ( ( !$query || $query == '' ) && $type == 'query' ) { $query = 'glucose';
+		if ( ( !$query || $query == '' ) && $type == 'query' ) {
+			$query = 'glucose';
 		}
-		if ( $species == 'ALL SPECIES' ) { $species = '';
+		if ( $species == 'ALL SPECIES' ) {
+			$species = '';
 		}
 
-		// Add CSS
-		// Hack to add a css that's not in the skins directory
-		global $wgStylePath;
-		$oldStylePath = $wgStylePath;
-		$wgStylePath = $wfSearchPagePath;
-		$wgOut->addStyle( "SearchPathways.css" );
-		$wgStylePath = $oldStylePath;
+		$out->addModules( [ "wpi.searchPathways" ] );
+		// Submit button pressed
+		if ( $req->getVal( 'doSearch' ) == '1' ) {
+			global $wgScriptPath;
 
-		if ( $_GET['doSearch'] == '1' ) { // Submit button pressed
 			$this->showForm( $query, $species, $ids, $codes, $type );
-			try {
-				$this->showResults();
-			} catch ( Exception $e ) {
-				$wgOut->addHTML( "<b>Error: {$e->getMessage()}</b>" );
-				$wgOut->addHTML( "<pre>$e</pre>" );
-			}
+			$out->addHTML(
+				"<DIV id='searchResults'>"
+				. "<IMG src='$wgScriptPath/extensions/WikiPathways/images/progress.gif'/> "
+				. "Loading...</DIV>"
+			);
+			$out->addHTML( "<DIV id='more'></DIV>" );
+			$out->addHTML( "<DIV id='error'></DIV>" );
 		} else {
 			$this->showForm( $query, $species, $ids, $codes, $type );
 		}
 	}
 
-	function showForm( $query, $species = '', $ids = '', $codes = '', $type ) {
-		global $wgRequest, $wgOut, $wpiScriptURL, $wgJsMimeType, $wfSearchPagePath, $wgScriptPath;
+	public function showForm( $query, $species = '', $ids = '', $codes = '', $type ) {
+
+		$out = $this->getOutput();
 		# For now, hide the form when id search is done (no gui for that yet)
 		$hide = "";
 		$xrefInfo = "";
@@ -79,7 +82,8 @@ class SearchPathways extends \SpecialPage {
 			$xrefs = SearchPathwaysAjax::parToXref( $ids, $codes );
 			$xrefInfo = "Pathways by idenifier: ";
 			$xstr = [];
-			foreach ( $xrefs as $x ) {	$xstr[] = "{$x->getId()} ({$x->getSystem()})";
+			foreach ( $xrefs as $x ) {
+				$xstr[] = "{$x->getId()} ({$x->getSystem()})";
 			}
 			$xrefInfo .= implode( ", ", $xstr );
 			$xrefInfo = "<P>$xrefInfo</P>";
@@ -92,11 +96,11 @@ class SearchPathways extends \SpecialPage {
 		// <input type='radio' name='type' value='query' CHECKED>Keywords
 		// <input type='radio' name='type' value='xref'>Identifiers
 		// <tr><td>
-		."Search for:
-								<input type='text' name='query' value='$query' size='25'>
+		."Search for: <input type='text' name='query' value='$query' size='25'>
 				</td><td><select name='species'>";
 		$allSpecies = Pathway::getAvailableSpecies();
-		$search_form .= "<option value='ALL SPECIES'" . ( $species == '' ? ' SELECTED' : '' ). ">ALL SPECIES";
+		$search_form .= "<option value='ALL SPECIES'"
+					 . ( $species == '' ? ' SELECTED' : '' ). ">ALL SPECIES";
 		foreach ( $allSpecies as $sp ) {
 			$search_form .= "<option value='$sp'" . ( $sp == $species ? ' SELECTED' : '' ) . ">$sp";
 		}
@@ -104,7 +108,8 @@ class SearchPathways extends \SpecialPage {
 		$search_form .= "<input type='hidden' name='title' value='Special:SearchPathways'>
 				<input type='hidden' name='doSearch' value='1'>
 				</td><td><input type='submit' value='Search'></td></tr>
-				<tr valign='top'><td colspan='3'><font size='-3'><i>&nbsp;&nbsp;&nbsp;Tip: use AND, OR, *, ?, parentheses or quotes</i></font></td></tr>
+				<tr valign='top'><td colspan='3'><font size='-3'><i>&nbsp;&nbsp;&nbsp;
+Tip: use AND, OR, *, ?, parentheses or quotes</i></font></td></tr>
 				</table>";
 
 		$search_form .= "<input type='hidden' name='ids' value='$ids'/>";
@@ -113,32 +118,18 @@ class SearchPathways extends \SpecialPage {
 
 		$search_form .= "</FORM><BR>";
 
-		$wgOut->addHTML( "
+		$out->addHTML( "
 						<DIV id='search' >
 			$search_form
 			</DIV>
 						" );
-		$wgOut->addScript( "<script type=\"{$wgJsMimeType}\" src=\"$wfSearchPagePath/SearchPathways.js\"></script>\n" );
-		$wgOut->addHTML( "<DIV id='searchResults'></DIV>" );
-		$wgOut->addHTML(
-			"<DIV id='loading'><IMG src='$wgScriptPath/extensions/WikiPathways/images/progress.gif'/> Loading...</DIV>"
-		);
-		$wgOut->addHTML( "<DIV id='more'></DIV>" );
-		$wgOut->addHTML( "<DIV id='error'></DIV>" );
 	}
 
-	function showResults() {
-		global $wgOut, $wgJsMimeType;
-
-		$wgOut->addHTML(
-			"<script type=\"{$wgJsMimeType}\">" .
-			"SearchPathways.doSearch();" .
-			"</script>\n"
-		);
-	}
-
-	static function makeThumbNail( $pathway, $label = '', $href = '', $alt, $align = 'right', $id = 'thumb', $boxwidth = 300, $boxheight=false, $framed=false ) {
-		global $wgStylePath, $wgContLang;
+	public static function makeThumbNail(
+		$pathway, $label = '', $href = '', $alt, $align = 'right', $id = 'thumb',
+		$boxwidth = 300, $boxheight=false, $framed=false
+	) {
+		global $wgContLang;
 
 		try {
 			$pathway->getImage();
@@ -146,9 +137,11 @@ class SearchPathways extends \SpecialPage {
 			$img->loadFromFile();
 			$imgURL = $img->getURL();
 		} catch ( Exception $e ) {
-			$blank = "<div id=\"{$id}\" class=\"thumb t{$align}\"><div class=\"thumbinner\" style=\"width:200px;\">";
+			$blank = "<div id=\"{$id}\" class=\"thumb t{$align}\">"
+				   . "<div class=\"thumbinner\" style=\"width:200px;\">";
 			$blank .= "Image does not exist";
-			$blank .= '  <div class="thumbcaption" style="text-align:right">'.$label."</div></div></div>";
+			$blank .= '  <div class="thumbcaption" style="text-align:right">'
+				   . $label."</div></div></div>";
 			return str_replace( "\n", ' ', $blank );
 		}
 
@@ -172,7 +165,8 @@ class SearchPathways extends \SpecialPage {
 			$boxheight = $height;
 			$thumbUrl  = $img->getViewURL();
 		} else {
-			if ( $boxheight === false ) { $boxheight = -1;
+			if ( $boxheight === false ) {
+				$boxheight = -1;
 			}
 			$thumb = $img->getThumbnail( $boxwidth, $boxheight );
 			if ( $thumb ) {
@@ -189,7 +183,8 @@ class SearchPathways extends \SpecialPage {
 		$magnifyalign = $wgContLang->isRTL() ? 'left' : 'right';
 		$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
 
-		$s = "<div id=\"{$id}\" class=\"thumb t{$align}\"><div class=\"thumbinner\" style=\"width:{$oboxwidth}px;\">";
+		$s = "<div id=\"{$id}\" class=\"thumb t{$align}\">"
+		   . "<div class=\"thumbinner\" style=\"width:{$oboxwidth}px;\">";
 		if ( $thumbUrl == '' ) {
 			// Couldn't generate thumbnail? Scale the image client-side.
 			$thumbUrl = $img->getViewURL();
@@ -203,17 +198,16 @@ class SearchPathways extends \SpecialPage {
 		} elseif ( !$img->exists() ) {
 			$s .= "Image does not exist";
 		} else {
-			$s .= '<a href="'.$href.'" class="internal" title="'.$alt.'">'.
-				'<img src="'.$thumbUrl.'" alt="'.$alt.'" ' .
-				'width="'.$boxwidth.'" height="'.$boxheight.'" ' .
-
-				'longdesc="'.$href.'" class="thumbimage" /></a>';
+			$s .= '<a href="'.$href.'" class="internal" title="'.$alt.'">'
+			   . '<img src="'.$thumbUrl.'" alt="'.$alt.'" '
+			   . 'width="'.$boxwidth.'" height="'.$boxheight.'" '
+			   . 'longdesc="'.$href.'" class="thumbimage" /></a>';
 		}
 		$s .= '  <div class="thumbcaption"'.$textalign.'>'.$label."</div></div></div>";
 		return str_replace( "\n", ' ', $s );
 	}
 
-	# The callback function for converting the input text to HTML output
+	# The callback public function for converting the input text to HTML output
 	public static function renderSearchPathwaysBox( &$parser ) {
 		global $siteURL;
 

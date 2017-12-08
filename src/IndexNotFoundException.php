@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Copyright (C) 2017  J. David Gladstone Institutes
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,17 +17,14 @@
  */
 namespace WikiPathways;
 
-use MWException;
+use Exception;
 
-class MetaTagException extends MWException {
-	private $tag;
-
-	public function __construct( $tag, $msg = '' ) {
-		parent::__construct( $msg );
-		$this->tag = $tag;
-	}
-
-	public function getTag() {
-		return $tag;
+class IndexNotFoundException extends Exception {
+	public function __construct( Exception $e = null ) {
+		if ( $e ) {
+			parent::__construct( $e->getMessage() );
+		} else {
+			parent::__construct( 'Unable to locate lucene index service. Please specify the base url for the index service as $indexServiceUrl in pass.php' );
+		}
 	}
 }

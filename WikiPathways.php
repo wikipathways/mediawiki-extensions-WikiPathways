@@ -68,7 +68,6 @@ require_once "globals.php";
 require_once "wpi.php";
 require_once "siteStats.php";
 require_once "imageSize.php";
-require_once "search.php";
 require_once "button.php";
 require_once "imageLink.php";
 require_once "listPathways.php";
@@ -396,8 +395,18 @@ $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::removeTag";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getAvailableTags";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagHistory";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTags";
+$wgAjaxExportList[] = "jsGetResults";
+$wgAjaxExportList[] = "jsSearchPathways";
 
 // FIXME this is here because the shim needs to be in a global context
 function jsGetAuthors( $pageId, $limit = '', $includeBots = false ) {
 	return \WikiPathways\GPML\AuthorInfoList::jsGetAuthors( $pageId, $limit, $includeBots );
+}
+function jsSearchPathways( $pageId, $species, $ids, $codes, $type ) {
+	return \WikiPathways\SearchPathwaysAjax::doSearch(
+		$pageId, $species, $ids, $codes, $type
+	);
+}
+function jsGetResults( $batch, $searchId ) {
+	return \WikiPathways\SearchPathwaysAjax::getResults( $batch, $searchId );
 }
