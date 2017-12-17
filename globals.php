@@ -11,19 +11,25 @@ define( "FILETYPE_PWF", "pwf" );
 define( "FILETYPE_TXT", "txt" );
 define( "FILETYPE_BIOPAX", "owl" );
 
-// Script info
-$wpiPathName = 'wpi'; // pathname containing wpi script
-$wpiTmpName = 'tmp'; // temp path name
-$wpiCacheName = 'cache'; // cache path name
+// pathname containing wpi script
+$wpiPathName = '/extensions/WikiPathways';
+
+// temp path name
+$wpiTmpName = 'tmp';
+
+// cache path name
+$wpiCacheName = 'cache';
+
 $wpiScriptFile = 'wpi.php';
-
-$host = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : "www.wikipathways.org";
-
+$wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
 $wpiScriptPath = realpath( __DIR__ );
 $wpiScript = "$wpiScriptPath/$wpiScriptFile";
 $wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
+
+$host = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : "www.wikipathways.org";
 $siteURL = "//$host";
-$wpiURL = "$siteURL/$wpiPathName";
+
+$wpiURL = "$siteURL$wpiPathName";
 $wpiCachePath = "$wpiScriptPath/$wpiCacheName";
 
 define( "WPI_SCRIPT_PATH", $wpiScriptPath );
@@ -41,8 +47,8 @@ define( "JS_SRC_EDITAPPLET", $wgScriptPath . "/wpi/js/editapplet.js" );
 define( "JS_SRC_RESIZE", $wgScriptPath . "/wpi/js/resize.js" );
 define( "JS_SRC_PROTOTYPE", $wgScriptPath . "/wpi/js/prototype.js" );
 
-// Users
-define( "USER_MAINT_BOT", "MaintBot" ); // User account for maintenance scripts
+// User account for maintenance scripts
+define( "USER_MAINT_BOT", "MaintBot" );
 
 // WikiPathways data
 define( 'COMMENT_WP_CATEGORY', 'WikiPathways-category' );

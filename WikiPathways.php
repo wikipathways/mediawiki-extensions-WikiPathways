@@ -65,7 +65,6 @@ require_once "$IP/extensions/BiblioPlus/BiblioPlus.php";
 wfLoadSkin( "Vector" );
 
 require_once "globals.php";
-require_once "wpi.php";
 require_once "siteStats.php";
 require_once "imageSize.php";
 require_once "button.php";
@@ -362,7 +361,6 @@ $wgPasswordSender = "no-reply@wikipathways.com";
 
 $wgContentHandlerTextFallback = 'serialize';
 
-$wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
 if ( !isset( $jsSvgWeb ) ) {
 	$jsSvgWeb = "$wpiModulePath/svgweb/svg-uncompressed.js\""
 			  . "data-path=\"$wpiModulePath/svgweb";

@@ -1540,7 +1540,7 @@ class Pathway {
 			 . "$basePath/bin/pathvisio_core.jar "
 			 . "'$gpmlFile' '$outFile' 2>&1";
 		wfDebug( "CONVERTER: $cmd\n" );
-		$msg = wfJavaExec( $cmd, $status );
+		$msg = wfShellExec( $cmd, $status, [], [ 'memory' => 0 ] );
 
 		if ( $status != 0 ) {
 			throw new Exception(

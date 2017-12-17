@@ -86,6 +86,7 @@
 		"WikiPathways\\MetaDataCache": "src/MetaDataCache.php",
 		"WikiPathways\\MetaTagException": "src/MetaTagException.php",
 		"WikiPathways\\MetaTagHistoryRow": "src/MetaTagHistoryRow.php",
+		"WikiPathways\\MimeTypes": "src/MimeTypes.php",
 		"WikiPathways\\NewPathways": "src/NewPathways.php",
 		"WikiPathways\\Organism": "src/Organism.php",
 		"WikiPathways\\PagePermission": "src/PagePermission.php",
@@ -130,8 +131,8 @@
 		"WikiPathways\\CreatePathway": "src/CreatePathway.php",
 		"WikiPathways\\PathwayPage": "src/PathwayPage.php",
 		"WikiPathways\\PermissionManager": "src/PermissionManager.php",
-		"WikiPathways\\XrefPanel": "src/XrefPanel.php"
-
+		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
+		"WikiPathways\\wpi": "wpi.php"
 	},
 	"AjaxEportList": [
 		"SearchPathwaysAjax::doSearch",
