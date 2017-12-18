@@ -253,6 +253,8 @@ $wgExtraNamespaces[NS_WISHLIST]      = "Wishlist";
 $wgExtraNamespaces[NS_WISHLIST_TALK] = "Wishlist_Talk";
 $wgExtraNamespaces[NS_PORTAL]        = "Portal";
 $wgExtraNamespaces[NS_PORTAL_TALK]   = "Portal_Talk";
+$wgExtraNamespaces[NS_GPML]          = "Pathway";
+$wgExtraNamespaces[NS_GPML_TALK]     = "Pathway_Talk";
 
 $wgNamespacesToBeSearchedDefault[100] = false;
 $wgNamespacesToBeSearchedDefault[101] = false;
