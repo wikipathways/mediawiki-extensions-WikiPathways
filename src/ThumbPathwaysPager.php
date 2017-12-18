@@ -17,6 +17,8 @@
  */
 namespace WikiPathways;
 
+use Title;
+
 class ThumbPathwaysPager extends BasePathwaysPager {
 
 	function __construct( $species, $tag, $sortOrder ) {
