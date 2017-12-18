@@ -38,6 +38,7 @@ class MetaTag {
 	public static $ACTION_CREATE = "create";
 
 	private $exists = false;
+	private static $quickCache;
 
 	private $name;
 	private $text;
@@ -147,14 +148,9 @@ class MetaTag {
 			[ 'tag_name' ],
 			[ 'page_id' => $page_id ]
 		);
-		$row = $dbr->fetchObject( $res );
-		if ( $row ) {
-			do {
-				$tags[] = new MetaTag( $row->tag_name, $page_id );
-			} while ( $row );
+		foreach ( $res as $row ) {
+			$tags[] = new MetaTag( $row->tag_name, $page_id );
 		}
-
-		$dbr->freeResult( $res );
 		return $tags;
 	}
 
@@ -207,13 +203,18 @@ class MetaTag {
 	 * from the database if the tag exists
 	 */
 	private function loadFromDB() {
-		$dbr = wfGetDB( DB_SLAVE );
-		$res = $dbr->select(
-			self::$TAG_TABLE,
-			[ 'tag_text', 'revision', 'user_add', 'user_mod', 'time_add', 'time_mod' ],
-			[ 'tag_name' => $this->name, 'page_id' => $this->page_id ]
-		);
-		$row = $dbr->fetchObject( $res );
+		if ( !isset( self::$quickCache[$this->name][$this->page_id] ) ) {
+			$dbr = wfGetDB( DB_SLAVE );
+			$res = $dbr->select(
+				self::$TAG_TABLE,
+				[ 'tag_text', 'revision', 'user_add', 'user_mod', 'time_add', 'time_mod' ],
+				[ 'tag_name' => $this->name, 'page_id' => $this->page_id ], __METHOD__
+			);
+			$row = $dbr->fetchObject( $res );
+			self::$quickCache[$this->name][$this->page_id] = $row;
+		} else {
+			$row = self::$quickCache[$this->name][$this->page_id];
+		}
 		if ( $row ) {
 			$this->exists = true;
 			$this->text = $row->tag_text;
@@ -223,7 +224,6 @@ class MetaTag {
 			$this->time_add = $row->time_add;
 			$this->time_mod = $row->time_mod;
 		}
-		$dbr->freeResult( $res );
 	}
 
 	/**
