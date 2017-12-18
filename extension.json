@@ -129,7 +129,6 @@
 		"WikiPathways\\Pathway": "src/Pathway.php",
 		"WikiPathways\\SpecialCurationTags": "src/SpecialCurationTags.php",
 		"WikiPathways\\CreatePathway": "src/CreatePathway.php",
-		"WikiPathways\\PathwayPage": "src/PathwayPage.php",
 		"WikiPathways\\PermissionManager": "src/PermissionManager.php",
 		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
 		"WikiPathways\\wpi": "wpi.php"
@@ -161,8 +160,6 @@
 		"userCan": "WikiPathways\\PermissionManager::checkRestrictions",
 		"SkinTemplateContentActions": "WikiPathways\\PermissionManager::addPermissionTab",
 		"UnknownAction": "WikiPathways\\PermissionManager::permissionTabAction",
-		"ParserBeforeStrip": "WikiPathways\\PathwayPage::render",
-		"BeforePageDisplay": "WikiPathways\\PathwayPage::addPreloaderScript",
 		"MakeGlobalVariablesScript": "WikiPathways\\CurationTag::onMakeGlobalVariablesScript"
 	},
 	"GroupPermissions": {
