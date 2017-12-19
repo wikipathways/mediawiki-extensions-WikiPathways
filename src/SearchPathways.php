@@ -15,40 +15,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author
- * @author Mark A. Hershberger
+ * @author Alexander Pico <apico@gladstone.ucsf.edu>
+ * @author Thomas Kelder <thomaskelder@gmail.com>
+ * @author Mark A. Hershberger <mah@nichework.com>
  */
 namespace WikiPathways;
+
+use HTMLForm;
+use HTML;
 
 class SearchPathways extends \SpecialPage {
 	private $this_url;
 
+	/**
+	 * @param string $empty not used
+	 */
 	public function __construct( $empty = null ) {
 		parent::__construct( "SearchPathways" );
 	}
 
+	/**
+	 * @param string $par other url bits
+	 */
 	public function execute( $par ) {
-		global $wfSearchPagePath;
-
 		$out = $this->getOutput();
 		$req = $this->getRequest();
+
 		$this->setHeaders();
 		$this->this_url = SITE_URL . '/index.php';
 		$out->setPagetitle( wfMessage( "searchpathways" ) );
 
-		$query   = $req->getVal( 'query' );
+		$query   = $req->getVal( 'query', 'glucose' );
 		$species = $req->getVal( 'species' );
 		$ids     = $req->getVal( 'ids' );
 		$codes   = $req->getVal( 'codes' );
-		$type    = $req->getVal( 'type' );
+		$type    = $req->getVal( 'type', 'query' );
 
 		// SET DEFAULTS
-		if ( !$type || $type == '' ) {
-			$type = 'query';
-		}
-		if ( ( !$query || $query == '' ) && $type == 'query' ) {
-			$query = 'glucose';
-		}
 		if ( $species == 'ALL SPECIES' ) {
 			$species = '';
 		}
@@ -60,25 +63,38 @@ class SearchPathways extends \SpecialPage {
 
 			$this->showForm( $query, $species, $ids, $codes, $type );
 			$out->addHTML(
-				"<DIV id='searchResults'>"
-				. "<IMG src='$wgScriptPath/extensions/WikiPathways/images/progress.gif'/> "
-				. "Loading...</DIV>"
+				Html::rawElement(
+					"div", [ "id" => "searchResults" ], Html::rawElement(
+						"img",
+						[ "src" => "$wgScriptPath/extensions/WikiPathways/images/progress.gif" ]
+					) . "Loading..."
+				) .
+				Html::rawElement(
+					"div", [ "id" => "more" ] ),
+				Html::rawElement(
+					"div", [ "id" => "error" ] )
 			);
-			$out->addHTML( "<DIV id='more'></DIV>" );
-			$out->addHTML( "<DIV id='error'></DIV>" );
 		} else {
 			$this->showForm( $query, $species, $ids, $codes, $type );
 		}
 	}
 
+	/**
+	 * Show the form
+	 *
+	 * @param string $query what is being searched for
+	 * @param string $species to which species it is restricted
+	 * @param string $ids used by parToXref
+	 * @param string $codes used by parToXref
+	 * @param string $type if not "query" use parToXref
+	 */
 	public function showForm( $query, $species = '', $ids = '', $codes = '', $type ) {
-
 		$out = $this->getOutput();
 		# For now, hide the form when id search is done (no gui for that yet)
-		$hide = "";
 		$xrefInfo = "";
-		if ( $type != 'query' ) {
-			$hide = "style='display:none'";
+		$form = "";
+
+		if ( $type !== 'query' ) {
 			$xrefs = SearchPathwaysAjax::parToXref( $ids, $codes );
 			$xrefInfo = "Pathways by idenifier: ";
 			$xstr = [];
@@ -89,40 +105,38 @@ class SearchPathways extends \SpecialPage {
 			$xrefInfo = "<P>$xrefInfo</P>";
 		}
 
-		$form_method = "get";
-		$form_extra = "";
-		$search_form = "$xrefInfo<FORM $hide id='searchForm' action='$this->this_url' method='get'>
-				<table cellspacing='7'><tr valign='middle'><td>"
-		// <input type='radio' name='type' value='query' CHECKED>Keywords
-		// <input type='radio' name='type' value='xref'>Identifiers
-		// <tr><td>
-		."Search for: <input type='text' name='query' value='$query' size='25'>
-				</td><td><select name='species'>";
-		$allSpecies = Pathway::getAvailableSpecies();
-		$search_form .= "<option value='ALL SPECIES'"
-					 . ( $species == '' ? ' SELECTED' : '' ). ">ALL SPECIES";
-		foreach ( $allSpecies as $sp ) {
-			$search_form .= "<option value='$sp'" . ( $sp == $species ? ' SELECTED' : '' ) . ">$sp";
+		$speciesSelect['ALL SPECIES'] = 'ALL SPECIES';
+		foreach ( Pathway::getAvailableSpecies() as $sp ) {
+			$speciesSelect[$sp] = $sp;
 		}
-		$search_form .= '</select>';
-		$search_form .= "<input type='hidden' name='title' value='Special:SearchPathways'>
-				<input type='hidden' name='doSearch' value='1'>
-				</td><td><input type='submit' value='Search'></td></tr>
-				<tr valign='top'><td colspan='3'><font size='-3'><i>&nbsp;&nbsp;&nbsp;
-Tip: use AND, OR, *, ?, parentheses or quotes</i></font></td></tr>
-				</table>";
 
-		$search_form .= "<input type='hidden' name='ids' value='$ids'/>";
-		$search_form .= "<input type='hidden' name='codes' value='$codes'/>";
-		$search_form .= "<input type='hidden' name='type' value='$type'/>";
+		$formDescriptor = [
+			"search" => [
+				"label-message" => "wp-searchpathway-search",
+				"class" => "HTMLTextField",
+				"name" => "query",
+				"default" => $query,
+				"help" => wfMessage( "wp-searchpathway-search-help" )->plain(),
+				"size" => 25
+			],
+			"species" => [
+				"type" => "select",
+				"name" => "species",
+				"options" => $speciesSelect
+			]
+		];
+		$searchForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() );
+		$searchForm->setId( "searchForm" )
+			->addHiddenField( "ids", $ids )
+			->addHiddenField( "codes", $codes )
+			->addHiddenField( "type", $type )
+			->addHiddenField( "doSearch", 1 )
+			->setSubmitText( wfMessage( "wp-searchpathway-dosearch" )->plain() )
+			->setMethod( "get" )
+			->prepareForm();
 
-		$search_form .= "</FORM><BR>";
-
-		$out->addHTML( "
-						<DIV id='search' >
-			$search_form
-			</DIV>
-						" );
+		$searchForm->displayForm( false );
+		return $xrefInfo.$form;
 	}
 
 	public static function makeThumbNail(

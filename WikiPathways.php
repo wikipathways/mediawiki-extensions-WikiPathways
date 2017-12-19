@@ -42,6 +42,7 @@ wfLoadExtensions( [
 	"EmbedVideo",
 	"Gadgets",
 	"GPML",
+	"IFrame",
 	"ImageMap",
 	"InputBox",
 	"Interwiki",

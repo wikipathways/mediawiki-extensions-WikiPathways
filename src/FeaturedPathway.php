@@ -22,12 +22,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+namespace WikiPathways;
 
 class FeaturedPathway extends PathwayOfTheDay {
 
 	/**
 	 * Select a random pathway from the list on the wiki page
 	 * FeaturedPathway
+	 * @return Pathway random pathway from pathway list
 	 */
 	protected function fetchRandomPathway() {
 		wfDebug( "Fetching random pathway...\n" );

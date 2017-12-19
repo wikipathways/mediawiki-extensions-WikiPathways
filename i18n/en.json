@@ -35,5 +35,8 @@
 	"showerror_descr": "Shows an error message.",
 	"tissueanalyzer": "Tissue Analyzer",
 	"searchpathways": "Find pathways",
-	"popularpathwayspage": "Most viewed pathways"
+	"popularpathwayspage": "Most viewed pathways",
+	"wp-searchpathway-search": "Search form",
+	"wp-searchpathway-dosearch": "Search",
+	"wp-searchpathway-search-help": "Tip: use AND, OR, *, ?, parentheses or quotes"
 }

@@ -18,27 +18,36 @@
 		]
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "",
-		"remoteExtPath": "WikiPathways"
+		"localBasePath": "modules",
+		"remoteExtPath": "WikiPathways/modules"
 	},
 	"ResourceModules": {
 		"wpi.otags": {
 			"styles": [
-				"modules/otag.css"
+				"otag.css"
 			]
 		},
 		"wpi.CurationTags": {
 			"position": "top",
 			"scripts": [
-				"modules/CurationTags.js"
+				"CurationTags.js"
 			],
 			"styles": [
-				"modules/CurationTags.css"
+				"CurationTags.css"
 			]
+		},
+		"wpi.searchPathways": {
+			"scripts": [
+				"SearchPathways.js"
+			],
+			"styles": [
+				"SearchPathways.css"
+			],
+			"dependencies": "mediawiki.util"
 		},
 		"wpi.XrefPanel": {
 			"scripts": [
-				"modules/xrefpanel.js"
+				"xrefpanel.js"
 			],
 			"dependencies": [
 				"wpi.JQuery"
@@ -46,11 +55,11 @@
 		},
 		"wpi.JQuery": {
 			"scripts": [
-				"modules/jquery-1.8.3.min.js",
-				"modules/jquery-ui-1.8.10.custom.min.js"
+				"jquery-1.8.3.min.js",
+				"jquery-ui-1.8.10.custom.min.js"
 			],
 			"styles": [
-				"modules/jquery-ui-1.8.10.custom.css"
+				"jquery-ui-1.8.10.custom.css"
 			]
 		}
 	},

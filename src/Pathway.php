@@ -23,6 +23,7 @@
  */
 namespace WikiPathways;
 
+use Article;
 use DOMDocument;
 use Exception;
 use Revision;
@@ -1099,7 +1100,7 @@ class Pathway {
 	public static function parsePathwayListPage( $listPage ) {
 		$listRev = Revision::newFromTitle( Title::newFromText( $listPage ), 0 );
 		if ( $listRev != null ) {
-			$lines = explode( "\n", $listRev->getText() );
+			$lines = explode( "\n", $listRev->getContent()->getNativeData() );
 		} else {
 			$lines = [];
 		}
