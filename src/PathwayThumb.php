@@ -24,6 +24,7 @@ namespace WikiPathways;
 use Exception;
 use LocalFile;
 use RepoGroup;
+use WikiPathways\GPML\Content;
 use Title;
 
 class PathwayThumb {
@@ -171,7 +172,7 @@ class PathwayThumb {
 		// Create dropdown action menu
 		$pwTitle = $pathway->getTitleObject()->getFullText();
 		// disable dropdown for now
-		$drop = PathwayPage::editDropDown( $pathway );
+		$drop = Content::editDropDown( $pathway );
 		$drop = '<div style="float:right;">' . $drop . '</div>';
 
 		return $editButton . $helpLink . $drop;
@@ -189,7 +190,6 @@ class PathwayThumb {
 		global $wgContLang;
 
 		$img = $pathway->getImage();
-		$imgURL = $img->getURL();
 
 		$thumbUrl = '';
 		$error = '';
@@ -263,6 +263,7 @@ class PathwayThumb {
 	) {
 		global $wgContLang, $wgUser;
 
+		$imgURL = $pathway->getImage()->getURL();
 		$editorState = 'disabled';
 		if ( $wgUser->isLoggedIn() && $wgUser->isEmailConfirmed() ) {
 			$editorState = 'closed';
@@ -304,7 +305,7 @@ class PathwayThumb {
 					fit-to-container="true">
 					  <img style="height:600px; max-width:100%"
 						alt="'.$alt.'"
-							src="'.$imgUrl.'">
+							src="'.$imgURL.'">
 				</wikipathways-pvjs>
 			</div>';
 		$s .= '  <div class="thumbcaption"'.$textalign.'>'.$label."</div></div></div>";

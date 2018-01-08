@@ -1604,4 +1604,29 @@ class Pathway {
 		$ex = file_exists( $output );
 		wfDebug( "PNG CACHE SAVED: $output, $ex;\n" );
 	}
+
+	/**
+	 * Get the JSON for the active version of this pathway
+	 *
+	 * @todo we aren't caching this
+	 * @return string the JSON representation of the GPML code,
+	 *     formatted to match the structure of SVG
+	 */
+	public function getPvjson() {
+		if ( !isset( $this->pvjson ) ) {
+			// $gpml_path = $this->getFileLocation( 'gpml', false );
+			// $identifier = $this->getIdentifier();
+			// $version = $this->getActiveRevision();
+			// $organism = $this->getSpecies();
+
+			// $pvjson = GPMLConverter::gpml2pvjson(
+			// 	file_get_contents( $gpml_path ), [
+			// 		"identifier" => $identifier,
+			// 		"version" => $version,
+			// 		"organism" => $organism
+			// 	] );
+			$this->pvjson = [];
+		}
+		return $this->pvjson;
+	}
 }

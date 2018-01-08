@@ -89,7 +89,9 @@ class GpmlHistoryPager extends HistoryPager {
 			return $first . $second;
 	}
 
-	private function gpmlHistoryLine( $pathway, $row, $nr, $counter = '', $cur = false, $firstInList = false ) {
+	private function gpmlHistoryLine(
+		$pathway, $row, $nr, $counter = '', $cur = false, $firstInList = false
+	) {
 		global $wpiScript, $wgLang, $wgUser, $wgTitle;
 
 		$rev = new Revision( $row );
@@ -111,7 +113,7 @@ class GpmlHistoryPager extends HistoryPager {
 		$diff = self::diffButtons( $rev, $firstInList, $counter, $nr );
 
 		$revert = "";
-		if ( $wgUser->getID() != 0 && $wgTitle && $wgTitle->userCanEdit() ) {
+		if ( $wgUser->getID() != 0 && $wgTitle && $wgTitle->userCan("edit") ) {
 			$revert = $cur ? "" : "(<A href=$revUrl>revert</A>), ";
 		}
 

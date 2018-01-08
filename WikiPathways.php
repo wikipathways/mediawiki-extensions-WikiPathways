@@ -377,6 +377,9 @@ $wgEnableUserEmail = false;
 $wgEnotifUserTalk = false;
 $wgEnotifWatchlist = false;
 
+$wgAllowUserJs = true;
+$wgAllowUserCss = true;
+
 // enable ontology tags on pathway page
 $wpiEnableOtag = true;
 

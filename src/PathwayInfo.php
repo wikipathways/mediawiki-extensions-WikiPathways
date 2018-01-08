@@ -63,6 +63,7 @@ class PathwayInfo extends PathwayData {
 	 * Creates a table of all datanodes and their info
 	 */
 	function datanodes() {
+		throw new Exception( "Wha" );
 		$table = '<table class="wikitable sortable" id="dnTable">';
 		$table .= '<tbody><th>Name<th>Type<th>Database reference<th>Comment';
 		// style="border:1px #AAA solid;margin:1em 1em 0;background:#F9F9F9"
