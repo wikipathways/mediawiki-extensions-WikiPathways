@@ -101,10 +101,10 @@ class OntologyTags {
 		// 	"</script>\n"
 		// );
 
-		global $wgStylePath;
+		$wgStylePath = "/extensions/WikiPathways";
 		if ( $userCanEdit ) {
 			$output = <<<HTML
-<div id="otagprogress" style="display:none" align='center'><span><img src='$wgStylePath/common/images/progress.gif'> Saving...</span></div>
+<div id="otagprogress" style="display:none" align='center'><span><img src='$wgStylePath/images/progress.gif'> Saving...</span></div>
 <div id="ontologyContainer" class="yui-skin-sam">
 	<div id="ontologyMessage" style="display:none;">No Tags!</div>
 	<div id="ontologyTags" style="display:none;"></div>
@@ -121,20 +121,18 @@ class OntologyTags {
 	</div>
 </div>
 <div style="clear:both;"></div>
-<script type="text/javascript" src="$opath/js/script.js"></script>
 <script type="text/javascript">
 	YAHOO.util.Event.onDOMReady(ontologytree.init, ontologytree,true);
 </script>
 HTML;
 		} else {
 			$output = <<<HTML
-<div id="otagprogress" style="display:none" align='center'><span><img src='$wgStylePath/common/images/progress.gif'> Saving...</span></div>
+<div id="otagprogress" style="display:none" align='center'><span><img src='$wgStylePath/images/progress.gif'> Saving...</span></div>
 <div id="ontologyContainer" class="yui-skin-sam">
 <div id="ontologyMessage" style="display:none;">No Tags!</div>
 <div id="ontologyTags" style="display:none;"> </div>
 <div id="ontologyTagDisplay">&nbsp;</div>
 </div>
-<script type="text/javascript" src="$opath/js/script.js"></script>
 HTML;
 		}
 		return '<!-- ENCODED_CONTENT '.base64_encode( $output ).' -->';

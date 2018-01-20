@@ -9,7 +9,8 @@ var treeRoot = document.getElementById('ontologyTrees');
 var oACInput = document.getElementById('ontologyACInput');
 var save_img = document.getElementById('save_img');
 var save_link = document.getElementById('save_link');
-var title = wgPageName;
+var title = mw.config.get('wgPageName');
+var stylepath = "/extensions/WikiPathways/modules";
 var ontologies = YAHOO.lang.JSON.parse(ontologiesJSON);
 var oTagsCount = new Array();
 
@@ -158,7 +159,7 @@ if(otagloggedIn == 1)
 
 		oAC.itemSelectEvent.subscribe(itemSelectHandler);
 		oAC.dataRequestEvent.subscribe(function(){
-			oACInput.style.backgroundImage = 'url(' + stylepath + '/common/images/progress.gif)';
+			oACInput.style.backgroundImage = 'url(' + stylepath + '/images/progress.gif)';
 			oACInput.style.backgroundPosition = 'right';
 			oACInput.style.backgroundRepeat = 'no-repeat';
 		}
@@ -261,7 +262,7 @@ function addTag(concept, conceptId)
 
 	if(document.getElementById(ontology).innerHTML.indexOf(conceptId)>0)
 	{
-		document.getElementById('ontologyTagDisplay').innerHTML = "<div class='otag'><font color='red'>Error : The pathway is already tagged with this term !</font><br><a title='Close' href='javascript:closeTag();'><img src='" + stylepath + "/common/images/cancel.png' /></a><br></div>";
+		document.getElementById('ontologyTagDisplay').innerHTML = "<div class='otag'><font color='red'>Error : The pathway is already tagged with this term !</font><br><a title='Close' href='javascript:closeTag();'><img src='" + stylepath + "/images/cancel.png' /></a><br></div>";
 		return;
 	}
 
@@ -357,25 +358,25 @@ function displayTag(concept, conceptId, newTag)
 		var conceptIdURI = "http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F" + conceptId.replace(/:/g, '_');
 		var url = "http://bioportal.bioontology.org/ontologies/" + ontology_version_id + "?p=classes&conceptid=" + conceptIdURI;
 
-		output += "<a href='" + url + "'  title='More info at BioPortal' target='_blank'><img src='" + stylepath + "/common/images/info_large.png'></a>&nbsp;";
+		output += "<a href='" + url + "'  title='More info at BioPortal' target='_blank'><img src='" + stylepath + "/images/info_large.png'></a>&nbsp;";
 
 		//Other pathways search link
 		var term = conceptId.replace(/:/g, '');
 		url = "?query=" + term + "&species=ALL+SPECIES&title=Special%3ASearchPathways&doSearch=1&type=query";
 		url = wgServer + wgScriptPath + url;
-		output += "<a title='More pathways with this term' href='" + url + "'><img src='" + stylepath + "/common/images/search_circle.png' /></a>&nbsp;";
+		output += "<a title='More pathways with this term' href='" + url + "'><img src='" + stylepath + "/images/search_circle.png' /></a>&nbsp;";
 
 		if(otagloggedIn == 1)
 		{
 			if(newTag == "true")
 			{
-				output += "<a title='Close' href='javascript:closeTag();'><img src='" + stylepath + "/common/images/cancel.png' /></a>&nbsp;";
-				output += "<a title='Add' href='javascript:addTag(\"" + escape(concept) +  "\",\""+conceptId + "\");'><img src='" + stylepath + "/common/images/apply.png' /></a>&nbsp;";
+				output += "<a title='Close' href='javascript:closeTag();'><img src='" + stylepath + "/images/cancel.png' /></a>&nbsp;";
+				output += "<a title='Add' href='javascript:addTag(\"" + escape(concept) +  "\",\""+conceptId + "\");'><img src='" + stylepath + "/images/apply.png' /></a>&nbsp;";
 			}
 			else
 			{
-				output += "<a title='Remove' href='javascript:removeTag(\"" + conceptId +  "\");'><img src='" + stylepath + "/common/images/cancel.png' /></a>&nbsp;";
-				output += "<a title='Close' href='javascript:closeTag();'><img src='" + stylepath + "/common/images/apply.png' /></a>&nbsp;";
+				output += "<a title='Remove' href='javascript:removeTag(\"" + conceptId +  "\");'><img src='" + stylepath + "/images/cancel.png' /></a>&nbsp;";
+				output += "<a title='Close' href='javascript:closeTag();'><img src='" + stylepath + "/images/apply.png' /></a>&nbsp;";
 			}
 		}
 		output += "</div>";

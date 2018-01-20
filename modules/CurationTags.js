@@ -214,16 +214,16 @@ CurationTags.removeTagCallback = function(xhr) {
 
 CurationTags.removeTagFromPathway = function( tagName, pathway, rowId ) {
 	sajax_do_call(
-	    "CurationTagsAjax::removeTag",
-	    [tagName, pathway],
-            function(xhr) {
-                if(CurationTags.checkResponse(xhr)) {
-                    var row = document.getElementById( rowId );
-                    var table = row.parentNode;
-                    table.removeChild(row);
-                }
+		"CurationTagsAjax::removeTag",
+		[tagName, pathway],
+			function(xhr) {
+				if(CurationTags.checkResponse(xhr)) {
+					var row = document.getElementById( rowId );
+					var table = row.parentNode;
+					table.removeChild(row);
+				}
 
-            }
+			}
 	);
 };
 
@@ -489,9 +489,9 @@ CurationTags.parseTagXml = function(tagElm) {
 		newElm.id =  CurationTags.makeId("tagDiv_" + tagName);
 		newElm.className = "tagcontainer";
 
-            if( tagRevision && tagRevision < wgCurRevisionId ) {
-                newElm.className += " transparent";
-            }
+			if( tagRevision && tagRevision < wgCurRevisionId ) {
+				newElm.className += " transparent";
+			}
 		//TODO: Only showing buttons on mouseover on tag works great under FF
 		//but I can't get it to work under IE7
 		//Fix is to make buttons semi-transparent by default,
@@ -524,12 +524,12 @@ CurationTags.parseTagXml = function(tagElm) {
 
 		newElm.appendChild(tagContent);
 	} else {
-            if( tagRevision && tagRevision < wgCurRevisionId ) {
-                elm.className = "tagcontainer transparent";
-            } else {
-                elm.className = "tagcontainer";
-            }
-        }
+			if( tagRevision && tagRevision < wgCurRevisionId ) {
+				elm.className = "tagcontainer transparent";
+			} else {
+				elm.className = "tagcontainer";
+			}
+		}
 
 	tagd = {};
 	tagd.name = tagName;
@@ -547,14 +547,14 @@ CurationTags.parseTagXml = function(tagElm) {
 	}
 	//To make the message show up when hovering over tag:
 	//part 1: replace UNIQUEID placeholder with tag name
-       html = html.replace(/UNIQUEID/g, CurationTags.makeId(tagName));
+	   html = html.replace(/UNIQUEID/g, CurationTags.makeId(tagName));
 
 	tagContent.innerHTML = html;
 
 	//To make the message show up when hovering over tag:
 	//part 2: insert event listeners
-     var control = document.getElementById( CurationTags.makeId(tagName + "_hover"));
-     var show = document.getElementById( CurationTags.makeId(tagName + "_show"));
+	 var control = document.getElementById( CurationTags.makeId(tagName + "_hover"));
+	 var show = document.getElementById( CurationTags.makeId(tagName + "_show"));
 	if (show && control) {
 		var funOver = function(e){
 			show.style.display = '';
@@ -694,28 +694,28 @@ CurationTags.checkResponse = function(xhr) {
  * Overlays a progress monitor over the given element.
  */
 CurationTags.showProgress = function() {
-    if( CurationTags.progressDiv ) {
-        CurationTags.progressDiv.style.display = "block";
-    }
+	if( CurationTags.progressDiv ) {
+		CurationTags.progressDiv.style.display = "block";
+	}
 };
 
 /**
  * Removes the progress monitor from the given element
  */
 CurationTags.hideProgress = function() {
-    if( CurationTags.progressDiv ) {
-        CurationTags.progressDiv.style.display = "none";
-    }
+	if( CurationTags.progressDiv ) {
+		CurationTags.progressDiv.style.display = "none";
+	}
 };
 
 CurationTags.showError = function(msg) {
-    if( CurationTags.errorDiv ) {
+	if( CurationTags.errorDiv ) {
 	CurationTags.errorDiv.style.display = "block";
 	CurationTags.errorDiv.innerHTML = "<p class='tagerror'>" + msg +
 		" - <a href='javascript:CurationTags.hideError();'>close</a></p>";
-    } else {
-        alert(msg);
-    }
+	} else {
+		alert(msg);
+	}
 };
 
 CurationTags.hideError = function() {

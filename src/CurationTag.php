@@ -59,6 +59,7 @@ class CurationTag {
 			$parser->mTitle->getLatestRevId();
 		}
 
+		$parser->getOutput()->addModules( [ "wpi.CurationTags" ] );
 		$pageId = $parser->mTitle->getArticleID();
 		$elementId = 'curationTagDiv';
 		return "<div id='$elementId'></div>"

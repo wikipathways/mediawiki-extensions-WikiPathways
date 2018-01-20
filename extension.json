@@ -188,8 +188,13 @@
 	],
 	"ResourceModules": {
 		"wpi.OntologyTags": {
-			"scripts": [],
-			"styles": []
+			"scripts": [
+				"otag_script.js"
+			],
+			"styles": [],
+			"dependencies": [
+				"wpi.OntCanEdit"
+			]
 		},
 		"wpi.OntCanEdit": {
 			"scripts": [
@@ -205,6 +210,9 @@
 			]
 		},
 		"wpi.CurationTags": {
+			"scripts": [
+				"CurationTags.js"
+			]
 		},
 		"wpi.XrefPanel": {
 		}
