@@ -81,7 +81,6 @@ require_once "pathwayParserFunctions.php";
 require_once "PrivatePathways/PrivatePathways.php";
 require_once "PrivatePathways/ListPrivatePathways.php";
 require_once "PrivatePathways/PrivateContributions.php";
-require_once "otag/otags_main.php";
 require_once "ontologyindex/ontologyindex.php";
 require_once "StubManager/StubManager.php";
 require_once "SecureHTML/SecureHTML.php";
@@ -217,25 +216,6 @@ $wgSVGConverters['inkscape'] = '$path/inkscape -z -b white -w $width -f $input -
 
 # Allow direct linking to external images (so we don't have to upload them to the wiki)
 $wgAllowExternalImages = true;
-
-# Ontology data
-
-# Ontologies in JSON format for use in the Javascript
-# Format : ["<Ontology Name>", <Ontology Id>, <Version Id>]
-$wgOntologiesJSON = '[' . '["Pathway Ontology","PW:0000001",1035,46237,"PW"]'
-				  . ',' . '["Disease","DOID:4",1009,46309,"DOID"]' . ','
-				  . '["Cell Type","CL:0000000",1006,46163,"CL"]]';
-# Ontologies Array to be used in the PHP Code
-$wgOntologiesArray = json_decode( $wgOntologiesJSON );
-
-# Email address for the User Identification parameter to be used while making
-# REST calls to BioPortal
-$wgOntologiesBioPortalEmail = "apico@gladstone.ucsf.edu";
-
-# Maximum number of search results returned while searching BioPortal
-$wgOntologiesBioPortalSearchHits = 12;
-# Time after which data in the cache is refreshed (in Seconds)
-$wgOntologiesExpiryTime = 3600 * 24 * 7;
 
 # Custom namespaces
 // NS_PATHWAY is same as NS_GPML since refactoring

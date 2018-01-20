@@ -35,7 +35,7 @@ class Hook {
 			"batchDownload", "WikiPathways\\BatchDownloader::createDownloadLinks"
 		);
 		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
-		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
+		$wgParser->setHook( "OntologyTags", "WikiPathways\\OntologyTags::tag" );
 		$wgParser->setHook(
 			"CurationTags", "WikiPathways\\CurationTag::displayCurationTags"
 		);
@@ -226,4 +226,5 @@ class Hook {
 		$result = null;
 		return true;
 	}
+
 }

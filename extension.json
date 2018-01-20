@@ -72,6 +72,7 @@
 		"BrowsePathwaysPage": "WikiPathways\\BrowsePathways",
 		"MostEditedPathwaysPage": "WikiPathways\\MostEditedPathways",
 		"NewPathwaysPage": "WikiPathways\\NewPathways",
+		"OntologyIndex": "WikiPathways\\OntologyIndex",
 		"PopularPathwaysPage": "WikiPathways\\PopularPathways",
 		"SearchPathways": "WikiPathways\\SearchPathways",
 		"ShowError": "WikiPathways\\ShowError",
@@ -132,6 +133,7 @@
 		"WikiPathways\\DiffApplet": "src/DiffApplet.php",
 		"WikiPathways\\BrowsePathways": "src/BrowsePathways.php",
 		"WikiPathways\\MostEditedPathways": "src/MostEditedPathways.php",
+		"WikiPathways\\OntologyTags": "src/OntologyTags.php",
 		"WikiPathways\\Hook": "src/Hook.php",
 		"WikiPathways\\RecentPathwayChanges": "src/RecentPathwayChanges.php",
 		"WikiPathways\\MagicWord": "src/MagicWord.php",
@@ -150,6 +152,9 @@
 		"WikiPathways\\Hook::pathwayViewer"
 	],
 	"Hooks": {
+		"ParserAfterTidy": [
+			"WikiPathways\\OntologyTags::onHeader"
+		],
 		"ArticleSaveComplete":  [
 			"WikiPathways\\Hook::updateTags"
 		],
@@ -182,15 +187,31 @@
 		"seepagewatchers"
 	],
 	"ResourceModules": {
-		"ext.whoIsWatching": {
+		"wpi.OntologyTags": {
+			"scripts": [],
+			"styles": []
+		},
+		"wpi.OntCanEdit": {
+			"scripts": [
+				"yui2.7.0.allcomponents.js"
+			],
 			"styles": [
-				"modules/ext.whoIsWatching.css"
+				"yui2.7.0.css"
 			]
+		},
+		"wpi.OntNoEdit": {
+			"scripts": [
+				"yui2.7.0.mincomponents.js"
+			]
+		},
+		"wpi.CurationTags": {
+		},
+		"wpi.XrefPanel": {
 		}
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "",
-		"remoteExtPath": ""
+		"localBasePath": "modules",
+		"remoteExtPath": "WikiPathways/modules"
 	},
 	"config": {
 		"_prefix": "whoiswatching_",

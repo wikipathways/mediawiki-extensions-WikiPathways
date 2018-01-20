@@ -19,60 +19,91 @@
  * @author Mark A. Hershberger
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	echo "This file is part of MediaWiki, it is not a valid entry point.\n";
-	exit( 1 );
-}
-$opath = WPI_URL . "/extensions/WikiPathways/otag";
-$wgExtensionFunctions[] = "wfotag";
+namespace WikiPathways;
 
-function wfotag() {
-	global $wgHooks;
-	global $wgParser;
-	$wgHooks['ParserAfterTidy'][] = 'oheader';
-	$wgParser->setHook( "OntologyTags", "ofunction" );
-}
+use Parser;
 
-function oheader( &$parser, &$text ) {
-	$text = preg_replace_callback(
-		'/<!-- ENCODED_CONTENT ([0-9a-zA-Z\\+]+=*) -->/',
-		function ( $matches ) {
-			return base64_decode( $matches[1] );
-		}, $text );
+class OntologyTags {
 
-	return true;
-}
+	# Maximum number of search results returned while searching BioPortal
+	const BIO_PORTAL_SEARCH_HITS = 12;
 
-function ofunction( $input, $argv, $parser ) {
-	global $wgTitle, $wgOut,  $opath, $wgOntologiesJSON, $wgStylePath, $wgJsMimeType;
-	$oldStylePath = $wgStylePath;
-	$wgStylePath = $opath . "/css/";
+	# Time after which data in the cache is refreshed (in Seconds)
+	const EXPIRY_TIME = 3600 * 24 * 7;
 
-	$title = $parser->getTitle();
-	$loggedIn = $title->userCan( 'edit' ) ? 1 : 0;
-
-	if ( $loggedIn ) {
-		$wgOut->addScript( '<script type="text/javascript" src="' . $opath . '/js/yui2.7.0.allcomponents.js"></script>' );
-		$wgOut->addStyle( "yui2.7.0.css" );
-	} else {
-		$wgOut->addScript( '<script type="text/javascript" src="' . $opath . '/js/yui2.7.0.mincomponents.js"></script>' );
+	/**
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ParserAfterTidy
+	 * @param Parser $parser object
+	 * @param string &$text to change
+	 * @SuppressWarnings(UnusedFormalParameter)
+	 */
+	public function onHeader( Parser $parser, &$text ) {
+		$text = preg_replace_callback(
+			'/<!-- ENCODED_CONTENT ([0-9a-zA-Z\\+]+=*) -->/',
+			function ( $matches ) {
+				return base64_decode( $matches[1] );
+			}, $text );
 	}
 
-	$wgOut->addModules( [
-		'wpi.CurationTags', 'wpi.AuthorInfo', 'wpi.XrefPanel', 'wpi.otags'
-	] );
-	$wgStylePath = $oldStylePath;
+	/**
+	 * Use this instead of $wgOntologiesJSON or $wgOntologiesArray
+	 *
+	 * @return array of arrays of ontology information
+	 */
+	public static function getOntologies() {
+		return array_filter(
+			json_decode( wfMessage( "wp-ontology-tags.json" )->plain() ),
+			function ( $value ) { return is_array( $value ); }
+		);
+	}
 
-	$wgOut->addScript(
-		"<script type=\"{$wgJsMimeType}\">" .
-		"var opath=\"$opath\";" .
-		"var otagloggedIn = \"$loggedIn\";" .
-		"var ontologiesJSON = '$wgOntologiesJSON';" .
-		"</script>\n"
-	);
+	/**
+	 * Use this instead of $wgOntologiesBioPortalEmail
+	 *
+	 * Email address for the User Identification parameter to be used
+	 * while making REST calls to BioPortal.
+	 *
+	 * @return string
+	 */
+	public static function getBioPortalEmail() {
+		return wfMessage( "wp-ontology-bio-portal-email" )->plain();
+	}
 
-	if ( $loggedIn ) {
-		$output = <<<HTML
+	/**
+	 * Parser hook for <OntologyTags>
+	 *
+	 * @param string $input inside the tag
+	 * @param array $argv attributes
+	 * @param Parser $parser object
+	 * @return string
+	 */
+	public static function tag( $input, $argv, Parser $parser ) {
+		global $wgOut, $opath;
+
+		$title = $parser->getTitle();
+		$userCanEdit = $title->userCan( 'edit' ) ? 1 : 0;
+
+		$yuiModule = "wpi.OntNoEdit";
+		if ( $userCanEdit ) {
+			$yuiModule = "wpi.OntCanEdit";
+		}
+
+		$wgOut->addModules( [
+			'wpi.CurationTags', 'wpi.AuthorInfo', 'wpi.XrefPanel', 'wpi.OntologyTags', $yuiModule
+		] );
+
+		/* This is all bogus */
+		// $wgOut->addScript(
+		// 	"<script type=\"{$wgJsMimeType}\">" .
+		// 	"var opath=\"$opath\";" .
+		// 	"var otagloggedIn = \"$userCanEdit\";" .
+		// 	"var ontologiesJSON = '$wgOntologiesJSON';" .
+		// 	"</script>\n"
+		// );
+
+		global $wgStylePath;
+		if ( $userCanEdit ) {
+			$output = <<<HTML
 <div id="otagprogress" style="display:none" align='center'><span><img src='$wgStylePath/common/images/progress.gif'> Saving...</span></div>
 <div id="ontologyContainer" class="yui-skin-sam">
 	<div id="ontologyMessage" style="display:none;">No Tags!</div>
@@ -95,8 +126,8 @@ function ofunction( $input, $argv, $parser ) {
 	YAHOO.util.Event.onDOMReady(ontologytree.init, ontologytree,true);
 </script>
 HTML;
-	} else {
-		$output = <<<HTML
+		} else {
+			$output = <<<HTML
 <div id="otagprogress" style="display:none" align='center'><span><img src='$wgStylePath/common/images/progress.gif'> Saving...</span></div>
 <div id="ontologyContainer" class="yui-skin-sam">
 <div id="ontologyMessage" style="display:none;">No Tags!</div>
@@ -105,6 +136,7 @@ HTML;
 </div>
 <script type="text/javascript" src="$opath/js/script.js"></script>
 HTML;
+		}
+		return '<!-- ENCODED_CONTENT '.base64_encode( $output ).' -->';
 	}
-	return '<!-- ENCODED_CONTENT '.base64_encode( $output ).' -->';
 }
