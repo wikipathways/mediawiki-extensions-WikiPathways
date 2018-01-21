@@ -78,28 +78,20 @@ class OntologyTags {
 	 * @return string
 	 */
 	public static function tag( $input, $argv, Parser $parser ) {
-		global $wgOut, $opath;
-
 		$title = $parser->getTitle();
+		$out = \RequestContext::getMain()->getOutput();
 		$userCanEdit = $title->userCan( 'edit' ) ? 1 : 0;
 
 		$yuiModule = "wpi.OntNoEdit";
 		if ( $userCanEdit ) {
 			$yuiModule = "wpi.OntCanEdit";
 		}
-
-		$wgOut->addModules( [
-			'wpi.CurationTags', 'wpi.AuthorInfo', 'wpi.XrefPanel', 'wpi.OntologyTags', $yuiModule
+		$out->addJsConfigVars( "ontologies", self::getOntologies() );
+		$out->addJsConfigVars( "opath", '/extensions/WikiPathways/otag/' );
+		$out->addJsConfigVars( "stylepath", '/extensions/WikiPathways/modules' );
+		$out->addModules( [
+			$yuiModule, 'mw.config', 'wpi.CurationTags', 'wpi.AuthorInfo', 'wpi.XrefPanel', 'wpi.OntologyTags'
 		] );
-
-		/* This is all bogus */
-		// $wgOut->addScript(
-		// 	"<script type=\"{$wgJsMimeType}\">" .
-		// 	"var opath=\"$opath\";" .
-		// 	"var otagloggedIn = \"$userCanEdit\";" .
-		// 	"var ontologiesJSON = '$wgOntologiesJSON';" .
-		// 	"</script>\n"
-		// );
 
 		$wgStylePath = "/extensions/WikiPathways";
 		if ( $userCanEdit ) {

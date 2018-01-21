@@ -1,0 +1,108 @@
+--- OntologyCache.php
++++ OntologyCache.php
+@@ -30,75 +30,66 @@
+		$dbw->commit();
+	}
+
+-	public static function fetchCache($function,$params, $timeOut = 0)
+-	{
++	public static function fetchCache( $function,$params, $timeOut = 0 ) {
++
+		global $wgOntologiesExpiryTime;
+
+-		$params = self::addKey($params);
++		$params = self::addKey( $params );
+
+-		if($timeOut == 0)
++		if ( $timeOut == 0 )
+			$time = time() - $wgOntologiesExpiryTime;
+-		else
+-			$time = time() - $timeOut;
++else $time = time() - $timeOut;
+
+-		$dbr =& wfGetDB(DB_SLAVE);
++		$dbr =& wfGetDB( DB_SLAVE );
+		$query = "SELECT * FROM `ontologycache` where function = '$function' AND params = '$params' ORDER BY timestamp DESC ";
+-		$res = $dbr->query($query);
+-		//$res = $dbr->select( 'ontology', array('term','term_id','ontology'), array( 'pw_id' => $title ), $fname = 'Database::select', $options = array('Group by' => 'ontology' ));
++		$res = $dbr->query( $query );
++		// $res = $dbr->select( 'ontology', array('term','term_id','ontology'), array( 'pw_id' => $title ), $fname = 'Database::select', $options = array('Group by' => 'ontology' ));
+
+-		if($row = $dbr->fetchObject($res))
++		if ( $row = $dbr->fetchObject( $res ) )
+		{
+-			if($row->timestamp > $time)
+-				return($row->response);
+-			else
+-			{
+-				if($xml = @simplexml_load_file($params))
++			if ( $row->timestamp > $time )
++				return ( $row->response ); else {
++				if ( $xml = @simplexml_load_file( $params ) )
+				{
+					$xml = $xml->asXML();
+-					ontologycache::updateCache($function,$params,$xml);
+-					return($xml);
+-				}
+-				else
+-				{
++					ontologycache::updateCache( $function, $params, $xml );
++					return ( $xml );
++				} else {
+					$dbw =& wfGetDB( DB_MASTER );
+					$dbw->begin();
+-					$dbw->update('ontologycache',array('timestamp'=>time()) ,array("function"=>$function,"params"=>$params),$fname = 'Database::update', $options = array() );
++					$dbw->update( 'ontologycache', [ 'timestamp'=>time() ], [ "function"=>$function,"params"=>$params ], $fname = 'Database::update', $options = [] );
+					$dbw->commit();
+-					return($row->response);
++					return ( $row->response );
+				}
+-			}
+-		}
+-		else
+-		{
+-			if($xml = @simplexml_load_file($params))
++			 }
++		} else {
++			if ( $xml = @simplexml_load_file( $params ) )
+			{
+				$xml = $xml->asXML();
+-				ontologycache::updateCache($function,$params,$xml);
+-				return($xml);
++				ontologycache::updateCache( $function, $params, $xml );
++				return ( $xml );
+			}
+		}
+		$dbr->freeResult( $res );
+	}
+
+-	public static function fetchBrowseCache($params, $timeOut = 0)
+-	{
++	public static function fetchBrowseCache( $params, $timeOut = 0 ) {
+
+		global $wgOntologiesExpiryTime;
+		$function = 'browse';
+
+-		if($timeOut == 0)
++		if ( $timeOut == 0 )
+			$time = time() - $wgOntologiesExpiryTime;
+-		else
+-			$time = time() - $timeOut;
++else $time = time() - $timeOut;
+
+-		$dbr =& wfGetDB(DB_SLAVE);
++		$dbr =& wfGetDB( DB_SLAVE );
+		$query = "SELECT * FROM `ontologycache` where function = '$function' AND params = '$params' ORDER BY timestamp DESC ";
+-		$res = $dbr->query($query);
++		$res = $dbr->query( $query );
+
+-		if($row = $dbr->fetchObject($res))
++		if ( $row = $dbr->fetchObject( $res ) )
+		{
+-			if($row->timestamp > $time) {
+-				return($row->response);
++			if ( $row->timestamp > $time ) {
++				return ( $row->response );
+			} else {
+				return false;
+			}

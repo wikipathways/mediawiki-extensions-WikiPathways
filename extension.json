@@ -17,52 +17,6 @@
 			"i18n"
 		]
 	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "modules",
-		"remoteExtPath": "WikiPathways/modules"
-	},
-	"ResourceModules": {
-		"wpi.otags": {
-			"styles": [
-				"otag.css"
-			]
-		},
-		"wpi.CurationTags": {
-			"position": "top",
-			"scripts": [
-				"CurationTags.js"
-			],
-			"styles": [
-				"CurationTags.css"
-			]
-		},
-		"wpi.searchPathways": {
-			"scripts": [
-				"SearchPathways.js"
-			],
-			"styles": [
-				"SearchPathways.css"
-			],
-			"dependencies": "mediawiki.util"
-		},
-		"wpi.XrefPanel": {
-			"scripts": [
-				"xrefpanel.js"
-			],
-			"dependencies": [
-				"wpi.JQuery"
-			]
-		},
-		"wpi.JQuery": {
-			"scripts": [
-				"jquery-1.8.3.min.js",
-				"jquery-ui-1.8.10.custom.min.js"
-			],
-			"styles": [
-				"jquery-ui-1.8.10.custom.css"
-			]
-		}
-	},
 	"SpecialPages": {
 		"CreatePathwayPage": "WikiPathways\\CreatePathway",
 		"CurationTags": "WikiPathways\\SpecialCurationTags",
@@ -186,15 +140,56 @@
 		"addpagetoanywatchlist",
 		"seepagewatchers"
 	],
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "WikiPathways/modules"
+	},
 	"ResourceModules": {
+		"wpi.otags": {
+			"styles": [
+				"otag.css"
+			]
+		},
+		"wpi.CurationTags": {
+			"position": "top",
+			"scripts": [
+				"CurationTags.js"
+			],
+			"styles": [
+				"CurationTags.css"
+			]
+		},
+		"wpi.searchPathways": {
+			"scripts": [
+				"SearchPathways.js"
+			],
+			"styles": [
+				"SearchPathways.css"
+			],
+			"dependencies": "mediawiki.util"
+		},
+		"wpi.XrefPanel": {
+			"scripts": [
+				"xrefpanel.js"
+			],
+			"dependencies": [
+				"wpi.JQuery"
+			]
+		},
+		"wpi.JQuery": {
+			"scripts": [
+				"jquery-1.8.3.min.js",
+				"jquery-ui-1.8.10.custom.min.js"
+			],
+			"styles": [
+				"jquery-ui-1.8.10.custom.css"
+			]
+		},
 		"wpi.OntologyTags": {
 			"scripts": [
 				"otag_script.js"
 			],
-			"styles": [],
-			"dependencies": [
-				"wpi.OntCanEdit"
-			]
+			"styles": []
 		},
 		"wpi.OntCanEdit": {
 			"scripts": [

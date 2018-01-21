@@ -9,15 +9,15 @@ var treeRoot = document.getElementById('ontologyTrees');
 var oACInput = document.getElementById('ontologyACInput');
 var save_img = document.getElementById('save_img');
 var save_link = document.getElementById('save_link');
-var title = mw.config.get('wgPageName');
-var stylepath = "/extensions/WikiPathways/modules";
-var ontologies = YAHOO.lang.JSON.parse(ontologiesJSON);
+var arg = mw.config.get( [ 'ontologies', 'wgPageName', 'opath' ] );
+var otagloggedIn = !mw.user.isAnon;
+
 var oTagsCount = new Array();
 
-for(var i=0;i<ontologies.length;i++)
+for(var i=0;i<arg.ontologies.length;i++)
 {
-	document.getElementById('ontologyTags').innerHTML += "<div id='" + ontologies[i][0] + "'><b>" + ontologies[i][0] + "</b> : </div>";
-	oTagsCount[ontologies[i][0]] = 0;
+	document.getElementById('ontologyTags').innerHTML += "<div id='" + arg.ontologies[i][0] + "'><b>" + arg.ontologies[i][0] + "</b> : </div>";
+	oTagsCount[arg.ontologies[i][0]] = 0;
 }
 fetchTags();
 
@@ -25,7 +25,7 @@ if(otagloggedIn == 1)
 {
 	var createDOM = function() {
 
-		for(var i=0;i<ontologies.length;i++)
+		for(var i=0;i<arg.ontologies.length;i++)
 		{
 			var Treediv = document.createElement("span");
 			Treediv.id = "ontologyTree" + (i + 1);
@@ -41,7 +41,7 @@ if(otagloggedIn == 1)
 				tree[no] = new YAHOO.widget.TreeView("ontologyTree" + (no + 1));
 				tree[no].setDynamicLoad(loadNodeData);
 				var root = tree[no].getRoot();
-				var aConcepts = [ontologies[no][0] + " - " + ontologies[no][1]] ;
+				var aConcepts = [arg.ontologies[no][0] + " - " + arg.ontologies[no][1]] ;
 
 				for (var i=0, j=aConcepts.length; i<j; i++) {
 					var tempNode = new YAHOO.widget.TextNode(aConcepts[i], root, false);
@@ -71,7 +71,7 @@ if(otagloggedIn == 1)
 
 		var nodeID = node.c_id.replace("http://purl.obolibrary.org/obo/","");
 		nodeID = nodeID.replace(":","_");
-		var sUrl = opath + "/otags.php?action=tree&tagId=" + encodeURI(nodeID);
+		var sUrl = arg.opath + "otags.php?action=tree&tagId=" + encodeURI(nodeID);
 		var callback = {
 				success: function(oResponse) {
 			var oResults = YAHOO.lang.JSON.parse(oResponse.responseText);
@@ -114,8 +114,7 @@ if(otagloggedIn == 1)
 	}
 
 	var ontologySearch = function () {
-
-		var oDS = new YAHOO.util.XHRDataSource( opath + "/otags.php");
+		var oDS = new YAHOO.util.XHRDataSource( arg.opath + "otags.php");
 		// Set the responseType
 		oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
 		// Define the schema of the JSON results
@@ -157,18 +156,21 @@ if(otagloggedIn == 1)
 			}
 		};
 
-		oAC.itemSelectEvent.subscribe(itemSelectHandler);
-		oAC.dataRequestEvent.subscribe(function(){
-			oACInput.style.backgroundImage = 'url(' + stylepath + '/images/progress.gif)';
-			oACInput.style.backgroundPosition = 'right';
-			oACInput.style.backgroundRepeat = 'no-repeat';
+		if ( oAC.itemSelectEvent ) {
+			oAC.itemSelectEvent.subscribe(itemSelectHandler);
 		}
-				);
-		oAC.containerPopulateEvent  .subscribe(function(){
-			oACInput.style.backgroundImage = '';
+		if ( oAC.dataRequestEvent ) {
+			oAC.dataRequestEvent.subscribe( function(){
+				oACInput.style.backgroundImage = 'url(' + stylepath + '/images/progress.gif)';
+				oACInput.style.backgroundPosition = 'right';
+				oACInput.style.backgroundRepeat = 'no-repeat';
+			} );
 		}
-				);
-
+		if ( oAC.containerPopulateEvent ) {
+			oAC.containerPopulateEvent  .subscribe(function(){
+				oACInput.style.backgroundImage = '';
+			} );
+		}
 
 		return {
 			oDS: oDS,
@@ -180,11 +182,11 @@ if(otagloggedIn == 1)
 function getOntologyName(tag_id)
 {
 	var ontology_name;
-	for(var i=0;i<ontologies.length;i++)
+	for(var i=0;i<arg.ontologies.length;i++)
 	{
-		if(tag_id.substring(0,2) == ontologies[i][1].substring(0,2))
+		if(tag_id.substring(0,2) == arg.ontologies[i][1].substring(0,2))
 		{
-			ontology_name = ontologies[i][0];
+			ontology_name = arg.ontologies[i][0];
 			break;
 		}
 	}
@@ -196,29 +198,29 @@ function getOntologyId(type,tag_id)
 	var ontology_id;
 
 	if(type == "acronym")
-		for(var i=0;i<ontologies.length;i++)
+		for(var i=0;i<arg.ontologies.length;i++)
 		{
-			if(tag_id.substring(0,2) == ontologies[i][1].substring(0,2))
+			if(tag_id.substring(0,2) == arg.ontologies[i][1].substring(0,2))
 			{
-				ontology_id = ontologies[i][4];
+				ontology_id = arg.ontologies[i][4];
 				break;
 			}
 		}
 	else if(type == "version")
-		for(var i=0;i<ontologies.length;i++)
+		for(var i=0;i<arg.ontologies.length;i++)
 		{
-			if(tag_id.substring(0,2) == ontologies[i][1].substring(0,2))
+			if(tag_id.substring(0,2) == arg.ontologies[i][1].substring(0,2))
 			{
-				ontology_id = ontologies[i][3];
+				ontology_id = arg.ontologies[i][3];
 				break;
 			}
 		}
 	else
-		for(i=0;i<ontologies.length;i++)
+		for(i=0;i<arg.ontologies.length;i++)
 		{
-			if(tag_id.substring(0,2) == ontologies[i][1].substring(0,2))
+			if(tag_id.substring(0,2) == arg.ontologies[i][1].substring(0,2))
 			{
-				ontology_id = ontologies[i][2];
+				ontology_id = arg.ontologies[i][2];
 				break;
 			}
 		}
@@ -250,8 +252,8 @@ function removeTag(conceptId)
 			argument:['foo','bar']
 		};
 
-	var postData = "action=remove" + "&title=" + wgTitle +"&rand=" + rand + "&tagId=" + conceptId ;
-	var request = YAHOO.util.Connect.asyncRequest('POST', opath + "/otags.php", callback, postData);
+	var postData = "action=remove" + "&title=" + args.wgPageName +"&rand=" + rand + "&tagId=" + conceptId ;
+	var request = YAHOO.util.Connect.asyncRequest('POST', arg.opath + "otags.php", callback, postData);
 }
 function addTag(concept, conceptId)
 {
@@ -290,8 +292,8 @@ function addTag(concept, conceptId)
 			argument:['foo','bar']
 		};
 
-	var postData = "action=add" + "&title=" + wgTitle +"&rand=" + rand + "&tagId=" + conceptId + "&tag=" + concept;
-	var request = YAHOO.util.Connect.asyncRequest('POST', opath + "/otags.php", callback, postData);
+	var postData = "action=add" + "&title=" + mw.config.get( 'wgPageName' ) +"&rand=" + rand + "&tagId=" + conceptId + "&tag=" + concept;
+	var request = YAHOO.util.Connect.asyncRequest('POST', arg.opath + "otags.php", callback, postData);
 }
 
 function fetchTags()
@@ -340,8 +342,8 @@ function fetchTags()
 			argument:['foo','bar']
 		};
 
-	var postData = "action=fetch" + "&title=" + wgTitle +"&rand=" + rand  ;
-	var request = YAHOO.util.Connect.asyncRequest('POST', opath + "/otags.php", callback, postData);
+	var postData = "action=fetch" + "&title=" + mw.config.get( 'wgPageName' ) +"&rand=" + rand  ;
+	var request = YAHOO.util.Connect.asyncRequest('POST', arg.opath + "otags.php", callback, postData);
 	//    makeRequest("Deleted tag : " + tags[index][0] + " (" + ontology_name + ")");
 }
 
@@ -422,24 +424,26 @@ function toggleOntologyControls()
 {
 	var controlsElement = document.getElementById('ontologyEdit');
 	var labelElement = document.getElementById('ontologyEditLabel');
-	var status = controlsElement.style.display;
-	if(status != 'none')
-	{
-		controlsElement.style.display = "none";
-		labelElement.innerHTML = "Add Ontology tags!";
-	}
-	else
-	{
-		controlsElement.style.display = "block";
-		labelElement.innerHTML = "Hide Ontology Options";
+	if ( controlsElement ) {
+		var status = controlsElement.style.display;
+		if(status != 'none')
+		{
+			controlsElement.style.display = "none";
+			labelElement.innerHTML = "Add Ontology tags!";
+		}
+		else
+		{
+			controlsElement.style.display = "block";
+			labelElement.innerHTML = "Hide Ontology Options";
+		}
 	}
 }
 
 function toggleOntologyDisplay()
 {
-	for(var i=0;i<ontologies.length;i++)
+	for(var i=0;i<arg.ontologies.length;i++)
 	{
-		var ontologyName = ontologies[i][0];
+		var ontologyName = arg.ontologies[i][0];
 
 		if(oTagsCount[ontologyName] > 0)
 			document.getElementById(ontologyName).style.display = "Block";
