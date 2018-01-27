@@ -20,6 +20,7 @@
 	"SpecialPages": {
 		"CreatePathwayPage": "WikiPathways\\CreatePathway",
 		"CurationTags": "WikiPathways\\SpecialCurationTags",
+		"SpecialCurationTags": "WikiPathways\\SpecialCurationTags",
 		"DiffAppletPage": "WikiPathways\\DiffApplet",
 		"RecentPathwayChanges": "WikiPathways\\RecentPathwayChanges",
 		"BrowsePathways": "WikiPathways\\BrowsePathways",
