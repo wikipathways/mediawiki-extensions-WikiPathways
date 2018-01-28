@@ -1379,7 +1379,7 @@ class Pathway {
 			$this->updateCache( FILETYPE_GPML );
 		}
 
-		if ( !$fileType ) {
+		if ( $fileType === null ) {
 			// Update all
 			foreach ( self::$fileTypes as $type ) {
 				$this->updateCache( $type );
@@ -1415,7 +1415,6 @@ class Pathway {
 		if ( !$img->exists() ) {
 			/* Avoid calling this unless we need to */
 			$this->updateCache( FILETYPE_IMG );
-			$img->loadFromFile();
 		}
 
 		return $img;

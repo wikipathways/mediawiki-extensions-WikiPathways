@@ -47,7 +47,7 @@ class ThumbPathwaysPager extends BasePathwaysPager {
 				$this->getTitle(),
 				wfMessage( 'nextn' )->params( $wgLang->formatNum( $this->mLimit ) )->text(),
 				[ "class" => 'infinite-more-link' ],
-				[ 'next' => $queries['next'] ]
+				$queries['next']
 			);
 		}
 
