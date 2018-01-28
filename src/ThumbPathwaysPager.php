@@ -42,14 +42,12 @@ class ThumbPathwaysPager extends BasePathwaysPager {
 		$link = "<a class='infinite-more-link' href='data:'></a>";
 
 		$queries = $this->getPagingQueries();
-		$opts = [ 'parsemag', 'escapenoentities' ];
-
 		if ( isset( $queries['next'] ) && $queries['next'] ) {
-			$link = $this->getSkin()->makeKnownLinkObj(
+			$link = \Linker::linkKnown(
 				$this->getTitle(),
-				wfMessage( 'nextn', $opts, $wgLang->formatNum( $this->mLimit ) )->text(),
-				wfArrayToCGI( $queries['next'], $this->getDefaultQuery() ), '', '',
-				"class='infinite-more-link'"
+				wfMessage( 'nextn' )->params( $wgLang->formatNum( $this->mLimit ) )->text(),
+				[ "class" => 'infinite-more-link' ],
+				[ 'next' => $queries['next'] ]
 			);
 		}
 
