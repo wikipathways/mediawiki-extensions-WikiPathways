@@ -1,6 +1,6 @@
 {
-	"name": "mediawiki/wikipathways",
-	"description": "Extensions that control WikiPathways.org",
+	"name": "wikipathways/wikipathways",
+	"description": "Brings Wikipathways to life",
 	"keywords": ["mediawiki", "wiki"],
 	"homepage": "https://www.wikipathways.org/",
 
