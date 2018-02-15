@@ -21,6 +21,7 @@
  * @author
  * @author Mark A. Hershberger <mah@nichework.com>
  */
+namespace WikiPathways;
 
 /**
    Since counting unique genes accross all pathways is an expensive operation,
