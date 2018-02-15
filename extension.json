@@ -79,6 +79,7 @@
 		"WikiPathways\\StatisticsCache": "src/StatisticsCache.php",
 		"WikiPathways\\TagChangeNotification": "src/TagChangeNotification.php",
 		"WikiPathways\\TaggedPathway": "src/TaggedPathway.php",
+		"WikiPathways\\TopWishes": "src/TopWishes.php",
 		"WikiPathways\\ThumbPathwaysPager": "src/ThumbPathwaysPager.php",
 		"WikiPathways\\TissueAnalyzer": "src/TissueAnalyzer.php",
 		"WikiPathways\\Wish": "src/Wish.php",
