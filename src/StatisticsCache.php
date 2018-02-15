@@ -265,44 +265,44 @@ class StatisticsCache {
 		return $data;
 	}
 
-public static function getSiteStats( &$parser, $tableAttr ) {
-	$nrPathways = self::howManyPathways( 'total' );
-	$output = "* There are '''{$nrPathways}''' pathways";
+    public static function getSiteStats( &$parser, $tableAttr ) {
+        $nrPathways = self::howManyPathways( 'total' );
+        $output = "* There are '''{$nrPathways}''' pathways";
 
-	if ( ! is_dir( WPI_CACHE_PATH ) && ! wfMkdirParents( WPI_CACHE_PATH ) ) {
-		wfDebug( "Can't create: " . WPI_CACHE_PATH );
-		throw new Exception( "Can't create WPI_CACHE_PATH!" );
-	}
+        if ( ! is_dir( WPI_CACHE_PATH ) && ! wfMkdirParents( WPI_CACHE_PATH ) ) {
+            wfDebug( "Can't create: " . WPI_CACHE_PATH );
+            throw new Exception( "Can't create WPI_CACHE_PATH!" );
+        }
 
-	$table = <<<EOD
+        $table = <<<EOD
 
 * Number of '''pathways''' ''(and unique genes)'' per species:
 {| align="center" $tableAttr
 EOD;
-	foreach ( Pathway::getAvailableSpecies() as $species ) {
-		$nr = self::howManyPathways( $species );
-		$genes = self::howManyUniqueGenes( $species );
-		if ( $nr > 0 ) {  // skip listing species with 0 pathways
-			$table .= <<<EOD
+        foreach ( Pathway::getAvailableSpecies() as $species ) {
+            $nr = self::howManyPathways( $species );
+            $genes = self::howManyUniqueGenes( $species );
+            if ( $nr > 0 ) {  // skip listing species with 0 pathways
+                $table .= <<<EOD
 
 |-align="left"
 |$species:
 |'''$nr'''
 |''($genes)''
 EOD;
-		}
-	}
-	$table .= "\n|}";
-	$output .= $table;
-	// $output .= "\n* There are '''{{NUMBEROFUSERS}}''' registered users";
-	$output .= "\n* [[WikiPathways:Statistics|Additional statistics... ]]";
+            }
+        }
+        $table .= "\n|}";
+        $output .= $table;
+        // $output .= "\n* There are '''{{NUMBEROFUSERS}}''' registered users";
+        $output .= "\n* [[WikiPathways:Statistics|Additional statistics... ]]";
 
-	$output = $parser->recursiveTagParse( $output );
-	return [ $output, 'isHTML' => true, 'noparse' => true, 'nowiki' => true ];
-}
+        $output = $parser->recursiveTagParse( $output );
+        return [ $output, 'isHTML' => true, 'noparse' => true, 'nowiki' => true ];
+    }
 
-public static function getSpecies() {
-	return Pathway::getAvailableSpecies();
-}
+    public static function getSpecies() {
+        return Pathway::getAvailableSpecies();
+    }
 
 }
