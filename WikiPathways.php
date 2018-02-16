@@ -34,31 +34,6 @@ $wgUploadPath = "{$wgScriptPath}/images";
 $wgResourceBasePath = $wgScriptPath;
 $wgUsePathInfo = false;
 
-wfLoadExtensions( [
-	"Cite",
-	"ConfirmEdit",
-	"ConfirmEdit/QuestyCaptcha",
-	"CodeEditor",
-	"EmbedVideo",
-	"Gadgets",
-	"GPML",
-	"GPMLConverter",
-	"IFrame",
-	"ImageMap",
-	"InputBox",
-	"Interwiki",
-	"LabeledSectionTransclusion",
-	"Nuke",
-	"ParserFunctions",
-	"Renameuser",
-	"RSS",
-	"SyntaxHighlight_GeSHi",
-	"TitleBlacklist",
-	"UserLoginLog",
-	"UserSnoop",
-	"WikiEditor",
-	"WikiPathways"
-] );
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
 require_once "$IP/extensions/UserMerge/UserMerge.php";
@@ -447,3 +422,28 @@ function jsSearchPathways( $pageId, $species, $ids, $codes, $type ) {
 function jsGetResults( $batch, $searchId ) {
 	return \WikiPathways\SearchPathwaysAjax::getResults( $batch, $searchId );
 }
+wfLoadExtensions( [
+	"Cite",
+	"ConfirmEdit",
+	"ConfirmEdit/QuestyCaptcha",
+	"CodeEditor",
+	"EmbedVideo",
+	"Gadgets",
+	"GPML",
+	"GPMLConverter",
+	"IFrame",
+	"ImageMap",
+	"InputBox",
+	"Interwiki",
+	"LabeledSectionTransclusion",
+	"Nuke",
+	"ParserFunctions",
+	"Renameuser",
+	"RSS",
+	"SyntaxHighlight_GeSHi",
+	"TitleBlacklist",
+	"UserLoginLog",
+	"UserSnoop",
+	"WikiEditor",
+	"WikiPathways"
+] );
