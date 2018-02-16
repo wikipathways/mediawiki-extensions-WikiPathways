@@ -21,7 +21,7 @@ class Statistics {
 	/*
 	 * Loads javascript required for statistics.
 	 */
-	function loadStatistics( &$parser ) {
+	public static function loadStatistics( &$parser ) {
 		global $wgOut;
 
 		$src = WPI_URL . "/statistics/statistics.js";
