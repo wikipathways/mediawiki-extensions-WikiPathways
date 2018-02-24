@@ -30,7 +30,10 @@ class DataSourcesCache {
 	static $content = null;
 
 	public static function getFilename() {
-		return WPI_CACHE_PATH . "/" . self::$file;
+		if ( !file_exists( WPI_CACHE_DIR ) ) {
+			wfMkdirParents( WPI_CACHE_DIR );
+		}
+		return WPI_CACHE_DIR . "/" . self::$file;
 	}
 
 	public static function update() {

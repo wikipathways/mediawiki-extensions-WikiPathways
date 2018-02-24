@@ -191,7 +191,7 @@ class StatisticsCache {
 	private static function writeGeneCache( $data ) {
 		global $wgScriptPath;
 		// write all data in $data back to the file again
-		$filename = WPI_CACHE_PATH . '/UniqueGeneCounts.data';
+		$filename = WPI_CACHE_DIR . '/UniqueGeneCounts.data';
 		$file = fopen( $filename, 'w+' );
 		foreach ( $data as $key => $c ) {
 				fwrite( $file, "$key\t$c\n" );
@@ -210,7 +210,7 @@ class StatisticsCache {
 		// read contents of the cache into variable $data
 		$data = [];
 
-		$filename = WPI_CACHE_PATH . '/UniqueGeneCounts.data';
+		$filename = WPI_CACHE_DIR . '/UniqueGeneCounts.data';
 		$file = @fopen( $filename, 'r' );
 		if ( $file ) {
 			while ( !feof( $file ) ) {
@@ -220,7 +220,7 @@ class StatisticsCache {
 				}
 			}
 		} else {
-			wfDebug( "UniqueGeneCounts.data isn't in " . WPI_CACHE_PATH );
+			wfDebug( "UniqueGeneCounts.data isn't in " . WPI_CACHE_DIR );
 		}
 		return $data;
 	}
@@ -229,7 +229,7 @@ class StatisticsCache {
 		global $wgScriptPath;
 
 		// write all data in $data back to the file again
-		$filename = WPI_CACHE_PATH . '/PathwayCounts.data';
+		$filename = WPI_CACHE_DIR . '/PathwayCounts.data';
 
 		$file = @fopen( $filename, 'w+' );
 		if ( $file === false ) {
@@ -253,7 +253,7 @@ class StatisticsCache {
 		// read contents of the cache into variable $data
 		$data = [];
 
-		$filename = WPI_CACHE_PATH . '/PathwayCounts.data';
+		$filename = WPI_CACHE_DIR . '/PathwayCounts.data';
 		$file = @fopen( $filename, 'r' );
 		if ( $file ) {
 				while ( !feof( $file ) ) {
@@ -266,44 +266,44 @@ class StatisticsCache {
 		return $data;
 	}
 
-    public static function getSiteStats( &$parser, $tableAttr ) {
-        $nrPathways = self::howManyPathways( 'total' );
-        $output = "* There are '''{$nrPathways}''' pathways";
+	public static function getSiteStats( &$parser, $tableAttr ) {
+		$nrPathways = self::howManyPathways( 'total' );
+		$output = "* There are '''{$nrPathways}''' pathways";
 
-        if ( ! is_dir( WPI_CACHE_PATH ) && ! wfMkdirParents( WPI_CACHE_PATH ) ) {
-            wfDebug( "Can't create: " . WPI_CACHE_PATH );
-            throw new Exception( "Can't create WPI_CACHE_PATH!" );
-        }
+		if ( ! is_dir( WPI_CACHE_DIR ) && ! wfMkdirParents( WPI_CACHE_DIR ) ) {
+			wfDebug( "Can't create: " . WPI_CACHE_DIR );
+			throw new Exception( "Can't create WPI_CACHE_DIR!" );
+		}
 
-        $table = <<<EOD
+		$table = <<<EOD
 
 * Number of '''pathways''' ''(and unique genes)'' per species:
 {| align="center" $tableAttr
 EOD;
-        foreach ( Pathway::getAvailableSpecies() as $species ) {
-            $nr = self::howManyPathways( $species );
-            $genes = self::howManyUniqueGenes( $species );
-            if ( $nr > 0 ) {  // skip listing species with 0 pathways
-                $table .= <<<EOD
+		foreach ( Pathway::getAvailableSpecies() as $species ) {
+			$nr = self::howManyPathways( $species );
+			$genes = self::howManyUniqueGenes( $species );
+			if ( $nr > 0 ) {  // skip listing species with 0 pathways
+				$table .= <<<EOD
 
 |-align="left"
 |$species:
 |'''$nr'''
 |''($genes)''
 EOD;
-            }
-        }
-        $table .= "\n|}";
-        $output .= $table;
-        // $output .= "\n* There are '''{{NUMBEROFUSERS}}''' registered users";
-        $output .= "\n* [[WikiPathways:Statistics|Additional statistics... ]]";
+			}
+		}
+		$table .= "\n|}";
+		$output .= $table;
+		// $output .= "\n* There are '''{{NUMBEROFUSERS}}''' registered users";
+		$output .= "\n* [[WikiPathways:Statistics|Additional statistics... ]]";
 
-        $output = $parser->recursiveTagParse( $output );
-        return [ $output, 'isHTML' => true, 'noparse' => true, 'nowiki' => true ];
-    }
+		$output = $parser->recursiveTagParse( $output );
+		return [ $output, 'isHTML' => true, 'noparse' => true, 'nowiki' => true ];
+	}
 
-    public static function getSpecies() {
-        return Pathway::getAvailableSpecies();
-    }
+	public static function getSpecies() {
+		return Pathway::getAvailableSpecies();
+	}
 
 }

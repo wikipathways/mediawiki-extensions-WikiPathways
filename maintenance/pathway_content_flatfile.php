@@ -16,8 +16,8 @@ $mappingPref = $o["m"]; //'true';// $o->["mapping"]; // 'on'; //$_REQUEST['mappi
 
 //Try to use a cached file if possible
 //Always use cached if present. Updated by weekly cron script.
-$cacheFile = WPI_CACHE_PATH . "/wikipathways_data_$species.$outputFormat";
-if($mappingPref == "off"){$cacheFile = WPI_CACHE_PATH . "/wikipathways_native_data_$species.$outputFormat";}
+$cacheFile = WPI_CACHE_DIR . "/wikipathways_data_$species.$outputFormat";
+if($mappingPref == "off"){$cacheFile = WPI_CACHE_DIR . "/wikipathways_native_data_$species.$outputFormat";}
 
 // all else...
 generateContent($species); //Update cache
@@ -26,7 +26,7 @@ returnCached();
 function returnCached() {
 	global $cacheFile;
 	//Redirect to cached url
-	$url = WPI_CACHE_URL . '/' . basename($cacheFile);
+	$url = WPI_CACHE_PATH . '/' . basename($cacheFile);
 	ob_start();
 	ob_clean();
 	header("Location: $url");

@@ -68,16 +68,12 @@ $wpiPathName = '/extensions/WikiPathways';
 // temp path name
 $wpiTmpName = 'tmp';
 
-// cache path name
-$wpiCacheName = 'cache';
-
 $wpiScriptFile = 'wpi.php';
 $wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
 $wpiScriptPath = realpath( __DIR__ );
 $wpiScript = "$wpiScriptPath/$wpiScriptFile";
 $wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
 $wpiURL = "$siteURL$wpiPathName";
-$wpiCachePath = "$wpiScriptPath/$wpiCacheName";
 
 // File types
 define( "FILETYPE_IMG", "svg" );
@@ -108,8 +104,8 @@ define( "SITE_URL", $siteURL );
 define( "WPI_URL",  $wpiURL );
 define( "WPI_SCRIPT_URL", WPI_URL . '/' . $wpiScriptFile );
 define( "WPI_TMP_URL", WPI_URL . '/' . $wpiTmpName );
-define( "WPI_CACHE_PATH", $wpiCachePath );
-define( "WPI_CACHE_URL", WPI_URL . '/' . $wpiCacheName );
+define( "WPI_CACHE_DIR", "$IP/images/wpi/cache" );
+define( "WPI_CACHE_DIR", "$wgScriptPath/images/wpi/cache" );
 
 // JS info
 define( "JS_SRC_EDITAPPLET", $wgScriptPath . "/wpi/js/editapplet.js" );
@@ -124,7 +120,6 @@ define( 'COMMENT_WP_CATEGORY', 'WikiPathways-category' );
 define( 'COMMENT_WP_DESCRIPTION', 'WikiPathways-description' );
 
 ini_set( 'memory_limit', '2048M' );
-
 
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
@@ -150,9 +145,9 @@ require_once "PrivatePathways/ListPrivatePathways.php";
 require_once "PrivatePathways/PrivateContributions.php";
 require_once "ontologyindex/ontologyindex.php";
 require_once "StubManager/StubManager.php";
-require_once "SecureHTML/SecureHTML.php";
-require_once "PageEditor/PageEditor.php";
-require_once "PullPages/PullPages.php";
+//require_once "SecureHTML/SecureHTML.php";
+//require_once "PageEditor/PageEditor.php";
+//require_once "PullPages/PullPages.php";
 
 $wfSearchPagePath = WPI_URL . "/extensions/SearchPathways";
 $wgCaptchaClass = 'QuestyCaptcha';

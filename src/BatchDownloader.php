@@ -117,7 +117,7 @@ class BatchDownloader {
 		// Filter out illegal chars
 		$fileName = preg_replace( "/[\/\?\<\>\\\:\*\|\[\]]/", '-', $fileName );
 
-		return WPI_CACHE_PATH . "/" . $fileName;
+		return WPI_CACHE_DIR . "/" . $fileName;
 	}
 
 	private function getCached() {
@@ -300,7 +300,7 @@ class BatchDownloader {
 
 	function doDownload( $file ) {
 		// redirect to the cached file
-		$url = WPI_CACHE_URL . '/' . basename( $file );
+		$url = WPI_CACHE_PATH . '/' . basename( $file );
 		ob_start();
 		ob_clean();
 		header( "Location: $url" );

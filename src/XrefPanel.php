@@ -73,7 +73,7 @@ class XrefPanel {
 			$js[] = 'XrefPanel_lookupAttributes = false;';
 		}
 
-		$bridge = "XrefPanel_dataSourcesUrl = '" . WPI_CACHE_URL
+		$bridge = "XrefPanel_dataSourcesUrl = '" . WPI_CACHE_PATH
 		. "/datasources.txt';\n";
 
 		if ( $wpiBridgeUrl !== false ) {
