@@ -35,9 +35,13 @@ class Pathway {
 	public static $DELETE_PREFIX = "Deleted pathway: ";
 
 	private static $fileTypes = [
-		FILETYPE_IMG => FILETYPE_IMG,
-		FILETYPE_GPML => FILETYPE_GPML,
-		FILETYPE_PNG => FILETYPE_IMG,
+		FILETYPE_PDF =>FILETYPE_PDF,
+		FILETYPE_PWF =>FILETYPE_PWF,
+		FILETYPE_TXT =>FILETYPE_TXT,
+		FILETYPE_BIOPAX =>FILETYPE_BIOPAX,
+		FILETYPE_IMG =>FILETYPE_IMG,
+		FILETYPE_GPML =>FILETYPE_GPML,
+		FILETYPE_PNG =>FILETYPE_IMG,
 	];
 
 	// The title object for the pathway page
@@ -117,7 +121,7 @@ class Pathway {
 	 * @deprecated This constructor will be removed after the
 	 * transision to stable identifiers.
 	 * @return Pathway
-	*/
+	 */
 	public static function newFromName(
 		$name, $species, $updateCache = false
 	) {
@@ -561,7 +565,7 @@ class Pathway {
 	 */
 	public function getName( $textForm = true ) {
 		if ( $this->exists() ) {
-			 // Only use cache if this pathway exists
+			// Only use cache if this pathway exists
 			return $this->getMetaDataCache()->getValue(
 				MetaDataCache::$FIELD_NAME
 			);
@@ -780,9 +784,9 @@ class Pathway {
 		}
 		global $wgScriptPath;
 		return $wgScriptPath
-						 . wfLocalFile(
-							 $this->getFileName( $fileType )
-						 )->getUrl();
+			. wfLocalFile(
+				$this->getFileName( $fileType )
+			)->getUrl();
 	}
 
 	/**
@@ -904,7 +908,7 @@ class Pathway {
 		 * it is untested.  Leaving it here because I couldn't find
 		 * any use of this function. */
 		$rev = Revision::loadFromTimestamp( wfGetDB( DB_SLAVE ),
-			$this->getTitleObject(), $timestamp );
+											$this->getTitleObject(), $timestamp );
 		return $rev->getPrevious();
 
 		$revs = Revision::fetchAllRevisions( $this->getTitleObject() );
@@ -1190,20 +1194,20 @@ class Pathway {
 			$return .= str_repeat( '-', $error->column ) . "^\n";
 
 			switch ( $error->level ) {
-				case LIBXML_ERR_WARNING:
-					$return .= "Warning $error->code: ";
-					break;
-				case LIBXML_ERR_ERROR:
-					$return .= "Error $error->code: ";
-					break;
-				case LIBXML_ERR_FATAL:
-					$return .= "Fatal Error $error->code: ";
-					break;
+			case LIBXML_ERR_WARNING:
+				$return .= "Warning $error->code: ";
+				break;
+			case LIBXML_ERR_ERROR:
+				$return .= "Error $error->code: ";
+				break;
+			case LIBXML_ERR_FATAL:
+				$return .= "Fatal Error $error->code: ";
+				break;
 			}
 
 			$return .= trim( $error->message ) .
-				"\n  Line: $error->line" .
-				"\n  Column: $error->column";
+					"\n  Line: $error->line" .
+					"\n  Column: $error->column";
 
 			if ( $error->file ) {
 				$return .= "\n  File: $error->file";

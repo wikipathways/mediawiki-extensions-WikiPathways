@@ -66,11 +66,6 @@ class Hook {
 		);
 
 		XrefPanel::addXrefPanelScripts();
-
-		Pathway::registerFileType( FILETYPE_PDF );
-		Pathway::registerFileType( FILETYPE_PWF );
-		Pathway::registerFileType( FILETYPE_TXT );
-		Pathway::registerFileType( FILETYPE_BIOPAX );
 	}
 
 	public static function pathwayMagic( &$magicWords, $langCode ) {

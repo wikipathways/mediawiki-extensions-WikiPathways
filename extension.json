@@ -108,6 +108,7 @@
 		"WikiPathways\\Hook::pathwayViewer"
 	],
 	"Hooks": {
+		"AbortNewAccount": "abortOnBadDomain",
 		"ParserAfterTidy": [
 			"WikiPathways\\OntologyTags::onHeader"
 		],

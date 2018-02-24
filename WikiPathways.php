@@ -23,9 +23,37 @@
 # Passwords and secrets and such
 require_once "$IP/../pass.php";
 
-ini_set( 'memory_limit', '2048M' );
+wfLoadExtensions( [
+	"Cite",
+	"ConfirmEdit",
+	"ConfirmEdit/QuestyCaptcha",
+	"CodeEditor",
+	"EmbedVideo",
+	"Gadgets",
+	"GPML",
+	"GPMLConverter",
+	"IFrame",
+	"ImageMap",
+	"InputBox",
+	"Interwiki",
+	"LabeledSectionTransclusion",
+	"Nuke",
+	"ParserFunctions",
+	"Renameuser",
+	"RSS",
+	"SyntaxHighlight_GeSHi",
+	"TitleBlacklist",
+	"UserLoginLog",
+	"UserSnoop",
+	"WikiEditor",
+	"WikiPathways"
+] );
+
 $wgDBname = "wikipathways";
 $wgDBuser = "wikiuser";
+
+$host = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : "www.wikipathways.org";
+$siteURL = "//$host";
 
 $wgScriptPath = "";
 $wgExtensionAssetsPath = "{$wgScriptPath}/extensions";
@@ -33,6 +61,70 @@ $wgStylePath = "{$wgScriptPath}/skins";
 $wgUploadPath = "{$wgScriptPath}/images";
 $wgResourceBasePath = $wgScriptPath;
 $wgUsePathInfo = false;
+
+// pathname containing wpi script
+$wpiPathName = '/extensions/WikiPathways';
+
+// temp path name
+$wpiTmpName = 'tmp';
+
+// cache path name
+$wpiCacheName = 'cache';
+
+$wpiScriptFile = 'wpi.php';
+$wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
+$wpiScriptPath = realpath( __DIR__ );
+$wpiScript = "$wpiScriptPath/$wpiScriptFile";
+$wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
+$wpiURL = "$siteURL$wpiPathName";
+$wpiCachePath = "$wpiScriptPath/$wpiCacheName";
+
+// File types
+define( "FILETYPE_IMG", "svg" );
+define( "FILETYPE_GPML", "gpml" );
+define( "FILETYPE_MAPP", "mapp" );
+define( "FILETYPE_PNG", "png" );
+define( "FILETYPE_PDF", "pdf" );
+define( "FILETYPE_PWF", "pwf" );
+define( "FILETYPE_TXT", "txt" );
+define( "FILETYPE_BIOPAX", "owl" );
+
+# Custom namespaces
+// NS_PATHWAY is same as NS_GPML since refactoring
+define( "NS_WISHLIST_TALK", 105 );
+define( "NS_PORTAL", 106 );
+define( "NS_PORTAL_TALK", 107 );
+define( "NS_QUESTION", 108 );
+define( "NS_QUESTION_TALK", 109 );
+
+define( "NS_GPML", 102 );
+define( "NS_GPML_TALK", 103 );
+define( "NS_WISHLIST", 104 );
+
+define( "WPI_SCRIPT_PATH", $wpiScriptPath );
+define( "WPI_SCRIPT", $wpiScript );
+define( "WPI_TMP_PATH", $wpiTmpPath );
+define( "SITE_URL", $siteURL );
+define( "WPI_URL",  $wpiURL );
+define( "WPI_SCRIPT_URL", WPI_URL . '/' . $wpiScriptFile );
+define( "WPI_TMP_URL", WPI_URL . '/' . $wpiTmpName );
+define( "WPI_CACHE_PATH", $wpiCachePath );
+define( "WPI_CACHE_URL", WPI_URL . '/' . $wpiCacheName );
+
+// JS info
+define( "JS_SRC_EDITAPPLET", $wgScriptPath . "/wpi/js/editapplet.js" );
+define( "JS_SRC_RESIZE", $wgScriptPath . "/wpi/js/resize.js" );
+define( "JS_SRC_PROTOTYPE", $wgScriptPath . "/wpi/js/prototype.js" );
+
+// User account for maintenance scripts
+define( "USER_MAINT_BOT", "MaintBot" );
+
+// WikiPathways data
+define( 'COMMENT_WP_CATEGORY', 'WikiPathways-category' );
+define( 'COMMENT_WP_DESCRIPTION', 'WikiPathways-description' );
+
+ini_set( 'memory_limit', '2048M' );
+
 
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
@@ -192,17 +284,6 @@ $wgSVGConverters['inkscape'] = '$path/inkscape -z -b white -w $width -f $input -
 # Allow direct linking to external images (so we don't have to upload them to the wiki)
 $wgAllowExternalImages = true;
 
-# Custom namespaces
-// NS_PATHWAY is same as NS_GPML since refactoring
-define( "NS_WISHLIST_TALK", 105 );
-define( "NS_PORTAL", 106 );
-define( "NS_PORTAL_TALK", 107 );
-define( "NS_QUESTION", 108 );
-define( "NS_QUESTION_TALK", 109 );
-
-define( "NS_GPML", 102 );
-define( "NS_GPML_TALK", 103 );
-define( "NS_WISHLIST", 104 );
 $wgExtraNamespaces[100]              = "Pw_Old";
 $wgExtraNamespaces[101]              = "Pw_Old_Talk";
 $wgExtraNamespaces[NS_WISHLIST]      = "Wishlist";
@@ -309,8 +390,6 @@ $wgGroupPermissions[ 'webservice' ][ 'webservice_write'      ] = true;
 $wgGroupPermissions[ 'portal'     ][ 'portal-edit'           ] = true;
 $wgGroupPermissions[ 'portal'     ][ 'portal-tlk-edt'        ] = true;
 
-$wgHooks['AbortNewAccount'][] = 'abortOnBadDomain';
-
 $wgEnableEmail      = true;
 $wgEnableUserEmail  = true;
 
@@ -357,59 +436,6 @@ $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTags";
 $wgAjaxExportList[] = "jsGetResults";
 $wgAjaxExportList[] = "jsSearchPathways";
 
-// File types
-define( "FILETYPE_IMG", "svg" );
-define( "FILETYPE_GPML", "gpml" );
-define( "FILETYPE_MAPP", "mapp" );
-define( "FILETYPE_PNG", "png" );
-define( "FILETYPE_PDF", "pdf" );
-define( "FILETYPE_PWF", "pwf" );
-define( "FILETYPE_TXT", "txt" );
-define( "FILETYPE_BIOPAX", "owl" );
-
-// pathname containing wpi script
-$wpiPathName = '/extensions/WikiPathways';
-
-// temp path name
-$wpiTmpName = 'tmp';
-
-// cache path name
-$wpiCacheName = 'cache';
-
-$wpiScriptFile = 'wpi.php';
-$wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
-$wpiScriptPath = realpath( __DIR__ );
-$wpiScript = "$wpiScriptPath/$wpiScriptFile";
-$wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
-
-$host = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : "www.wikipathways.org";
-$siteURL = "//$host";
-
-$wpiURL = "$siteURL$wpiPathName";
-$wpiCachePath = "$wpiScriptPath/$wpiCacheName";
-
-define( "WPI_SCRIPT_PATH", $wpiScriptPath );
-define( "WPI_SCRIPT", $wpiScript );
-define( "WPI_TMP_PATH", $wpiTmpPath );
-define( "SITE_URL", $siteURL );
-define( "WPI_URL",  $wpiURL );
-define( "WPI_SCRIPT_URL", WPI_URL . '/' . $wpiScriptFile );
-define( "WPI_TMP_URL", WPI_URL . '/' . $wpiTmpName );
-define( "WPI_CACHE_PATH", $wpiCachePath );
-define( "WPI_CACHE_URL", WPI_URL . '/' . $wpiCacheName );
-
-// JS info
-define( "JS_SRC_EDITAPPLET", $wgScriptPath . "/wpi/js/editapplet.js" );
-define( "JS_SRC_RESIZE", $wgScriptPath . "/wpi/js/resize.js" );
-define( "JS_SRC_PROTOTYPE", $wgScriptPath . "/wpi/js/prototype.js" );
-
-// User account for maintenance scripts
-define( "USER_MAINT_BOT", "MaintBot" );
-
-// WikiPathways data
-define( 'COMMENT_WP_CATEGORY', 'WikiPathways-category' );
-define( 'COMMENT_WP_DESCRIPTION', 'WikiPathways-description' );
-
 // FIXME this is here because the shim needs to be in a global context
 function jsGetAuthors( $pageId, $limit = '', $includeBots = false ) {
 	return \WikiPathways\GPML\AuthorInfoList::jsGetAuthors( $pageId, $limit, $includeBots );
@@ -422,28 +448,3 @@ function jsSearchPathways( $pageId, $species, $ids, $codes, $type ) {
 function jsGetResults( $batch, $searchId ) {
 	return \WikiPathways\SearchPathwaysAjax::getResults( $batch, $searchId );
 }
-wfLoadExtensions( [
-	"Cite",
-	"ConfirmEdit",
-	"ConfirmEdit/QuestyCaptcha",
-	"CodeEditor",
-	"EmbedVideo",
-	"Gadgets",
-	"GPML",
-	"GPMLConverter",
-	"IFrame",
-	"ImageMap",
-	"InputBox",
-	"Interwiki",
-	"LabeledSectionTransclusion",
-	"Nuke",
-	"ParserFunctions",
-	"Renameuser",
-	"RSS",
-	"SyntaxHighlight_GeSHi",
-	"TitleBlacklist",
-	"UserLoginLog",
-	"UserSnoop",
-	"WikiEditor",
-	"WikiPathways"
-] );
