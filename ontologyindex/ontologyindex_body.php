@@ -15,25 +15,23 @@ class ontologyindex extends SpecialPage {
 
 	function init() {
 		global $wgOut, $wgRequest, $wgOntologiesJSON, $wgStylePath;
-		$opath = WPI_URL . "/extensions/ontologyindex";
 		$mode = $wgRequest->getVal( 'mode' );
 		$mode = ( $mode == "" ) ? "list" : $mode;
 
 		$oldStylePath = $wgStylePath;
-		$wgStylePath = $opath;
 		$wgOut->addStyle( "otagindex.css" );
-
-		$wgOut->addScript( '<script type="text/javascript" src="' . $opath . '/yui.js"></script>' );
+		// Update with resourceloader if used
+		// $wgOut->addScript( '<script type="text/javascript" src="' . $opath . '/yui.js"></script>' );
 		$wgOut->addHTML( "<div id='index_container'></div>" );
-		$wgOut->addScript(
-			"<script type='text/javascript'>var opath=\"$opath\";
-			var page_mode = \"$mode\";
-			var ontologiesJSON = '$wgOntologiesJSON';
-			</script>"
-		);
+		// $wgOut->addScript(
+		// 	"<script type='text/javascript'>var opath=\"$opath\";
+		// 	var page_mode = \"$mode\";
+		// 	var ontologiesJSON = '$wgOntologiesJSON';
+		// 	</script>"
+		// );
 
 		$wgStylePath = $oldStylePath;
 
-		$wgOut->addScript( "<script type='text/javascript' src='$opath/ontologyindex.js'></script>" );
+		// $wgOut->addScript( "<script type='text/javascript' src='$opath/ontologyindex.js'></script>" );
 	}
 }

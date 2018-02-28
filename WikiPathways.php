@@ -105,7 +105,7 @@ define( "WPI_URL",  $wpiURL );
 define( "WPI_SCRIPT_URL", WPI_URL . '/' . $wpiScriptFile );
 define( "WPI_TMP_URL", WPI_URL . '/' . $wpiTmpName );
 define( "WPI_CACHE_DIR", "$IP/images/wpi/cache" );
-define( "WPI_CACHE_DIR", "$wgScriptPath/images/wpi/cache" );
+define( "WPI_CACHE_PATH", "$wgScriptPath/images/wpi/cache" );
 
 // JS info
 define( "JS_SRC_EDITAPPLET", $wgScriptPath . "/wpi/js/editapplet.js" );
@@ -145,9 +145,8 @@ require_once "PrivatePathways/ListPrivatePathways.php";
 require_once "PrivatePathways/PrivateContributions.php";
 require_once "ontologyindex/ontologyindex.php";
 require_once "StubManager/StubManager.php";
-//require_once "SecureHTML/SecureHTML.php";
-//require_once "PageEditor/PageEditor.php";
-//require_once "PullPages/PullPages.php";
+// require_once( "SecureHTML/SecureHTML.php" );
+// require_once( "PullPages/PullPages.php" );
 
 $wfSearchPagePath = WPI_URL . "/extensions/SearchPathways";
 $wgCaptchaClass = 'QuestyCaptcha';
@@ -428,6 +427,7 @@ $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::removeTag";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getAvailableTags";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagHistory";
 $wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTags";
+$wgAjaxExportList[] = "WikiPathways\\PageEditor::save";
 $wgAjaxExportList[] = "jsGetResults";
 $wgAjaxExportList[] = "jsSearchPathways";
 

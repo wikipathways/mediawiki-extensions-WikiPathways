@@ -36,6 +36,8 @@ class Hook {
 		);
 		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
 		$wgParser->setHook( "OntologyTags", "WikiPathways\\OntologyTags::tag" );
+		$wgParser->setHook( "pageEditor", "WikiPathways\\PageEditor::display" );
+
 		$wgParser->setHook(
 			"CurationTags", "WikiPathways\\CurationTag::displayCurationTags"
 		);

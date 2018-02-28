@@ -24,6 +24,8 @@ class Statistics {
 	public static function loadStatistics( &$parser ) {
 		global $wgOut;
 
+		throw new \MWException( "I need to be using ResourceLoader" );
+		// WPI_URL here should use MW loading mechanisms instead
 		$src = WPI_URL . "/statistics/statistics.js";
 		$parser->mOutput->addHeadItem(
 			"<script src=\"https://www.google.com/jsapi\" type=\"text/javascript\"></script>\n" );

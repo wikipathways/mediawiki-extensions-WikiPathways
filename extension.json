@@ -94,6 +94,7 @@
 		"WikiPathways\\RecentPathwayChanges": "src/RecentPathwayChanges.php",
 		"WikiPathways\\MagicWord": "src/MagicWord.php",
 		"WikiPathways\\Pathway": "src/Pathway.php",
+		"WikiPathways\\PageEditor": "src/PageEditor.php",
 		"WikiPathways\\SpecialCurationTags": "src/SpecialCurationTags.php",
 		"WikiPathways\\CreatePathway": "src/CreatePathway.php",
 		"WikiPathways\\PermissionManager": "src/PermissionManager.php",
@@ -148,9 +149,12 @@
 		"remoteExtPath": "WikiPathways/modules"
 	},
 	"ResourceModules": {
-		"wpi.otags": {
+		"wpi.PageEditor": {
+			"scripts": [
+				"PageEditor.js"
+			],
 			"styles": [
-				"otag.css"
+				"PageEditor.css"
 			]
 		},
 		"wpi.CurationTags": {
@@ -186,25 +190,6 @@
 			],
 			"styles": [
 				"jquery-ui-1.8.10.custom.css"
-			]
-		},
-		"wpi.OntologyTags": {
-			"scripts": [
-				"otag_script.js"
-			],
-			"styles": []
-		},
-		"wpi.OntCanEdit": {
-			"scripts": [
-				"yui2.7.0.allcomponents.js"
-			],
-			"styles": [
-				"yui2.7.0.css"
-			]
-		},
-		"wpi.OntNoEdit": {
-			"scripts": [
-				"yui2.7.0.mincomponents.js"
 			]
 		},
 		"wpi.CurationTags": {
