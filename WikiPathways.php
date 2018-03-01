@@ -74,9 +74,11 @@ $wpiScriptPath = realpath( __DIR__ );
 $wpiScript = "$wpiScriptPath/$wpiScriptFile";
 $wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
 $wpiURL = "$siteURL$wpiPathName";
+$wpiFileCache = "$IP/images/wikipathways";
 
 // File types
 define( "FILETYPE_IMG", "svg" );
+define( "FILETYPE_JSON", "json" );
 define( "FILETYPE_GPML", "gpml" );
 define( "FILETYPE_MAPP", "mapp" );
 define( "FILETYPE_PNG", "png" );
