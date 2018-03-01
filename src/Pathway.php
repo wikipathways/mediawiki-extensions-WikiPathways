@@ -34,14 +34,23 @@ class Pathway {
 	public static $ID_PREFIX = 'WP';
 	public static $DELETE_PREFIX = "Deleted pathway: ";
 
+	private static $fileTypesConvertableByPathVisio = array(
+		FILETYPE_GPML => FILETYPE_GPML,
+		FILETYPE_PDF => FILETYPE_PDF,
+		FILETYPE_PNG => FILETYPE_PNG,
+		FILETYPE_PWF => FILETYPE_PWF,
+		FILETYPE_TXT => FILETYPE_TXT,
+		FILETYPE_BIOPAX => FILETYPE_BIOPAX,
+	);
+
 	private static $fileTypes = [
-		FILETYPE_PDF =>FILETYPE_PDF,
-		FILETYPE_PWF =>FILETYPE_PWF,
-		FILETYPE_TXT =>FILETYPE_TXT,
-		FILETYPE_BIOPAX =>FILETYPE_BIOPAX,
-		FILETYPE_IMG =>FILETYPE_IMG,
-		FILETYPE_GPML =>FILETYPE_GPML,
-		FILETYPE_PNG =>FILETYPE_IMG,
+		FILETYPE_PDF => FILETYPE_PDF,
+		FILETYPE_PWF => FILETYPE_PWF,
+		FILETYPE_TXT => FILETYPE_TXT,
+		FILETYPE_BIOPAX => FILETYPE_BIOPAX,
+		FILETYPE_IMG => FILETYPE_IMG,
+		FILETYPE_GPML => FILETYPE_GPML,
+		FILETYPE_PNG => FILETYPE_IMG,
 	];
 
 	// The title object for the pathway page
@@ -70,8 +79,8 @@ class Pathway {
 	 * @param int $id The pathway identifier
 	 * @param bool $updateCache whether to update the cache
 	 */
-	public function __construct( $id, $updateCache = false ) {
-		if ( !$id ) {
+	public function __construct( $id = null, $updateCache = false ) {
+		if ( $id === null ) {
 			throw new Exception(
 				"id argument missing in constructor for Pathway"
 			);
@@ -100,7 +109,7 @@ class Pathway {
 	 * @return int
 	 */
 	public function getPageIdDB() {
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
 			'page', 'page_id',
 			[ 'page_title' => $this->id, 'page_namespace' => NS_PATHWAY ],
@@ -251,7 +260,7 @@ class Pathway {
 	 * will reset all existing permissions.
 	 *
 	 * @param User $user to make pathway private to
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	public function makePrivate( User $user ) {
 		$title = $this->getTitleObject();
@@ -286,8 +295,6 @@ class Pathway {
 	 * @return bool
 	 */
 	public function isReadable() {
-		// After MW 1.19, this form should be used,
-		// but in earlier MW it is buggy.
 		return $this->getTitleObject()->userCan( 'read' );
 	}
 
@@ -344,7 +351,7 @@ class Pathway {
 	 *
 	 * @param bool|string $species a species, all if false
 	 * @return array
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	public static function getAllPathways( $species = false ) {
 		// Check if species is supported
@@ -354,7 +361,7 @@ class Pathway {
 			}
 		}
 		$allPathways = [];
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$ns = NS_PATHWAY;
 		$res = $dbr->select(
 			'page', 'page_title',
@@ -406,7 +413,7 @@ class Pathway {
 	 * Create a new Pathway from the given title
 	 * @param Title $title MW title or the MediaWiki Title object
 	 * @param bool $checkCache whether to check (just?) the cache
-	 * @throw Exception
+	 * @throws Exception
 	 * @return Pathway
 	 *
 	 */
@@ -426,10 +433,11 @@ class Pathway {
 	 * @param Title $title The full title of the pathway file
 	 * (e.g. Hs_Apoptosis.gpml), or the MediaWiki Title object
 	 * @param bool $checkCache whether to check (just?) the cache
-	 * @throw Exception
+	 * @throws Exception
 	 * @return Pathway
 	 */
 	public static function newFromFileTitle( $title, $checkCache = false ) {
+		throw new \MWException( "This is used after all. Change the code or fix the use of ereg, etc, here" );
 		if ( $title instanceof Title ) {
 			$title = $title->getText();
 		}
@@ -683,17 +691,14 @@ class Pathway {
 	 */
 	public function findCaseInsensitive() {
 		$title = strtolower( $this->getTitleObject()->getDbKey() );
-		$dbr =& wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$ns = NS_PATHWAY;
-		$query = "SELECT page_id FROM page
-					WHERE page_namespace = $ns
-					AND page_is_redirect = 0
-					AND LOWER( page_title ) = '$title'";
 		$res = $dbr->select(
 			"page", "page_id",
 			[
-				"page_namespace" => $ns, 'page_is_redirect' => 0,
-				'LOWER( page_title )' => $title
+				"page_namespace" => $ns,
+				"page_is_redirect" => 0,
+				"LOWER( page_title )" => $title
 			], __METHOD__ );
 		$title = null;
 		if ( $res->numRows() > 0 ) {
@@ -718,11 +723,81 @@ class Pathway {
 	}
 
 	/**
+	 * Get the JSON for this pathway, as a string (the active revision will be
+	 * used, see Pathway::getActiveRevision)
+	 * Gets the JSON representation of the GPML code,
+	 * formatted to match the structure of SVG,
+	 * as a string.
+	 * TODO: we aren't caching this
+	 */
+	public function getPvjson() {
+		wfDebug( "getPvjson() called\n" );
+
+		if ( isset( $this->pvjson ) ) {
+			wfDebug( "Returning pvjson from memory\n" );
+			return $this->pvjson;
+		}
+
+		$file = $this->getFileLocation( FILETYPE_JSON, false );
+		if ( $file && file_exists( $file ) ) {
+			wfDebug( "Returning pvjson from cache $file\n" );
+			return file_get_contents( $file );
+		}
+
+		$gpml_path = $this->getFileLocation( FILETYPE_GPML, false );
+		$identifier = $this->getIdentifier();
+		$version = $this->getActiveRevision();
+		$organism = $this->getSpecies();
+
+		$pvjson = GPMLConverter::gpml2pvjson(
+			file_get_contents( $gpml_path ),
+			[ "identifier" => $identifier,
+			  "version" => $version,
+			  "organism" => $organism ]
+		);
+		wfDebug( "Converted gpml to pvjson\n" );
+		$this->pvjson = $pvjson;
+		$this->savePvjsonCache();
+		return $pvjson;
+	}
+
+	/**
+	 * Get the SVG for the given JSON
+	 * TODO: we aren't caching this
+	 */
+	public function getSvg() {
+		wfDebug( "getSvg() called\n" );
+
+		if ( isset( $this->svg ) ) {
+			wfDebug( "Returning svg from memory\n" );
+			return $this->svg;
+		}
+
+		$file = $this->getFileLocation( FILETYPE_IMG, false );
+		if ( $file && file_exists( $file ) ) {
+			wfDebug( "Returning svg from cache $file\n" );
+			return file_get_contents( $file );
+		}
+
+		wfDebug( "need to get pvjson in order to get svg\n" );
+		$pvjson = $this->getPvjson();
+		wfDebug( "got pvjson in process of getting svg\n" );
+		$svg = GPMLConverter::pvjson2svg( $pvjson, [ "static" => false ] );
+		wfDebug( "got svg\n" );
+		$this->svg = $svg;
+		return $svg;
+	}
+
+	/**
+	 * Check if PathVisio-Java can convert from GPML to the given file type
+	 */
+	public static function isConvertableByPathVisio( $fileType ) {
+		return in_array( $fileType, array_keys( self::$fileTypesConvertableByPathVisio ) );
+	}
+
+	/**
 	 * Check if the given file type is valid (a pathway can
 	 * be converted to this file type)
-	 *
-	 * @param string $fileType to check
-	 * @return bool
 	 */
 	public static function isValidFileType( $fileType ) {
 		return in_array( $fileType, array_keys( self::$fileTypes ) );
@@ -730,73 +805,54 @@ class Pathway {
 
 	/**
 	 * Get the filename of a cached file following the naming conventions
-	 *
-	 * @param string $fileType to get the name for (one of the
-	 * FILETYPE_* constants)
-	 * @return string
+	 * @param string $fileType the file type to get the name for (one of the FILETYPE_* constants)
 	 */
 	public function getFileName( $fileType ) {
 		return $this->getFileTitle( $fileType )->getDBKey();
 	}
 
-	/**
-	 * Gets the path that points to the cached file
-	 *
-	 * @param string $fileType the file type to get the name for (one of the
-	 * FILETYPE_* constants)
-	 * @param bool $updateCache whether to update the cache (if needed) or not
-	 * @return string
-	 */
-	public function getFileLocation( $fileType, $updateCache = true ) {
-		global $wgUploadDirectory;
-		$loc = $wgUploadDirectory
-			 .'/'. $this->getFileObj( $fileType, $updateCache )->getURLRel();
-		return $loc;
+	private function getSubdir() {
+		static $hash;
+		if ( !$hash ) {
+			$hash = md5( $this->getIdentifier() );
+		}
+		$subdir = substr( $hash, 0, 2 ) . '/' . substr( $hash, 2, 2 );
+		return $subdir;
+	}
+
+	private function getSubdirAndFile( $fileType ) {
+		$dir = $this->getSubdir();
+		$fn = $this->getFileName( $fileType );
+
+		return "$dir/$fn";
 	}
 
 	/**
-	 * Get a LocalFile object
-	 *
-	 * @param string $fileType to get
-	 * @param bool $updateCache or not
-	 * @return LocalFile
+	 * Gets the path that points to the cached file
+	 * @param string $fileType the file type to get the name for (one of the FILETYPE_* constants)
+	 * @param bool $updateCache whether to update the cache (if needed) or not
 	 */
-	public function getFileObj( $fileType, $updateCache = true ) {
+	public function getFileLocation( $fileType, $updateCache = true ) {
+		// Make sure to have up to date version
 		if ( $updateCache ) {
-			// Make sure to have up to date version
 			$this->updateCache( $fileType );
 		}
-		$fn = $this->getFileName( $fileType );
-		return wfLocalFile( $fn );
+
+		global $wpiFileCache;
+		return $wpiFileCache . $this->getSubdirAndFile( $fileType );
 	}
 
 	/**
 	 * Gets the url that points to the the cached file
 	 *
-	 * @param string $fileType the file type to get the name for (one of the
-	 * FILETYPE_* constants)
+	 * @param string $fileType the file type to get the name for (one of the FILETYPE_* constants)
 	 * @param bool $updateCache whether to update the cache (if needed) or not
-	 * @return string
 	 */
 	public function getFileURL( $fileType, $updateCache = true ) {
 		if ( $updateCache ) {
 			$this->updateCache( $fileType );
 		}
-		global $wgScriptPath;
-		return $wgScriptPath
-			. wfLocalFile(
-				$this->getFileName( $fileType )
-			)->getUrl();
-	}
-
-	/**
-	 * Register a file type that can be exported to
-	 * (needs to be supported by the GPML exporter)
-	 *
-	 * @param string $fileType to register
-	 */
-	public static function registerFileType( $fileType ) {
-		self::$fileTypes[$fileType] = $fileType;
+		return $wgScriptPath . $this->getFileLocation( $fileType );
 	}
 
 	/**
@@ -808,7 +864,7 @@ class Pathway {
 	 *
 	 * @param string $fileType to get
 	 * @return Title
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	public function getFileTitle( $fileType ) {
 		// Append revision number if it's not the most recent
@@ -816,16 +872,10 @@ class Pathway {
 		if ( $this->revision ) {
 			$rev_stuffix = "_" . $this->revision;
 		}
-		$title = Title::newFromText(
+		return Title::newFromText(
 			$this->getIdentifier() . $rev_stuffix . "." . $fileType,
 			NS_IMAGE
 		);
-		if ( !$title ) {
-			throw new Exception(
-				"Invalid file title for pathway " . $fileName
-			);
-		}
-		return $title;
 	}
 
 	/**
@@ -843,7 +893,7 @@ class Pathway {
 	 * filtered out (e.g. Hs_Apoptosis for Human:Apoptosis)
 	 *
 	 * @return string
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	public function getFilePrefix() {
 		$prefix = $this->getSpeciesCode() . "_" . $this->getName();
@@ -860,7 +910,7 @@ class Pathway {
 		 */
 		$filtered = preg_replace( "/[\/\?\<\>\\\:\*\|\[\]]/", '-', $prefix );
 
-		$title = Title::newFromText( $filtered, NS_IMAGE );
+		$title = Title::newFromText( $filtered, NS_FILE );
 		if ( !$title ) {
 			throw new Exception(
 				"Invalid file title for pathway " + $fileName
@@ -907,7 +957,7 @@ class Pathway {
 		/* This code should be more efficient than what was here, but
 		 * it is untested.  Leaving it here because I couldn't find
 		 * any use of this function. */
-		$rev = Revision::loadFromTimestamp( wfGetDB( DB_SLAVE ),
+		$rev = Revision::loadFromTimestamp( wfGetDB( DB_REPLICA ),
 											$this->getTitleObject(), $timestamp );
 		return $rev->getPrevious();
 
@@ -980,7 +1030,7 @@ class Pathway {
 
 	private static function generateUniqueId() {
 		// Get the highest identifier
-		$dbr = wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_REPLICA );
 		$ns = NS_PATHWAY;
 		$prefix = self::$ID_PREFIX;
 		$likePrefix = $dbr->buildLike(
@@ -1146,18 +1196,6 @@ class Pathway {
 	];
 
 	/**
-	 * Validate a file
-	 *
-	 * @param string $file with content to validate
-	 * @return null if GPML is valid, error string if its invalid
-	 */
-	static function validateGPMLFile( $file ) {
-		if ( file_exists( $file ) ) {
-			return self::validateGpml( file_get_contents( $file ) );
-		}
-	}
-
-	/**
 	 * Validates the GPML code and returns the error if it's invalid
 	 *
 	 * @param string $gpml content to validate
@@ -1220,7 +1258,7 @@ class Pathway {
 	 * Revert this pathway to an old revision
 	 * @param int $oldId The id of the old revision to revert the
 	 * pathway to
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	public function revert( $oldId ) {
 		global $wgUser, $wgLang;
@@ -1383,6 +1421,8 @@ class Pathway {
 			$this->updateCache( FILETYPE_GPML );
 		}
 
+		global $wpiFileCache;
+		wfMkdirParents( $wpiFileCache . '/' . $this->getSubdir(), null, __METHOD__ );
 		if ( $fileType === null ) {
 			// Update all
 			foreach ( self::$fileTypes as $type ) {
@@ -1392,7 +1432,26 @@ class Pathway {
 		}
 		if ( $this->isOutOfDate( $fileType ) ) {
 			wfDebug( "\t->Updating cached file for $fileType\n" );
-			$this->saveConvertedCache( $fileType );
+			switch ( $fileType ) {
+				case FILETYPE_GPML:
+					$this->saveGpmlCache();
+					break;
+				case FILETYPE_JSON:
+					$this->savePvjsonCache();
+					break;
+				// *
+				case FILETYPE_IMG:
+					$this->saveSvgCache();
+					break;
+				// */
+				/*
+				case FILETYPE_PNG:
+					$this->savePngCache();
+					break;
+				//*/
+				default:
+					$this->saveConvertedByPathVisioCache( $fileType );
+			}
 		}
 	}
 
@@ -1444,7 +1503,7 @@ class Pathway {
 		}
 	}
 
-	private function ensureDir ( $filename ) {
+	private function ensureDir( $filename ) {
 		$dir = dirname( $filename );
 		if ( !file_exists( $dir ) ) {
 			wfMkdirParents( $dir );
@@ -1506,34 +1565,38 @@ class Pathway {
 
 	/**
 	 * Save a cached version of a filetype to be converted
-	 * from GPML
+	 * from GPML, when the conversion is done by PathVisio.
 	 */
-	private function saveConvertedCache( $fileType ) {
-		if ( $fileType === FILETYPE_PNG ) {
-			return $this->savePngCache();
-		} elseif ( $fileType === FILETYPE_GPML ) {
-			return $this->saveGpmlCache();
-		} else {
-			# Convert gpml to fileType
-			$gpmlFile = $this->getFileLocation( FILETYPE_GPML );
-			wfDebug( "Saving $gpmlFile to $fileType" );
-			$conFile = $this->getFileLocation( $fileType, false );
-			self::convert( $gpmlFile, $conFile );
-			return $conFile;
+	private function saveConvertedByPathVisioCache( $fileType ) {
+		# Convert gpml to fileType
+		$gpmlFile = realpath( $this->getFileLocation( FILETYPE_GPML ) );
+		wfDebug( "Saving $gpmlFile to $fileType" );
+		$conFile = $this->getFileLocation( $fileType, false );
+		$dir = dirname( $conFile );
+		if ( !is_dir( $dir ) && !wfMkdirParents( $dir ) ) {
+			throw new MWException( "Couldn't make directory: $dir" );
 		}
+		if ( self::isConvertableByPathVisio( $fileType ) ) {
+			self::convertWithPathVisio( $gpmlFile, $conFile );
+		} else {
+			throw new MWException( "PathVisio couldn't convert file of type \"$fileType\"" );
+		}
+		return $conFile;
 	}
 
 	/**
 	 * Convert the given GPML file to another
-	 * file format. The file format will be determined by the
+	 * file format, using PathVisio-Java. The file format will be determined by the
 	 * output file extension.
 	 *
 	 * @param string $gpmlFile source
 	 * @param string $outFile destination
 	 * @return bool
 	 */
-	public static function convert( $gpmlFile, $outFile ) {
+	public static function convertWithPathVisio( $gpmlFile, $outFile ) {
 		global $wgMaxShellMemory;
+
+		$gpmlFile = realpath( $gpmlFile );
 
 		self::ensureDir( $outFile );
 		$basePath = WPI_SCRIPT_PATH;
@@ -1562,6 +1625,7 @@ class Pathway {
 	}
 
 	private function saveGpmlCache() {
+		wfDebug( "saveGpmlCache() called\n" );
 		$gpml = $this->getGpml();
 		// Only write cache if there is GPML
 		if ( $gpml ) {
@@ -1571,7 +1635,55 @@ class Pathway {
 		}
 	}
 
+	private function savePvjsonCache() {
+		wfDebug( "savePvjsonCache() called\n" );
+		// This function is always called when GPML is converted to pvjson; which is not the case for SVG.
+		$pvjson = $this->pvjson;
+
+		if ( !$pvjson ) {
+			$pvjson = $this->getPvjson();
+		}
+
+		if ( !$pvjson ) {
+			wfDebug( "Invalid pvjson, so cannot savePvjsonCache." );
+			return;
+		}
+
+		$file = $this->getFileLocation( FILETYPE_JSON, false );
+		wfDebug( "savePvjsonCache: Need to write pvjson to $file\n" );
+		writeFile( $file, $pvjson );
+		$ex = file_exists( $file );
+		if ( !$ex ) {
+			throw new Exception( "Unable to save pvjson" );
+		}
+		wfDebug( "PVJSON CACHE SAVED: $file, $ex;\n" );
+	}
+
+	private function saveSvgCache() {
+		wfDebug( "saveSvgCache() called\n" );
+		$gpml_path = $this->getFileLocation( FILETYPE_GPML, false );
+		if ( !$gpml_path || !file_exists( $gpml_path ) ) {
+			throw new MWException( "saveSvgCache() failed: GPML unavailable." );
+		}
+		$svg = $this->getSvg();
+		if ( !$svg ) {
+			wfDebug( "Unable to convert to svg, so cannot saveSvgCache." );
+			return;
+		}
+		$file = $this->getFileLocation( FILETYPE_IMG, false );
+		writeFile( $file, $svg );
+		$ex = file_exists( $file );
+		if ( !$ex ) {
+			throw new Exception( "Unable to save svg" );
+		}
+		wfDebug( "SVG CACHE SAVED: $file, $ex;\n" );
+	}
+
 	private function savePngCache() {
+		// NOTE: Inkscape has an open issue for not supporting
+		// the CSS property dominant-baseline.
+		// https://bugs.launchpad.net/inkscape/+bug/811862
+		wfDebug( "savePngCache() called\n" );
 		global $wgSVGConverters, $wgSVGConverter, $wgSVGConverterPath;
 
 		$input = $this->getFileLocation( FILETYPE_IMG );
@@ -1606,30 +1718,5 @@ class Pathway {
 		}
 		$ex = file_exists( $output );
 		wfDebug( "PNG CACHE SAVED: $output, $ex;\n" );
-	}
-
-	/**
-	 * Get the JSON for the active version of this pathway
-	 *
-	 * @todo we aren't caching this
-	 * @return string the JSON representation of the GPML code,
-	 *     formatted to match the structure of SVG
-	 */
-	public function getPvjson() {
-		if ( !isset( $this->pvjson ) ) {
-			// $gpml_path = $this->getFileLocation( 'gpml', false );
-			// $identifier = $this->getIdentifier();
-			// $version = $this->getActiveRevision();
-			// $organism = $this->getSpecies();
-
-			// $pvjson = GPMLConverter::gpml2pvjson(
-			// 	file_get_contents( $gpml_path ), [
-			// 		"identifier" => $identifier,
-			// 		"version" => $version,
-			// 		"organism" => $organism
-			// 	] );
-			$this->pvjson = [];
-		}
-		return $this->pvjson;
 	}
 }
