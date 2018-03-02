@@ -768,7 +768,6 @@ class Pathway {
 
 	/**
 	 * Get the SVG for the given JSON
-	 * TODO: we aren't caching this
 	 */
 	public function getSvg() {
 		wfDebugLog( "Pathway",  "getSvg() called\n" );
@@ -1636,7 +1635,7 @@ class Pathway {
 				. "<BR>Status:$status\n<BR>Message:$msg\n"
 				. "<BR>Command:$cmd<BR>"
 			);
-			wfDebugLog( "Pathway", 
+			wfDebugLog( "Pathway",
 				"Unable to convert to $outFile:\n"
 				. "<BR>Status:$status\n<BR>Message:$msg\n"
 				. "<BR>Command:$cmd<BR>"

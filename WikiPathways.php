@@ -130,26 +130,6 @@ require_once "$IP/extensions/BiblioPlus/BiblioPlus.php";
 
 wfLoadSkin( "Vector" );
 
-require_once "siteStats.php";
-require_once "imageSize.php";
-require_once "button.php";
-require_once "imageLink.php";
-require_once "listPathways.php";
-require_once "movePathway.php";
-require_once "CreateUserPage.php";
-require_once "LabeledSectionTransclusion/compat.php";
-require_once "LabeledSectionTransclusion/lst.php";
-require_once "LabeledSectionTransclusion/lsth.php";
-require_once "DiffViewer/DiffViewer.php";
-require_once "pathwayParserFunctions.php";
-require_once "PrivatePathways/PrivatePathways.php";
-require_once "PrivatePathways/ListPrivatePathways.php";
-require_once "PrivatePathways/PrivateContributions.php";
-require_once "ontologyindex/ontologyindex.php";
-require_once "StubManager/StubManager.php";
-// require_once( "SecureHTML/SecureHTML.php" );
-// require_once( "PullPages/PullPages.php" );
-
 $wfSearchPagePath = WPI_URL . "/extensions/SearchPathways";
 $wgCaptchaClass = 'QuestyCaptcha';
 
