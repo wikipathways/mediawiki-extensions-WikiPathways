@@ -21,7 +21,6 @@
 	"wpi-createpage-not-logged-in": "You are not logged in.",
 	"wpi-createpage-permission": "You do not have the necessary permissions.",
 	"specialwishlist": "Pathway wishlist",
-	"diffappletpage": "Pathway Difference Viewer (applet)",
 	"curationtags": "Curation tags",
 	"curationtags-no-tags": "No default tags specified!  Please set [[CurationTagsDefinition]] with one default.",
 	"curationtags-multiple-tags": "Multiple default tags specified!  Please set [[CurationTagsDefinition]] with one default.",

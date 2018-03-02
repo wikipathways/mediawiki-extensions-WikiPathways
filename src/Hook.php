@@ -52,9 +52,6 @@ class Hook {
 			"pwImage", "WikiPathways\\PathwayThumb::renderPathwayImage"
 		);
 		$wgParser->setFunctionHook(
-			"editApplet", "WikiPathways\\EditApplet::createApplet"
-		);
-		$wgParser->setFunctionHook(
 			"pathwayOfTheDay", "WikiPathways\\PathwayOfTheDay::get"
 		);
 		$wgParser->setFunctionHook(
@@ -73,7 +70,6 @@ class Hook {
 	public static function pathwayMagic( &$magicWords, $langCode ) {
 		$magicWords['PathwayViewer'] = [ 0, 'PathwayViewer' ];
 		$magicWords['pwImage'] = [ 0, 'pwImage' ];
-		$magicWords['editApplet'] = [ 0, 'editApplet' ];
 		$magicWords['pathwayOfTheDay'] = [ 0, 'pathwayOfTheDay' ];
 		$magicWords['pathwayInfo'] = [ 0, 'pathwayInfo' ];
 		$magicWords['siteStats'] = [ 0, 'siteStats' ];

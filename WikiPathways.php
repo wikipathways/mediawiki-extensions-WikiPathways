@@ -110,7 +110,6 @@ define( "WPI_CACHE_DIR", "$IP/images/wpi/cache" );
 define( "WPI_CACHE_PATH", "$wgScriptPath/images/wpi/cache" );
 
 // JS info
-define( "JS_SRC_EDITAPPLET", $wgScriptPath . "/wpi/js/editapplet.js" );
 define( "JS_SRC_RESIZE", $wgScriptPath . "/wpi/js/resize.js" );
 define( "JS_SRC_PROTOTYPE", $wgScriptPath . "/wpi/js/prototype.js" );
 

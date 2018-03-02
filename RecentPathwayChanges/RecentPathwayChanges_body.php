@@ -157,10 +157,6 @@ class RecentQueryPage extends QueryPage {
 		$this->message['diff'] = wfMsgExt( 'diff', [ 'escape' ] );
 		if ( $result->rc_type > 0 ) { // not an edit of an existing page
 			$diffLink = $this->message['diff'];
-		} else {
-			$diffLink = "<a href='" . SITE_URL .
-				"/index.php?title=Special:DiffAppletPage&old={$result->rc_last_oldid}&new={$result->rc_this_oldid}" .
-				"&pwTitle={$id->getFullText()}'>diff</a>";
 		}
 
 		$text = $wgContLang->convert( $result->rc_comment );
