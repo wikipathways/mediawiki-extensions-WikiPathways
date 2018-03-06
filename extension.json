@@ -42,6 +42,7 @@
 		"WikiPathways\\DataSourcesCache": "src/DataSourcesCache.php",
 		"WikiPathways\\FeaturedPathway": "src/FeaturedPathway.php",
 		"WikiPathways\\GpmlHistoryPager": "src/GpmlHistoryPager.php",
+		"WikiPathways\\ImageLink": "src/ImageLink.php",
 		"WikiPathways\\IndexNotFoundException": "src/IndexNotFoundException.php",
 		"WikiPathways\\IndexClient": "src/IndexClient.php",
 		"WikiPathways\\Interaction": "src/Interaction.php",

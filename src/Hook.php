@@ -63,6 +63,9 @@ class Hook {
 		$wgParser->setFunctionHook(
 			"Statistics", "WikiPathways\\Statistics::loadStatistics"
 		);
+		$wgParser->setFunctionHook(
+			"imgLink", "WikiPathways\\ImageLink::renderImageLink"
+		);
 
 		XrefPanel::addXrefPanelScripts();
 	}
@@ -75,6 +78,7 @@ class Hook {
 		$magicWords['siteStats'] = [ 0, 'siteStats' ];
 		$magicWords['Statistics'] = [ 0, 'Statistics' ];
 		$magicWords['searchPathwaysBox'] = [ 0, 'searchPathwaysBox' ];
+		$magicWords['imgLink'] = [ 0, 'imgLink' ];
 	}
 
 	/* http://developers.pathvisio.org/ticket/1559 */
