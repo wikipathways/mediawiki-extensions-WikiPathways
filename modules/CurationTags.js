@@ -15,6 +15,9 @@ CurationTags.tagDefinitions = {};
  */
 CurationTags.tagData = {};
 
+CurationTags.mayEdit = mw.config.get( "CurationTags.mayEdit" );
+CurationTags.extensionPath = mw.config.get( "CurationTags.extensionPath" );
+CurationTags.helpLink = mw.config.get( "CurationTags.helpLink" );
 CurationTags.insertDiv = function(elementId, pageId) {
 	//Set the innerHTML of the given elementId to display the curation tags panel
 	CurationTags.pageId = pageId;

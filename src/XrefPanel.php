@@ -36,9 +36,6 @@ class XrefPanel {
 	}
 
 	public static function renderXref( $input, $argv, Parser $parser ) {
-		var_dump( $input );
-		var_dump( $argv );
-		exit;
 		return self::getXrefHTML(
 			$argv['id'], $argv['datasource'], $input, $argv['species']
 		);
@@ -52,8 +49,9 @@ class XrefPanel {
 		$id = json_encode( $id );
 		$species = json_encode( $species );
 		$url = SITE_URL . '/extensions/WikiPathways/images/info.png';
-		$fun = 'XrefPanel.registerTrigger(this, '
-		. "$id, $datasource, $species, $label);";
+		$fun = 'mw.loader.using( ["wpi.xrefPanel"] ).then('.
+			 'function() { XrefPanel.registerTrigger(this, '
+			 . "$id, $datasource, $species, $label) });";
 		$title = "Show additional info and linkouts";
 		$html = $text . " <img title='$title' style='cursor:pointer;'"
 		. " onload='$fun' src='$url'/>";

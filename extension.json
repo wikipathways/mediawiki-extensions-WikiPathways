@@ -188,13 +188,6 @@
 			"styles": [
 				"jquery-ui-1.8.10.custom.css"
 			]
-		},
-		"wpi.CurationTags": {
-			"scripts": [
-				"CurationTags.js"
-			]
-		},
-		"wpi.XrefPanel": {
 		}
 	},
 	"ResourceFileModulePaths": {

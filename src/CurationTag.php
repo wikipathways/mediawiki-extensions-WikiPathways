@@ -24,16 +24,16 @@ namespace WikiPathways;
 use SimpleXMLElement;
 use Exception;
 use MWException;
+use ResourceLoader;
 use OutputPage;
-use RequestContext;
 use Title;
 
 /**
  * API for reading/writing Curation tags
  **/
 class CurationTag {
-	private static $TAG_LIST = "Curationtags-definition.xml";
-	private static $TAG_LIST_PAGE = "MediaWiki:Curationtags-definition.xml";
+	private static $tagList = "Curationtags-definition.xml";
+	private static $tagListPage = "MediaWiki:Curationtags-definition.xml";
 
 	private static $mayEdit;
 
@@ -45,7 +45,7 @@ class CurationTag {
 		$helpLink = Title::newFromText( "CurationTags", NS_HELP )->getFullURL();
 
 		// Add CSS
-		$outputPage->addModuleScripts( "wpi.CurationTags", "top" );
+		$outputPage->addModules( [ "wpi.CurationTags" ] );
 		// Add javascript
 		$vars["CurationTags.extensionPath"] = $wgScriptPath . "/extensions/WikiPathways/";
 		$vars["CurationTags.mayEdit"] = self::$mayEdit;
@@ -53,8 +53,6 @@ class CurationTag {
 	}
 
 	public static function displayCurationTags( $input, $argv, $parser ) {
-		$title = $parser->getTitle();
-		$mayEdit = $title->userCan( 'edit' ) ? true : false;
 		if ( !$parser->getRevisionId() ) {
 			$parser->mTitle->getLatestRevId();
 		}
@@ -62,17 +60,19 @@ class CurationTag {
 		$parser->getOutput()->addModules( [ "wpi.CurationTags" ] );
 		$pageId = $parser->mTitle->getArticleID();
 		$elementId = 'curationTagDiv';
-		return "<div id='$elementId'></div>"
-			. "<script type='text/javascript'>"
-			. "CurationTags.insertDiv('$elementId', '$pageId');</script>\n";
+		$parser->getOutput()->addHeadItem(
+			ResourceLoader::makeInlineScript(
+				"CurationTags.insertDiv('$elementId', '$pageId');"
+			)
+		);
+
+		return "<div id='$elementId'></div>";
 	}
 
 	/**
 	 * Processes events after a curation tag has changed
 	 */
 	public static function curationTagChanged( $tag ) {
-		global $wgEnotifUseJobQ;
-
 		$hist = MetaTag::getHistoryForPage( $tag->getPageId(), wfTimestamp( TS_MW ) );
 
 		if ( count( $hist ) > 0 ) {
@@ -87,7 +87,7 @@ class CurationTag {
 	 * as curation tags. Other tags will be ignored
 	 * by this API.
 	 */
-	public static $TAG_PREFIX = "Curation:";
+	public static $tagPrefix = "Curation:";
 	private static $tagDefinition;
 
 	private static function getTagAttr( $tag, $attr ) {
@@ -239,16 +239,16 @@ class CurationTag {
 	 **/
 	public static function getTagDefinition() {
 		if ( !self::$tagDefinition ) {
-			$ref = wfMessage( self::$TAG_LIST )->plain();
+			$ref = wfMessage( self::$tagList )->plain();
 			if ( !$ref ) {
-				throw new Exception( "No content for [[".self::$TAG_LIST_PAGE."]].  "
+				throw new Exception( "No content for [[".self::$tagListPage."]].  "
 									. "It must be a valid XML document." );
 			}
 			try {
 				libxml_use_internal_errors( true );
 				self::$tagDefinition = new SimpleXMLElement( $ref );
 			} catch ( Exception $e ) {
-				$err = "Error parsing [[".self::$TAG_LIST_PAGE."]].  It must be a valid XML document.\n";
+				$err = "Error parsing [[".self::$tagListPage."]].  It must be a valid XML document.\n";
 				$line = explode( "\n", trim( $ref ) );
 				foreach ( libxml_get_errors() as $error ) {
 					if ( strstr( $error->message, "Start tag expected" ) ) {
@@ -362,7 +362,7 @@ class CurationTag {
 	 * Checks if the tagname is a curation tag
 	 **/
 	public static function isCurationTag( $tagName ) {
-		$expr = "/^" . self::$TAG_PREFIX . "/";
+		$expr = "/^" . self::$tagPrefix . "/";
 		return preg_match( $expr, $tagName );
 	}
 

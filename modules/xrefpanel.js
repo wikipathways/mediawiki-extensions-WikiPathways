@@ -46,7 +46,7 @@ XrefPanel.xrefHooks = [];
 
 XrefPanel.createLoadImage = function(){
 	return '<img src="' + XrefPanel_imgPath + '/progress.gif" />';
-}
+};
 
 /**
  * Add hook functions to customize the info
@@ -94,14 +94,14 @@ XrefPanel.createInfoCallback = function($div){
 			$container.append($row);
 		}
 		$div.append($container);
-	}
-}
+	};
+};
 
 XrefPanel.createErrorCallback = function($div, msg){
 	return function(hr, errMsg, ex){
 		$div.html('<font color="red">' + msg + '</font>');
-	}
-}
+	};
+};
 
 if(XrefPanel_lookupAttributes) {
 	XrefPanel.infoHooks.push(function(id, datasource, symbol, species){
@@ -141,21 +141,21 @@ XrefPanel.contentCache = {};
 XrefPanel.onPageLoad = function(){
 	//Load the datasources file
 	XrefPanel.loadDataSources();
-}
+};
 
 $(window).ready(XrefPanel.onPageLoad);
 
 XrefPanel.getCachedContent = function(id, datasource, species, symbol){
 	return XrefPanel.cacheContent[id + datasource + species + symbol];
-}
+};
 
 XrefPanel.cacheContent = function(id, datasource, species, symbol, $content){
 	XrefPanel.cacheContent[id + datasource + species + symbol] = $content;
-}
+};
 
 XrefPanel.unCacheContent = function(id, datasource, species, symbol){
 	XrefPanel.cacheContent[id + datasource + species + symbol] = null;
-}
+};
 
 XrefPanel.currentTriggerDialog = null;
 
@@ -174,7 +174,7 @@ XrefPanel.registerTrigger = function(elm, id, datasource, species, symbol) {
 		});
 		XrefPanel.currentTriggerDialog = $dialog;
 	});
-}
+};
 
 /**
  * Creates a jquery panel that contains information on the given
@@ -280,7 +280,7 @@ XrefPanel.create = function(id, datasource, species, symbol){
 			autoHeight: false,
 			collapsible: true
 		});
-	}
+	};
 
 	if (id && datasource) {
 		var $xdiv = $content.find('.xreflinks');
@@ -292,7 +292,7 @@ XrefPanel.create = function(id, datasource, species, symbol){
 	}
 	return $content;
 
-}
+};
 
 XrefPanel.getBaseUrl = function(){
 	var url = XrefPanel_bridgeUrl;
@@ -301,7 +301,7 @@ XrefPanel.getBaseUrl = function(){
 		url = url.substr(0, url.length - 1);
 	}
 	return url;
-}
+};
 
 XrefPanel.createXrefLink = function(id, datasource, withDataSourceLabel){
 	var url = XrefPanel.linkoutPatterns[datasource];
@@ -316,7 +316,7 @@ XrefPanel.createXrefLink = function(id, datasource, withDataSourceLabel){
 	  XrefPanel.log("Unable to create link for " + id + ", " + datasource);
 	}
 	return '<span style="font-size:12px;">' + html + '<br></span>';
-}
+};
 
 /**
  * Query all xrefs for the given datasource.
@@ -332,7 +332,7 @@ XrefPanel.queryXrefs = function(id, datasource, species, success, error){
 		success: success,
 		error: error
 	});
-}
+};
 
 /**
  * Query properties for xref
@@ -348,7 +348,7 @@ XrefPanel.queryProperties = function(id, datasource, species, success, error){
 		success: success,
 		error: error
 	});
-}
+};
 
 XrefPanel.loadDataSources = function(){
 	var callback = function(data, textStatus){
@@ -364,10 +364,27 @@ XrefPanel.loadDataSources = function(){
 				}
 			}
 		}
-	}
+	};
 	$.get(XrefPanel_dataSourcesUrl, {}, callback);
-}
+};
 
 XrefPanel.log = function(msg) {
 	if(console && console.log) console.log(msg);
-}
+};
+
+XrefPanel.show = function(elm, id, datasource, species, symbol) {
+	jqelm = $(elm);
+	if(XrefPanel.currentTriggerDialog) {
+		XrefPanel.currentTriggerDialog.dialog("close");
+		XrefPanel.currentTriggerDialog.dialog("destroy");
+	}
+	jqcontent = XrefPanel.create(id, datasource, species, symbol);
+	var x = jqelm.offset().left - $(window).scrollLeft();
+	var y = jqelm.offset().top - $(window).scrollTop();
+	jqdialog = jqcontent.dialog({
+		position: [x,y]
+	});
+	XrefPanel.currentTriggerDialog = jqdialog;
+};
+
+window.XrefPanel = XrefPanel;
