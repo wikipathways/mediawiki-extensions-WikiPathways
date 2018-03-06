@@ -23,6 +23,10 @@
  */
 namespace WikiPathways;
 
+use LocalFile;
+use RepoGroup;
+use Title;
+
 class ImageLink {
 	/**
 	 * Modified from pathwayThumb.php
@@ -161,11 +165,13 @@ class ImageLink {
 			if ( $boxheight === false ) {
 				$boxheight = -1;
 			}
-			$thumb = $img->getThumbnail( $boxwidth, $boxheight );
+			$thumb = $img->transform(
+				[ "width" => $boxwidth, "height" => $boxheight ]
+			);
 			if ( $thumb ) {
 				$thumbUrl = $thumb->getUrl();
-				$boxwidth = $thumb->width;
-				$boxheight = $thumb->height;
+				$boxwidth = $thumb->getWidth();
+				$boxheight = $thumb->getHeight();
 			} else {
 				$error = $img->getLastError();
 			}
@@ -174,7 +180,7 @@ class ImageLink {
 
 		$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
 
-		$html = "<div id='{$id}' class='thumb t{$align}'>"
+		$html = "<div class='thumb t{$align}'>"
 			  . "<div class='thumbinner' style='width:{$oboxwidth}px;'>";
 		if ( $thumbUrl == '' ) {
 			// Couldn't generate thumbnail? Scale the image client-side.
