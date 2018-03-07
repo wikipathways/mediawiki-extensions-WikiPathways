@@ -178,16 +178,7 @@
 				"xrefpanel.js"
 			],
 			"dependencies": [
-				"wpi.JQuery"
-			]
-		},
-		"wpi.JQuery": {
-			"scripts": [
-				"jquery-1.8.3.min.js",
-				"jquery-ui-1.8.10.custom.min.js"
-			],
-			"styles": [
-				"jquery-ui-1.8.10.custom.css"
+				"jquery.ui.dialog"
 			]
 		}
 	},
