@@ -373,10 +373,6 @@ $wgPasswordSender = "no-reply@wikipathways.com";
 
 $wgContentHandlerTextFallback = 'serialize';
 
-if ( !isset( $jsSvgWeb ) ) {
-	$jsSvgWeb = "$wpiModulePath/svgweb/svg-uncompressed.js\""
-			  . "data-path=\"$wpiModulePath/svgweb";
-}
 // Only load jquery when required by extension
 $jsRequireJQuery = false;
 
