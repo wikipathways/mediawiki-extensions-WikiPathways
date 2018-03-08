@@ -66,8 +66,6 @@ class Hook {
 		$wgParser->setFunctionHook(
 			"imgLink", "WikiPathways\\ImageLink::renderImageLink"
 		);
-
-		XrefPanel::addXrefPanelScripts();
 	}
 
 	public static function pathwayMagic( &$magicWords, $langCode ) {

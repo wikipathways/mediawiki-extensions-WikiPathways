@@ -1,19 +1,27 @@
 
-if (typeof(XrefPanel_dataSourcesUrl) == "undefined")
-	var XrefPanel_dataSourcesUrl = '../../cache/datasources.txt';//TODO change to BD webservice call, once available
-if (typeof(XrefPanel_bridgeUrl) == "undefined")
-	var XrefPanel_bridgeUrl = ''; //Disable bridgedb webservice queries if url is not specified
-if (typeof(XrefPanel_searchUrl) == "undefined")
+if (typeof(XrefPanel_dataSourcesUrl) == "undefined") {
+	//TODO change to BD webservice call, once available
+	var XrefPanel_dataSourcesUrl = '/extensions/WikiPathways/PathwayViewer/datasources.txt';
+}
+if (typeof(XrefPanel_bridgeUrl) == "undefined") {
+	//Disable bridgedb webservice queries if url is not specified
+	var XrefPanel_bridgeUrl = '';
+}
+if (typeof(XrefPanel_searchUrl) == "undefined") {
 	var XrefPanel_searchUrl = false;
-if (typeof(XrefPanel_lookupAttributes) == "undefined")
+}
+if (typeof(XrefPanel_lookupAttributes) == "undefined") {
 	var XrefPanel_lookupAttributes = true;
+}
 
 /**
  * Change this if the base path of the script (and resource files) is
  * different than the page root.
  */
-if (typeof(XrefPanel_imgPath) == "undefined")
-	var XrefPanel_imgPath = wgServer + '/' + wgScriptPath + '/extensions/WikiPathways/images/';
+if (typeof(XrefPanel_imgPath) == "undefined") {
+	var XrefPanel_imgPath = wgServer + '/' + wgScriptPath
+		+ '/extensions/WikiPathways/images/';
+}
 
 /**
  * A panel that displays information for an xref.
@@ -65,6 +73,31 @@ XrefPanel.ignoreAttributes = {
 	'Synonyms': ''
 };
 
+XrefPanel.getBaseUrl = function(){
+	var url = XrefPanel_bridgeUrl;
+	//Remove trailing slash
+	if (url && url.substr(-1) === "/") {
+		url = url.substr(0, url.length - 1);
+	}
+	return url;
+};
+
+/**
+ * Query all xrefs for the given datasource.
+ */
+XrefPanel.queryXrefs = function(id, datasource, species, success, error){
+	var url = XrefPanel.getBaseUrl();
+	if (!url)
+		return;
+	url = url + '/' + escape(species) + '/xrefs/' + escape(datasource) + '/' + id;
+	$.ajax({
+		url: url,
+		processData: false,
+		success: success,
+		error: error
+	});
+};
+
 /**
  * Add an info hook for bridgedb properties.
  */
@@ -105,14 +138,14 @@ XrefPanel.createErrorCallback = function($div, msg){
 
 if(XrefPanel_lookupAttributes) {
 	XrefPanel.infoHooks.push(function(id, datasource, symbol, species){
-		 if (XrefPanel_bridgeUrl) {
-			 var $div = $('<div id="bridgeInfo">' + XrefPanel.createLoadImage() + ' loading info...</div>');
-			 XrefPanel.queryProperties(id, datasource, species, XrefPanel.createInfoCallback($div), XrefPanel.createErrorCallback($div, 'Unable to load info.'));
-			 return $div;
-		 }
-		 else {
-			 return false;
-		 }
+		if (XrefPanel_bridgeUrl) {
+			var $div = $('<div id="bridgeInfo">' + XrefPanel.createLoadImage() + ' loading info...</div>');
+			XrefPanel.queryProperties(id, datasource, species, XrefPanel.createInfoCallback($div), XrefPanel.createErrorCallback($div, 'Unable to load info.'));
+			return $div;
+		}
+		else {
+			return false;
+		}
 	});
 }
 
@@ -137,13 +170,6 @@ XrefPanel.infoHooks.push(function(id, datasource, symbol, species){
  * requests to the bridgedb webservice.
  */
 XrefPanel.contentCache = {};
-
-XrefPanel.onPageLoad = function(){
-	//Load the datasources file
-	XrefPanel.loadDataSources();
-};
-
-$(window).ready(XrefPanel.onPageLoad);
 
 XrefPanel.getCachedContent = function(id, datasource, species, symbol){
 	return XrefPanel.cacheContent[id + datasource + species + symbol];
@@ -271,7 +297,8 @@ XrefPanel.create = function(id, datasource, species, symbol){
 					height: maxXrefLines + 'em'
 				});
 			}
-			var $wdiv = $('<div class="ui-helper-clearfix"/>').css('overflow', 'auto'); //Wrapper to prevent resizing of xref div
+			// Wrapper to prevent resizing of xref div
+			var $wdiv = $('<div class="ui-helper-clearfix"/>').css('overflow', 'auto');
 			$wdiv.append($xdiv);
 			$accordion.append($wdiv);
 		}
@@ -285,22 +312,16 @@ XrefPanel.create = function(id, datasource, species, symbol){
 	if (id && datasource) {
 		var $xdiv = $content.find('.xreflinks');
 		$xdiv.html(XrefPanel.createLoadImage() + ' loading links...');
-		XrefPanel.queryXrefs(id, datasource, species, cbXrefs, XrefPanel.createErrorCallback($xdiv, 'Unable to load external references.'));
+		XrefPanel.queryXrefs(
+			id, datasource, species, cbXrefs,
+			XrefPanel.createErrorCallback($xdiv, 'Unable to load external references.')
+		);
 	}
 	else {
 		$content.find('.xreflinks').empty();
 	}
 	return $content;
 
-};
-
-XrefPanel.getBaseUrl = function(){
-	var url = XrefPanel_bridgeUrl;
-	//Remove trailing slash
-	if (url && url.substr(-1) === "/") {
-		url = url.substr(0, url.length - 1);
-	}
-	return url;
 };
 
 XrefPanel.createXrefLink = function(id, datasource, withDataSourceLabel){
@@ -312,26 +333,10 @@ XrefPanel.createXrefLink = function(id, datasource, withDataSourceLabel){
 		html = '<a target="_blank" href="' + url + '">' + label + '</a>';
 	}
 	else {
-	   html = label;
-	  XrefPanel.log("Unable to create link for " + id + ", " + datasource);
+		html = label;
+		XrefPanel.log("Unable to create link for " + id + ", " + datasource);
 	}
 	return '<span style="font-size:12px;">' + html + '<br></span>';
-};
-
-/**
- * Query all xrefs for the given datasource.
- */
-XrefPanel.queryXrefs = function(id, datasource, species, success, error){
-	var url = XrefPanel.getBaseUrl();
-	if (!url)
-		return;
-	url = url + '/' + escape(species) + '/xrefs/' + escape(datasource) + '/' + id;
-	$.ajax({
-		url: url,
-		processData: false,
-		success: success,
-		error: error
-	});
 };
 
 /**
@@ -354,13 +359,16 @@ XrefPanel.loadDataSources = function(){
 	var callback = function(data, textStatus){
 		//Parse the datasources file and fill the url object
 		if (textStatus == 'success' || textStatus == 'notmodified') {
+			console.log( "loadDataSources: " + textStatus );
 			var lines = data.split("\n");
 			for (var l in lines) {
 				var cols = lines[l].split("\t", -1);
-				if (cols.length > 1) XrefPanel.systemCodes[cols[0]] = cols[1];
+				if (cols.length > 1) {
+					XrefPanel.systemCodes[cols[0]] = cols[1];
+				}
 				if (cols.length > 3 && cols[3]) {
 					var ds = cols[0];
-						XrefPanel.linkoutPatterns[cols[0]] = cols[3];
+					XrefPanel.linkoutPatterns[cols[0]] = cols[3];
 				}
 			}
 		}
@@ -388,3 +396,16 @@ XrefPanel.show = function(elm, id, datasource, species, symbol) {
 };
 
 window.XrefPanel = XrefPanel;
+
+$(document).ready( function() {
+	XrefPanel.loadDataSources();
+	Array.prototype.filter.call(
+		document.getElementsByClassName( "xrefPanel" ),
+		function( el ) {
+			XrefPanel.registerTrigger(
+				el, el.dataset.xrefID, el.dataset.dataSource,
+				el.dataset.species, el.dataset.label
+			);
+		}
+	);
+} );

@@ -184,6 +184,9 @@
 			"scripts": [
 				"xrefpanel.js"
 			],
+			"styles": [
+				"xrefpanel.css"
+			],
 			"dependencies": [
 				"jquery.ui.dialog"
 			]

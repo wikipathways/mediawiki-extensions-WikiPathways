@@ -16,6 +16,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Thomas Kelder <thomaskelder@gmail.com>
+ * @author Alexander Pico <apico@gladstone.ucsf.edu>
+ * @author Mark A. Hershberger <mah@nichework.com>
  */
 namespace WikiPathways;
 
@@ -54,15 +58,16 @@ class PathwayInfo extends PathwayData {
 		}
 	}
 
-	function __construct( Parser $parser, $pathway ) {
+	public function __construct( Parser $parser, $pathway ) {
 		parent::__construct( $pathway );
 		$this->parser = $parser;
 	}
 
 	/**
 	 * Creates a table of all datanodes and their info
+	 * @return array
 	 */
-	function datanodes() {
+	public function datanodes() {
 		$table = '<table class="wikitable sortable" id="dnTable">';
 		$table .= '<tbody><th>Name<th>Type<th>Database reference<th>Comment';
 		// style="border:1px #AAA solid;margin:1em 1em 0;background:#F9F9F9"
@@ -78,7 +83,6 @@ class PathwayInfo extends PathwayData {
 		// Create collapse button
 		$nrShow = 5;
 		$button = "";
-		$nrNodes = count( $nodes );
 		if ( count( $nodes ) > $nrShow ) {
 			$expand = "<b>View all...</b>";
 			$collapse = "<b>View last " . ( $nrShow ) . "...</b>";
@@ -88,7 +92,6 @@ class PathwayInfo extends PathwayData {
 					. "$expand<td width='45%'></table>";
 		}
 		// Sort and iterate over all elements
-		$species = $this->getOrganism();
 		ksort( $nodes );
 		$i = 0;
 		foreach ( $nodes as $datanode ) {
@@ -110,6 +113,7 @@ class PathwayInfo extends PathwayData {
 			// Add xref info button
 			$html = $link;
 			if ( $xid && $xds ) {
+				$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
 				$html = XrefPanel::getXrefHTML(
 					$xid, $xds, $datanode['TextLabel'], $link, $this->getOrganism()
 				);
@@ -145,8 +149,9 @@ class PathwayInfo extends PathwayData {
 
 	/**
 	 * Creates a table of all interactions and their info
+	 * @return string
 	 */
-	function interactionAnnotations() {
+	public function interactionAnnotations() {
 		$table = '<table class="wikitable sortable" id="inTable">';
 		$table .= '<tbody><th>Source<th>Target<th>Type<th>Database reference<th>Comment';
 		$all = $this->getAllAnnotatedInteractions();
@@ -166,7 +171,6 @@ class PathwayInfo extends PathwayData {
 		// Create collapse button
 		$nrShow = 5;
 		$button = "";
-		$nrNodes = count( $nodes );
 		if ( count( $nodes ) > $nrShow ) {
 			$expand = "<b>View all...</b>";
 			$collapse = "<b>View last " . ( $nrShow ) . "...</b>";
@@ -197,11 +201,13 @@ class PathwayInfo extends PathwayData {
 			// Add xref info button
 			$html = $link;
 			if ( $xid && $xds ) {
-				$html = XrefPanel::getXrefHTML( $xid, $xds, $xref['ID'], $link, $this->getOrganism() );
+				$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
+				$html = XrefPanel::getXrefHTML(
+					$xid, $xds, $xref['ID'], $link, $this->getOrganism()
+				);
 			}
 			// Comment Data
 			$comment = [];
-			$biopaxRef = [];
 			foreach ( $int->Comment as $child ) {
 				if ( $child->getName() == 'Comment' ) {
 					$comment[] = (string)$child;

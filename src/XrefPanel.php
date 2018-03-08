@@ -19,42 +19,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author
+ * @author Thomas Kelder <thomaskelder@gmail.com>
  * @author Mark A. Hershberger <mah@nichework.com>
  */
 
 namespace WikiPathways;
 
 use Parser;
+use Html;
 
 class XrefPanel {
-	public static function xref() {
-		global $wgParser;
-		$wgParser->setHook( "Xref", "WikiPathways\\XrefPanel::renderXref" );
-
-		self::addXrefPanelScripts();
-	}
-
 	public static function renderXref( $input, $argv, Parser $parser ) {
+		$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
+
 		return self::getXrefHTML(
 			$argv['id'], $argv['datasource'], $input, $argv['species']
 		);
 	}
 
 	public static function getXrefHTML(
-		$id, $datasource, $label, $text, $species
+		$xrefID,
+		$datasource,
+		$label,
+		$text,
+		$species
 	) {
-		$datasource = json_encode( $datasource );
-		$label = json_encode( $label );
-		$id = json_encode( $id );
-		$species = json_encode( $species );
-		$url = SITE_URL . '/extensions/WikiPathways/images/info.png';
-		$fun = 'mw.loader.using( ["wpi.xrefPanel"] ).then('.
-			 'function() { XrefPanel.registerTrigger(this, '
-			 . "$id, $datasource, $species, $label) });";
-		$title = "Show additional info and linkouts";
-		$html = $text . " <img title='$title' style='cursor:pointer;'"
-		. " onload='$fun' src='$url'/>";
+		$html = $text
+			  . Html::element( 'img', [
+				  'title' => 'Show additional info and linkouts',
+				  'class' => 'xrefPanel',
+				  'data-xrefID' => $xrefID,
+				  'data-dataSource' => $datasource,
+				  'data-species' => $species,
+				  'data-label' => $label,
+				  'src' => SITE_URL . '/extensions/WikiPathways/images/info.png'
+			  ] );
+
 		return $html;
 	}
 
@@ -86,15 +86,5 @@ class XrefPanel {
 		$js[] = $bridge;
 
 		return $js;
-	}
-
-	public static function addXrefPanelScripts() {
-		global $wpiJavascriptSources, $wpiJavascriptSnippets,
-		$cssJQueryUI, $wgScriptPath, $wgStylePath, $wgOut,
-		$jsRequireJQuery;
-
-		$jsRequireJQuery = true;
-
-		$wgOut->addModules( "wpi.XrefPanel" );
 	}
 }
