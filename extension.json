@@ -41,7 +41,6 @@
 		"WikiPathways\\DataSource": "src/DataSource.php",
 		"WikiPathways\\DataSourcesCache": "src/DataSourcesCache.php",
 		"WikiPathways\\FeaturedPathway": "src/FeaturedPathway.php",
-		"WikiPathways\\GpmlHistoryPager": "src/GpmlHistoryPager.php",
 		"WikiPathways\\ImageLink": "src/ImageLink.php",
 		"WikiPathways\\IndexNotFoundException": "src/IndexNotFoundException.php",
 		"WikiPathways\\IndexClient": "src/IndexClient.php",
@@ -147,6 +146,14 @@
 		"remoteExtPath": "WikiPathways/modules"
 	},
 	"ResourceModules": {
+		"wpi.toggleButton": {
+			"scripts": [
+				"ToggleButton.js"
+			],
+			"styles": [
+				"ToggleButton.css"
+			]
+		},
 		"wpi.PageEditor": {
 			"scripts": [
 				"PageEditor.js"
