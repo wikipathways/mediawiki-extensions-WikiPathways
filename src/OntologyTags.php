@@ -113,9 +113,11 @@ class OntologyTags {
 	</div>
 </div>
 <div style="clear:both;"></div>
+<!-- No YAHOO! for you!
 <script type="text/javascript">
 	YAHOO.util.Event.onDOMReady(ontologytree.init, ontologytree,true);
 </script>
+-->
 HTML;
 		} else {
 			$output = <<<HTML
