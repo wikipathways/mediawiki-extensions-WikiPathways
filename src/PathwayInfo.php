@@ -26,6 +26,7 @@ namespace WikiPathways;
 use Exception;
 use Parser;
 use Linker;
+use Title;
 
 class PathwayInfo extends PathwayData {
 	private $parser;
@@ -41,23 +42,35 @@ class PathwayInfo extends PathwayData {
 	public static function getPathwayInfoText( Parser $parser, $pathway, $type ) {
 		global $wgRequest;
 		$parser->disableCache();
-		try {
-			$pathway = Pathway::newFromTitle( $pathway );
-			$oldid = $wgRequest->getval( 'oldid' );
-			if ( $oldid ) {
-				$pathway->setActiveRevision( $oldid );
+		$pathway = Title::newFromText( $pathway, NS_PATHWAY );
+		if ( $pathway->exists() ) {
+			try {
+				$pathway = Pathway::newFromTitle( $pathway );
+				$oldid = $wgRequest->getval( 'oldid' );
+				if ( $oldid ) {
+					$pathway->setActiveRevision( $oldid );
+				}
+				$info = new PathwayInfo( $parser, $pathway );
+
+				if ( !$type ) {
+					return wfMessage( "wp-pathway-info-no-type", $type );
+				}
+				if ( method_exists( $info, $type ) ) {
+					return $info->$type();
+				} else {
+					return wfMessage( "wp-pathway-info-wrong-param", $type );
+				}
+			} catch ( Exception $e ) {
+				return "Error: $e";
 			}
-			$info = new PathwayInfo( $parser, $pathway );
-			if ( method_exists( $info, $type ) ) {
-				return $info->$type();
-			} else {
-				throw new Exception( "method PathwayInfo->$type doesn't exist" );
-			}
-		} catch ( Exception $e ) {
-			return "Error: $e";
 		}
+		return wfMessage( "wp-no-id-found" )->params( $pathway );
 	}
 
+	/**
+	 * @param Parser $parser from function
+	 * @param string $pathway page we're looking at
+	 */
 	public function __construct( Parser $parser, $pathway ) {
 		parent::__construct( $pathway );
 		$this->parser = $parser;

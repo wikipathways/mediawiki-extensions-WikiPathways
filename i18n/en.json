@@ -45,5 +45,8 @@
 	"wp-history-pager-time": "Time",
 	"wp-history-pager-user": "User",
 	"wp-history-pager-comment": "Comment",
-	"wp-history-pager-view": "view"
+	"wp-history-pager-view": "view",
+	"wp-no-id-found": "No pathway for $1",
+	"wp-pathway-info-no-type": "No type requested from #pathwayInfo",
+	"wp-pathway-info-wrong-param": "$1 is not a valid typpe parameter for #pathwayInfo"
 }

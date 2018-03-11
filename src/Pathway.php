@@ -418,14 +418,9 @@ class Pathway {
 	 * @return Pathway
 	 *
 	 */
-	public static function newFromTitle( $title, $checkCache = false ) {
+	public static function newFromTitle( Title $title, $checkCache = false ) {
 		// Remove url and namespace from title
 		$id = self::parseIdentifier( $title );
-		if ( !$id ) {
-			throw new Exception(
-				"Couldn't parse pathway identifier from title: " . $title
-			);
-		}
 		return new Pathway( $id, $checkCache );
 	}
 
