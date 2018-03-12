@@ -39,7 +39,7 @@ class PathwayThumb {
 		$parser->disableCache();
 		$latestRevision = 0;
 		try {
-			$pathway = Pathway::newFromTitle( $pwTitle );
+			$pathway = Pathway::newFromTitle( Title::newFromText( $pwTitle ) );
 			$revision = $wgRequest->getVal( 'oldid' );
 			if ( $revision ) {
 				$pathway->setActiveRevision( $revision );
@@ -169,8 +169,6 @@ class PathwayThumb {
 		$helpLink = "<div style='float:left;'><a href='$helpUrl'> "
 		 . "not working?</a></div>";
 
-		// Create dropdown action menu
-		$pwTitle = $pathway->getTitleObject()->getFullText();
 		// disable dropdown for now
 		$drop = Content::editDropDown( $pathway );
 		$drop = '<div style="float:right;">' . $drop . '</div>';

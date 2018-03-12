@@ -95,15 +95,7 @@ class PathwayInfo extends PathwayData {
 		}
 		// Create collapse button
 		$nrShow = 5;
-		$button = "";
-		if ( count( $nodes ) > $nrShow ) {
-			$expand = "<b>View all...</b>";
-			$collapse = "<b>View last " . ( $nrShow ) . "...</b>";
-			$button = "<table><td width='51%'> <div onClick='"
-					. 'doToggle("dnTable", this, "'.$expand.'", "'.$collapse.'")'
-					. "' style='cursor:pointer;color:#0000FF'>"
-					. "$expand<td width='45%'></table>";
-		}
+		$button = Pathway::toggleElement( "dnTable", count( $nodes ), $nrShow );
 		// Sort and iterate over all elements
 		ksort( $nodes );
 		$i = 0;
@@ -183,15 +175,7 @@ class PathwayInfo extends PathwayData {
 		}
 		// Create collapse button
 		$nrShow = 5;
-		$button = "";
-		if ( count( $nodes ) > $nrShow ) {
-			$expand = "<b>View all...</b>";
-			$collapse = "<b>View last " . ( $nrShow ) . "...</b>";
-			$button = "<table><td width='51%'> <div onClick='"
-					. 'doToggle("inTable", this, "'.$expand.'", "'
-					. $collapse.'")'."' style='cursor:pointer;color:#0000FF'>"
-					. "$expand<td width='45%'></table>";
-		}
+		$button = Pathway::toggleElement( "inTable", count( $nodes ), $nrShow );
 		// Sort and iterate over all elements
 		ksort( $nodes );
 		$i = 0;

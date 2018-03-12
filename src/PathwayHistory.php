@@ -143,15 +143,7 @@ class PathwayHistory extends HistoryPager {
 
 		$table = '';
 		if ( $numRows >= 1 ) {
-			if ( $numRows >= $this->nrShow ) {
-				$table = Html::rawElement(
-					'div', null, Html::element( 'b', [
-						'class' => 'toggleLink',
-						'data-target' => 'historyTable',
-						'data-expand' => 'View all...',
-						'data-collapse' => "View last {$this->nrShow}"
-					], 'View all...' ) );
-			}
+			$table = Pathway::toggleElement( "historyTable", $numRows, $this->nrShow );
 
 			$table .= Html::openElement(
 				'table', [

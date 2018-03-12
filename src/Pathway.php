@@ -25,6 +25,7 @@ namespace WikiPathways;
 
 use Article;
 use Exception;
+use Html;
 use Linker;
 use Revision;
 use Title;
@@ -1680,4 +1681,25 @@ class Pathway {
 		wfDebugLog( "Pathway",  "PNG CACHE SAVED: $output\n" );
 	}
 
+	/**
+	 * Toggle links. DRY.
+	 *
+	 * @param string $elId element ID that should be toggled.
+	 * @param int $total available
+	 * @param int $number to show
+	 * @return string
+	 */
+	public static function toggleElement( $elId, $total, $number ) {
+		$ret = "";
+		if ( $total > $number ) {
+			$ret = Html::rawElement(
+				'div', null, Html::element( 'b', [
+					'class' => 'toggleLink',
+					'data-target' => $elId,
+					'data-expand' => 'View all...',
+					'data-collapse' => "View last $number"
+				], 'View all...' ) );
+		}
+		return $ret;
+	}
 }

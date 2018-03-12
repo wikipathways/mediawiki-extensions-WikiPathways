@@ -105,7 +105,7 @@ if ( !isset( $highlights ) || empty( $highlights ) || $highlights == " " ) {
 	$highlights = "[]";
 }
 
-$pathway = Pathway::newFromTitle( $identifier );
+$pathway = Pathway::newFromTitle( Title::newFromText( $identifier ) );
 if ( $version ) {
 		$pathway->setActiveRevision( $version );
 }

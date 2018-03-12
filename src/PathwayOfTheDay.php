@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @author
+ * @author Thomas Kelder <thomaskelder@gmail.com>
  * @author Mark A. Hershberger <mah@nichework.com>
  *
  * We need:
@@ -42,6 +42,7 @@
 namespace WikiPathways;
 
 use Parser;
+use Title;
 
 class PathwayOfTheDay {
 	private static $table = 'pathwayOfTheDay';
@@ -148,7 +149,7 @@ class PathwayOfTheDay {
 			$this->brandNewDay();
 		}
 		try {
-			$pathway = Pathway::newFromTitle( $this->todaysPw );
+			$pathway = Pathway::newFromTitle( Title::newFromText( $this->todaysPw ) );
 			// Check for deletion and fetch other pathway if the
 			// current one doesn't exist anymore
 			if ( !$pathway->exists() || $pathway->isDeleted() ) {
@@ -157,7 +158,7 @@ class PathwayOfTheDay {
 			}
 		} catch ( Exception $e ) {
 			// Fallback to default pathway
-			$pathway = Pathway::newFromTitle( "Pathway:Homo sapiens:Apoptosis" );
+			$pathway = Pathway::newFromTitle( Title::newFromText( "Pathway:Homo sapiens:Apoptosis" ) );
 		}
 		return $pathway;
 	}
