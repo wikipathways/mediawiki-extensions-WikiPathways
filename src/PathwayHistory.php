@@ -63,10 +63,10 @@ class PathwayHistory extends HistoryPager {
 			$row = Html::rawElement(
 				"tr", $style,
 				Html::rawElement( 'td', null, $rowData['id'] )
-				. Html::rawElement( 'td', null, $rowData['view'] . $rowData['revert'] )
+				. Html::rawElement( 'td', null, $rowData['view'] . " " . $rowData['revert'] )
 				. Html::rawElement( 'td', null, $rowData['date'] )
 				. Html::rawElement( 'td', null, $rowData['user'] )
-				. Html::element( 'td', null, $rowData['descr'] ) );
+				. Html::rawElement( 'td', null, $rowData['descr'] ) );
 		}
 		return $row;
 	}
