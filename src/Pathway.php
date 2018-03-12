@@ -24,8 +24,8 @@
 namespace WikiPathways;
 
 use Article;
-use DOMDocument;
 use Exception;
+use Linker;
 use Revision;
 use Title;
 use UnregisteredLocalFile;
@@ -416,7 +416,6 @@ class Pathway {
 	 * @param bool $checkCache whether to check (just?) the cache
 	 * @throws Exception
 	 * @return Pathway
-	 *
 	 */
 	public static function newFromTitle( Title $title, $checkCache = false ) {
 		// Remove url and namespace from title
@@ -1010,39 +1009,6 @@ class Pathway {
 		return $pathway;
 	}
 
-	private static function checkGpmlSpecies( $gpml ) {
-		$gpml = utf8_encode( $gpml );
-		// preg_match can fail on very long strings, so first try to
-		// find the <Pathway ...> part with strpos
-		$startTag = strpos( $gpml, "<Pathway" );
-		if ( !$startTag ) {
-			throw new Exception(
-				"Unable to find start of '<Pathway ...>' tag."
-			);
-		}
-		$endTag = strpos( $gpml, ">", $startTag );
-		if ( !$endTag ) {
-			throw new Exception( "Unable to find end of '<Pathway ...>' tag." );
-		}
-
-		if (
-			preg_match( "/<Pathway.*Organism=\"(.*?)\"/us",
-						substr( $gpml, $startTag, $endTag - $startTag ),
-						$match )
-		) {
-			$species = $match[1];
-			if ( !in_array( $species, self::getAvailableSpecies() ) ) {
-				throw new Exception(
-					"The organism '$species' for the pathway is not supported."
-				);
-			}
-		} else {
-			throw new Exception(
-				"The pathway doesn't have an organism attribute."
-			);
-		}
-	}
-
 	private static function generateUniqueId() {
 		// Get the highest identifier
 		$dbr = wfGetDB( DB_REPLICA );
@@ -1106,6 +1072,13 @@ class Pathway {
 	}
 
 	/**
+	 * This is probably a bad SHIM since I'm depending on transforming
+	 * GPML to wikitext and then using MW to parse that.  That's
+	 * probably not what I should do, but to make it work, I need this
+	 * signal.
+	 */
+	public static $InternalUpdate = false;
+	/**
 	 * Update the pathway with the given GPML code
 	 * @param string $gpmlData The GPML code that contains the updated
 	 * pathway data
@@ -1115,10 +1088,10 @@ class Pathway {
 	public function updatePathway( $gpmlData, $description ) {
 		global $wgUser;
 
+		$gpml = new GPML\Content( $gpmlData );
 		// First validate the gpml
-		$error = self::validateGpml( $gpmlData );
-		if ( $error ) {
-			throw new Exception( $error );
+		if ( !$gpml->isValid() ) {
+			throw new Exception( $gpml->getValidationError() );
 		}
 
 		$gpmlTitle = $this->getTitleObject();
@@ -1146,17 +1119,18 @@ class Pathway {
 			$gpmlArticle->doWatch();
 		}
 
-		$succ = true;
-		$succ = $gpmlArticle->doEdit( $gpmlData, $description );
-		if ( $succ ) {
+		self::$InternalUpdate = true;
+		$success = $gpmlArticle->doEditContent( $gpml, $description, EDIT_INTERNAL );
+		self::$InternalUpdate = false;
+		if ( $success ) {
 			// Force reload of data
 			$this->setActiveRevision( $this->getLatestRevision() );
 			// Update metadata cache
-			$this->invalidateMetaDataCache();
+			$gpmlArticle->doPurge();
 		} else {
-			throw new Exception( "Unable to save GPML, are you logged in?" );
+			throw new Exception( "Unable to save GPML." );
 		}
-		return $succ;
+		return $success;
 	}
 
 	/**
@@ -1211,62 +1185,15 @@ class Pathway {
 	];
 
 	/**
-	 * Validates the GPML code and returns the error if it's invalid
+	 * Get the schema from the XML NS
 	 *
-	 * @param string $gpml content to validate
-	 * @return null if the GPML is valid, the error if it's invalid
+	 * @param string $xmlNs the namespace
+	 * @return string
 	 */
-	static function validateGpml( $gpml ) {
-		$return = null;
-		// First, check if species is supported
-		try {
-			self::checkGpmlSpecies( $gpml );
-		} catch ( Exception $e ) {
-			$return = $e->getMessage();
+	public static function getSchema( $xmlNs ) {
+		if ( isset( self::$gpmlSchemas[$xmlNs] ) ) {
+			return self::$gpmlSchemas[$xmlNs];
 		}
-		// Second, validate GPML to schema
-		$xml = new DOMDocument();
-		$parsed = $xml->loadXML( $gpml );
-		if ( !$parsed ) {
-			return "Error: no valid XML provided\n$gpml";
-		}
-
-		if ( !method_exists( $xml->firstChild, "getAttribute" ) ) {
-			return "Not valid GPML!";
-		}
-
-		$ns = $xml->firstChild->getAttribute( 'xmlns' );
-		$schema = self::$gpmlSchemas[$ns];
-		if ( !$schema ) {
-			return "Error: no xsd found for $ns\n$gpml";
-		}
-
-		if ( !$xml->schemaValidate( WPI_SCRIPT_PATH . "/bin/$schema" ) ) {
-			$error = libxml_get_last_error();
-			$return  = $gpml[$error->line - 1] . "\n";
-			$return .= str_repeat( '-', $error->column ) . "^\n";
-
-			switch ( $error->level ) {
-			case LIBXML_ERR_WARNING:
-				$return .= "Warning $error->code: ";
-				break;
-			case LIBXML_ERR_ERROR:
-				$return .= "Error $error->code: ";
-				break;
-			case LIBXML_ERR_FATAL:
-				$return .= "Fatal Error $error->code: ";
-				break;
-			}
-
-			$return .= trim( $error->message ) .
-					"\n  Line: $error->line" .
-					"\n  Column: $error->column";
-
-			if ( $error->file ) {
-				$return .= "\n  File: $error->file";
-			}
-		}
-		return $return;
 	}
 
 	/**
@@ -1278,7 +1205,7 @@ class Pathway {
 	public function revert( $oldId ) {
 		global $wgUser, $wgLang;
 		$rev = Revision::newFromId( $oldId );
-		$gpml = $rev->getText();
+		$gpml = $rev->getSerializedData();
 		if ( self::isDeletedMark( $gpml ) ) {
 			throw new Exception(
 				"You are trying to revert to a deleted version of the pathway. "
@@ -1286,7 +1213,7 @@ class Pathway {
 			);
 		}
 		if ( $gpml ) {
-			$usr = $wgUser->getSkin()->userLink(
+			$usr = Linker::userLink(
 				$wgUser->getId(), $wgUser->getName()
 			);
 			$date = $wgLang->timeanddate( $rev->getTimestamp(), true );
@@ -1752,4 +1679,5 @@ class Pathway {
 		}
 		wfDebugLog( "Pathway",  "PNG CACHE SAVED: $output\n" );
 	}
+
 }

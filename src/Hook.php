@@ -21,6 +21,11 @@
  */
 namespace WikiPathways;
 
+use Content;
+use ParserOptions;
+use ParserOutput;
+use Title;
+
 class Hook {
 	// Probably better to put this in parser init hook
 	public static function pathwayViewer() {
@@ -186,8 +191,13 @@ class Hook {
 	/**
 	 * Special user permissions once a pathway is deleted.
 	 * TODO: Disable this hook for running script to transfer to stable ids
+	 *
+	 * @param Title $title to check
+	 * @param User $user for permissions
+	 * @param
+	 * @return bool
 	 */
-	function checkDeleted( $title, $user, $action, &$result ) {
+	public static function checkDeleted( Title $title, $user, $action, &$result ) {
 		if ( $action == 'edit' && $title->getNamespace() == NS_PATHWAY ) {
 			$pathway = Pathway::newFromTitle( $title );
 			if ( $pathway->isDeleted() ) {
@@ -222,4 +232,16 @@ class Hook {
 		return true;
 	}
 
+	/**
+	 */
+	public static function onContentGetParserOutput(
+		Content $content,
+		Title $title,
+		$revId,
+		ParserOptions $options,
+		$generateHtml,
+		ParserOutput &$po
+	) {
+		return !Pathway::$InternalUpdate;
+	}
 }

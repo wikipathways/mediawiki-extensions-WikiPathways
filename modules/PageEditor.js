@@ -1,11 +1,4 @@
-function PageEditor(targetId, type, content, pwId, userCanEdit) {
-	this.$target = $('#' + targetId);
-	this.type = type;
-	this.content = content;
-	this.pwId = pwId;
-	this.userCanEdit = userCanEdit;
-	this.addEditButton();
-}
+PageEditor = function() {};
 
 PageEditor.images = {
 	edit:  '/extensions/WikiPathways/images/edit.png',
@@ -17,7 +10,7 @@ PageEditor.prototype.addEditButton = function() {
 	var that = this;
 	if(this.userCanEdit) {
 		this.$edit = $('<img class="pageEditBtn" src="' + PageEditor.images.edit + '" />')
-                	.attr('title', 'Edit ' + this.type);
+					.attr('title', 'Edit ' + this.type);
 		this.$target.before(this.$edit);
 		this.$edit.click(function() { that.startEditor(); });
 	}
@@ -103,31 +96,35 @@ PageEditor.prototype.save = function() {
 	}
 
 	//Perform save
-	sajax_do_call(
-		"PageEditor::save",
-		[this.pwId, this.type, val],
-		function(xhr) { that.afterSave(xhr); }
+	$.ajax(
+		mw.util.wikiScript(),
+		{
+			data: {
+				action: 'ajax',
+				rs: 'WikiPathways\\PageEditor::save',
+				rsargs: [ this.pwId, this.type, val ]
+			},
+			statusCode: {
+				200: window.location.reload(),
+				500: function( xhr, status, error ) {
+					alert( "Unable to save: " + status );
+				}
+			}
+		}
 	);
 };
 
-PageEditor.prototype.afterSave = function(xhr) {
-	if(this.checkResponse(xhr)) {
-		window.location.reload();
-	} else {
-		this.$block.remove();
-	}
-};
+$(document).ready( function() {
+	editor = document.getElementById("pageEditor");
+	if ( editor ){
+		pe = new PageEditor;
+		pe.editor = editor;
+		pe.$target = $("#" + editor.dataset.target);
+		pe.type = editor.dataset.type;
+		pe.content = editor.dataset.input;
+		pe.pwId = editor.dataset.pw;
+		pe.userCanEdit = editor.dataset.editable;
 
-PageEditor.prototype.checkResponse = function(xhr) {
-	if (xhr.readyState == 4){
-		if (xhr.status==200) {
-			return true;
-		} else {
-			window.alert("Unable to save: " + xhr.statusText);
-			return false;
-		}
-	} else {
-		window.alert("Unable to save: " + xhr.statusText);
-		return false;
+		pe.addEditButton();
 	}
-};
+} );

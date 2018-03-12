@@ -48,5 +48,7 @@
 	"wp-history-pager-view": "view",
 	"wp-no-id-found": "No pathway for $1",
 	"wp-pathway-info-no-type": "No type requested from #pathwayInfo",
-	"wp-pathway-info-wrong-param": "$1 is not a valid typpe parameter for #pathwayInfo"
+	"wp-pathway-info-wrong-param": "$1 is not a valid typpe parameter for #pathwayInfo",
+	"wp-pageditor-id-needed": "No ID was specified",
+	"wp-pageditor-type-needed": "No type was specified"
 }

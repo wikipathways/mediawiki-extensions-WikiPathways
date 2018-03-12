@@ -17,6 +17,8 @@
  */
 namespace WikiPathways;
 
+use Title;
+
 $IP = dirname( dirname( __DIR__ ) ) . "/mediawiki";
 putenv( "MW_INSTALL_PATH=$IP" );
 
@@ -114,7 +116,7 @@ class wpi {
 	 * @param int $oldId revision # to revert
 	 */
 	public static function revert( $pwTitle, $oldId ) {
-		$pathway = Pathway::newFromTitle( $pwTitle );
+		$pathway = Pathway::newFromTitle( Title::newFromText( $pwTitle ) );
 		$pathway->revert( $oldId );
 		// Redirect to old page
 		$url = $pathway->getTitleObject()->getFullURL();

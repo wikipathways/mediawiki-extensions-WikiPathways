@@ -19,3 +19,7 @@ div.editblock {
 	opacity:.80;
 	filter: alpha(opacity=80);
 }
+
+div#pageEditor {
+	height: 0px;
+}

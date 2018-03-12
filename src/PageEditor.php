@@ -19,34 +19,49 @@
  */
 namespace WikiPathways;
 
+use AjaxResponse;
+use Html;
+use DOMDocument;
+
 class PageEditor {
+	/**
+	 * Handle display of editor
+	 *
+	 * @param string $input of pageditor
+	 * @param array $argv attributes
+	 * @param Parser $parser object
+	 * @return string for display
+	 */
 	public static function display( $input, $argv, $parser ) {
-		global $wgOut, $wgUser;
+		global $wgUser;
 
 		// Check user rights
 		if ( !$wgUser->isLoggedIn() || wfReadOnly() ) {
 			return "<!-- Page Editor here. -->";
 		}
 
-		throw new \MWException( "Need to use ResourceLoader for Logged in users here." );
-		$title = $parser->getTitle();
-		$mayEdit = $title->userCan( 'edit' ) ? true : false;
-		$revision = $parser->getRevisionId();
-		if ( !$revision ) {
-			$parser->mTitle->getLatestRevId();
+		if ( !isset( $argv['id'] ) ) {
+			return wfMessage( "wp-pageditor-id-needed" );
 		}
-
-		// Add javascript
+		if ( !isset( $argv['type'] ) ) {
+			return wfMessage( "wp-pageditor-type-needed" );
+		}
 		$targetId = $argv['id'];
 		$type = $argv['type'];
-		$content = json_encode( $input );
+
+		$parser->getOutput()->addModules( [ "wpi.PageEditor" ] );
+		$title = $parser->getTitle();
+		$mayEdit = $title->userCan( 'edit' ) ? true : false;
+
+		// Add javascript
 		$pwId = $title->getText();
-		$userCanEdit = $title->userCan( 'edit' ) ? "true" : "false";
-
-		// This needs to use ResourceLoader
-		// $wgOut->addScript( "<script type=\"{$wgJsMimeType}\" src=\".../PageEditor.js\"></script>\n" );
-
-		$script = "<div style=\"height: 0px;\"><script type='{$wgJsMimeType}'>var p = new PageEditor('$targetId', '$type', $content, '$pwId', $userCanEdit);</script></div>";
+		$script = Html::element( 'div',
+								 [ 'id' => 'pageEditor',
+								   'data-target' => $targetId,
+								   'data-type' => $type,
+								   'data-input' => $input,
+								   'data-pw' => $pwId,
+								   'data-editable' => $mayEdit ] );
 
 		return $script;
 	}
@@ -55,11 +70,11 @@ class PageEditor {
 		try {
 			$pathway = new Pathway( $pwId );
 
+			$doc = new DOMDocument();
+			$gpml = $pathway->getGpml();
+			$doc->loadXML( $gpml );
 			switch ( $type ) {
 				case "description":
-					$doc = new DOMDocument();
-					$gpml = $pathway->getGpml();
-					$doc->loadXML( $gpml );
 					// Save description
 					$description = false;
 					$root = $doc->documentElement;
@@ -77,20 +92,13 @@ class PageEditor {
 						$root->insertBefore( $description, $root->firstChild );
 					}
 					$description->nodeValue = $content;
-
-					// Save the new GPML
-					$gpml = $doc->saveXML();
-					$pathway->updatePathway( $gpml, "Modified " . $type );
 					break;
 				case "title":
-					$doc = new DOMDocument();
-					$gpml = $pathway->getGpml();
-					$doc->loadXML( $gpml );
 					$doc->documentElement->setAttribute( "Name", $content );
-					$gpml = $doc->saveXML();
-					$pathway->updatePathway( $gpml, "Modified " . $type );
 					break;
 			}
+			$gpml = $doc->saveXML();
+			$pathway->updatePathway( $gpml, "Modified " . $type );
 		} catch ( Exception $e ) {
 			$r = new AjaxResponse( $e );
 			$r->setResponseCode( 500 );
@@ -98,16 +106,5 @@ class PageEditor {
 			return $r;
 		}
 		return new AjaxResponse( "" );
-	}
-
-	// From http://stackoverflow.com/questions/3361036/php-simplexml-insert-node-at-certain-position
-	static function simplexml_insert_after( SimpleXMLElement $sxe, SimpleXMLElement $insert, SimpleXMLElement $target ) {
-		$target_dom = dom_import_simplexml( $target );
-		$insert_dom = $target_dom->ownerDocument->importNode( dom_import_simplexml( $insert ), true );
-		if ( $target_dom->nextSibling ) {
-			return $target_dom->parentNode->insertBefore( $insert_dom, $target_dom->nextSibling );
-		} else {
-			return $target_dom->parentNode->appendChild( $insert_dom );
-		}
 	}
 }
