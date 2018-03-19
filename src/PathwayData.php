@@ -14,6 +14,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Thomas Kelder <thomaskelder@gmail.com>
+ * @author Anders Riutta <git@andersriutta.com>
+ * @author Mark A. Hershberger <mah@nichework.com>
  */
 namespace WikiPathways;
 
@@ -32,7 +36,7 @@ class PathwayData {
 	 * Creates an instance of PathwayData, containing
 	 * the GPML code parsed as SimpleXml object
 	 * @param pathway $pathway to get the data for
-	 **/
+	 */
 	public function __construct( $pathway ) {
 		$this->pathway = $pathway;
 		$this->loadGpml();
@@ -259,5 +263,27 @@ class PathwayData {
 				}
 			}
 		}
+	}
+
+	public function interactions() {
+		$interactions = $this->getInteractionsSoft();
+		foreach ( $interactions as $ia ) {
+			$table .= "\n|-\n";
+			$table .= "| {$ia->getNameSoft()}\n";
+			$table .= "|";
+			$xrefs = $ia->getPublicationXRefs( $this );
+			if ( !$xrefs ) { $xrefs = [];
+			}
+			foreach ( $xrefs as $ref ) {
+				$attr = $ref->attributes( 'rdf', true );
+				$table .= "<cite>" . $attr['id'] . "</cite>";
+			}
+		}
+		if ( $table ) {
+			$table = "=== Interactions ===\n{|class='wikitable'\n" . $table . "\n|}";
+		} else {
+			$table = "";
+		}
+		return $table;
 	}
 }

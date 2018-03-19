@@ -24,6 +24,7 @@
 namespace WikiPathways;
 
 use Exception;
+use Html;
 use Parser;
 use Linker;
 use Title;
@@ -32,7 +33,8 @@ class PathwayInfo extends PathwayData {
 	private $parser;
 
 	/**
-	 * Get the pathway info text.
+	 * Get the pathway info text.  Handles the {{#pathwayInfo}} parser
+	 * function.
 	 *
 	 * @param Parser $parser guess
 	 * @param string $pathway identifier
@@ -77,92 +79,41 @@ class PathwayInfo extends PathwayData {
 	}
 
 	/**
-	 * Creates a table of all datanodes and their info
-	 * @return array
+	 * @return string
 	 */
-	public function datanodes() {
-		$table = '<table class="wikitable sortable" id="dnTable">';
-		$table .= '<tbody><th>Name<th>Type<th>Database reference<th>Comment';
+	private function getDataNodesHeader() {
+		return Html::openElement( "table", [
+			'class' => 'wikitable sortable',
+			'id' => 'dnTable'
+		] ) . Html::openElement( "tbody" )
+			. Html::element( "th", null, wfMessage( "wp-pathwayinfo-name" ) )
+			. Html::element( "th", null, wfMessage( "wp-pathwayinfo-type" ) )
+			. Html::element( "th", null, wfMessage( "wp-pathwayinfo-dbref" ) )
+			. Html::element( "th", null, wfMessage( "wp-pathwayinfo-comment" ) );
 		// style="border:1px #AAA solid;margin:1em 1em 0;background:#F9F9F9"
+	}
+
+	private function getFooter() {
+		return '</tbody></table>';
+	}
+
+	private function getUniqueNodes() {
 		$all = $this->getElements( 'DataNode' );
-		// Check for uniqueness, based on textlabel and xref
 		$nodes = [];
+
 		foreach ( $all as $elm ) {
 			$key = $elm['TextLabel'];
 			$key .= $elm->Xref['ID'];
 			$key .= $elm->Xref['Database'];
 			$nodes[(string)$key] = $elm;
 		}
-		// Create collapse button
-		$nrShow = 5;
-		$button = Pathway::toggleElement( "dnTable", count( $nodes ), $nrShow );
-		// Sort and iterate over all elements
-		ksort( $nodes );
-		$i = 0;
-		foreach ( $nodes as $datanode ) {
-			$xref = $datanode->Xref;
-			$xid = (string)$xref['ID'];
-			$xds = (string)$xref['Database'];
-			$link = DataSource::getLinkout( $xid, $xds );
-			$id = trim( $xref['ID'] );
-			if ( $link ) {
-				$l = new Linker();
-				$link = $l->makeExternalLink( $link, "$id ({$xref['Database']})" );
-			} elseif ( $id != '' ) {
-				$link = $id;
-				if ( $xref['Database'] != '' ) {
-					$link .= ' (' . $xref['Database'] . ')';
-				}
-			}
-
-			// Add xref info button
-			$html = $link;
-			if ( $xid && $xds ) {
-				$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
-				$html = XrefPanel::getXrefHTML(
-					$xid, $xds, $datanode['TextLabel'], $link, $this->getOrganism()
-				);
-			}
-
-			// Comment Data
-			$comment = [];
-			$biopaxRef = [];
-			foreach ( $datanode->children() as $child ) {
-				if ( $child->getName() == 'Comment' ) {
-					$comment[] = (string)$child;
-				} elseif ( $child->getName() == 'BiopaxRef' ) {
-					$biopaxRef[] = (string)$child;
-				}
-			}
-
-			$doShow = $i++ < $nrShow ? "" : " class='toggleMe'";
-			$table .= "<tr$doShow>";
-			$table .= '<td>' . $datanode['TextLabel'];
-			$table .= '<td class="path-type">' . $datanode['Type'];
-			$table .= '<td class="path-dbref">' . $html;
-			$table .= "<td class='path-comment'>";
-
-			$table .= self::displayItem( $comment );
-			// http://developers.pathvisio.org/ticket/800#comment:9
-			// $table .= self::displayItem( $biopaxRef );
-		}
-		$table .= '</tbody></table>';
-		if ( count( $nodes ) == 0 ) { $table = "<cite>No datanodes</cite>";
-		}
-		return [ $button . $table, 'isHTML' => 1, 'noparse' => 1 ];
+		return $nodes;
 	}
 
-	/**
-	 * Creates a table of all interactions and their info
-	 * @return string
-	 */
-	public function interactionAnnotations() {
-		$table = '<table class="wikitable sortable" id="inTable">';
-		$table .= '<tbody><th>Source<th>Target<th>Type<th>Database reference<th>Comment';
+	private function getUniqueAnnotations() {
 		$all = $this->getAllAnnotatedInteractions();
-
-		// Check for uniqueness, based on Source-Target-Type-Xref
 		$nodes = [];
+
 		foreach ( $all as $elm ) {
 			if ( $elm->getEdge()->Xref['ID'] != "" && $elm->getEdge()->Xref['Database'] != "" ) {
 				$key = $elm->getSource()['TextLabel'];
@@ -173,67 +124,10 @@ class PathwayInfo extends PathwayData {
 				$nodes[(string)$key] = $elm;
 			}
 		}
-		// Create collapse button
-		$nrShow = 5;
-		$button = Pathway::toggleElement( "inTable", count( $nodes ), $nrShow );
-		// Sort and iterate over all elements
-		ksort( $nodes );
-		$i = 0;
-		foreach ( $nodes as $datanode ) {
-			$int = $datanode->getEdge();
-			$xref = $int->Xref;
-			$xid = (string)$xref['ID'];
-			$xds = (string)$xref['Database'];
-			$link = DataSource::getLinkout( $xid, $xds );
-			$id = trim( $xref['ID'] );
-			if ( $link ) {
-				$l = new Linker();
-				$link = $l->makeExternalLink( $link, "$id ({$xref['Database']})" );
-			} elseif ( $id != '' ) {
-				$link = $id;
-				if ( $xref['Database'] != '' ) {
-					$link .= ' (' . $xref['Database'] . ')';
-				}
-			}
-			// Add xref info button
-			$html = $link;
-			if ( $xid && $xds ) {
-				$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
-				$html = XrefPanel::getXrefHTML(
-					$xid, $xds, $xref['ID'], $link, $this->getOrganism()
-				);
-			}
-			// Comment Data
-			$comment = [];
-			foreach ( $int->Comment as $child ) {
-				if ( $child->getName() == 'Comment' ) {
-					$comment[] = (string)$child;
-				}
-			}
-			$doShow = $i++ < $nrShow ? "" : " class='toggleMe'";
-			$table .= "<tr$doShow>";
-			$table .= '<td class="path-source">' .$datanode->getSource()['TextLabel'];
-			$table .= '<td class="path-target" align="center">'.$datanode->getTarget()['TextLabel'];
-			$table .= '<td class="path-type" align="center">' .$datanode->getType();
-			$table .= '<td class="path-dbref" align="center">' . $html;
-			$table .= "<td class='path-comment'>";
-			if ( count( $comment ) > 1 ) {
-				$table .= "<ul>";
-				foreach ( $comment as $c ) {
-					$table .= "<li>$c";
-				}
-				$table .= "</ul>";
-			} elseif ( count( $comment ) == 1 ) {
-				$table .= $comment[0]."</br>";
-			}
-		}
-		$table .= '</tbody></table>';
-		if ( count( $nodes ) == 0 ) { $table = "<cite>No annotated interactions</cite>";
-		}
-		return [ $button . $table, 'isHTML' => 1, 'noparse' => 1 ];
+		return $nodes;
 	}
 
-	protected static function displayItem( $item ) {
+	private function displayItem( $item ) {
 		$ret = "";
 		if ( count( $item ) > 1 ) {
 			$ret .= "<ul>";
@@ -247,25 +141,173 @@ class PathwayInfo extends PathwayData {
 		return $ret;
 	}
 
-	public function interactions() {
-		$interactions = $this->getInteractionsSoft();
-		foreach ( $interactions as $ia ) {
-			$table .= "\n|-\n";
-			$table .= "| {$ia->getNameSoft()}\n";
-			$table .= "|";
-			$xrefs = $ia->getPublicationXRefs( $this );
-			if ( !$xrefs ) { $xrefs = [];
-			}
-			foreach ( $xrefs as $ref ) {
-				$attr = $ref->attributes( 'rdf', true );
-				$table .= "<cite>" . $attr['id'] . "</cite>";
+	private function getComment( $datanode ) {
+		// Comment Data
+
+		$comment = [];
+		foreach ( $datanode->children() as $child ) {
+			if ( $child->getName() == 'Comment' ) {
+				$comment[] = (string)$child;
 			}
 		}
-		if ( $table ) {
-			$table = "=== Interactions ===\n{|class='wikitable'\n" . $table . "\n|}";
+		return $this->displayItem( $comment );
+		// This did used to do biopaxrefs:
+		// http://developers.pathvisio.org/ticket/800#comment:9
+	}
+
+	private function getLink( $xid, $xds, $xref ) {
+		$link = DataSource::getLinkout( $xid, $xds );
+		if ( $link ) {
+			$linker = new Linker();
+			$link = $linker->makeExternalLink( $link, "$xid ({$xref['Database']})" );
+		} elseif ( $xid != '' ) {
+			$link = $xid;
+			if ( $xref['Database'] ) {
+				$link .= ' (' . $xref['Database'] . ')';
+			}
+		}
+		return $link;
+	}
+
+	// Add xref info button
+	private function getXrefHTML( $xid, $xds, $xref, $element ) {
+		$html = $this->getLink( $xid, $xds, $xref );
+		if ( $xid && $xds ) {
+			$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
+			$html = XrefPanel::getXrefHTML(
+				$xid, $xds, $element, $html, $this->getOrganism()
+			);
+		}
+		return $html;
+	}
+
+	private function getDataNodesTable( array $nodes, $nrShow ) {
+		$table = $this->getDataNodesHeader();
+
+		ksort( $nodes );
+		$row = 0;
+		foreach ( $nodes as $datanode ) {
+			$xref = $datanode->Xref;
+			$xds = (string)$xref['Database'];
+			$xid = trim( $xref['ID'] );
+
+			$html = $this->getXrefHTML( $xid, $xds, $xref, $datanode['TextLabel'] );
+
+			$table .= Html::rawElement(
+				"tr", [ 'class' => ( $row++ < $nrShow ? "" : "toggleMe" ) ],
+				Html::rawElement( 'td', null,  $datanode['TextLabel'] )
+				. Html::rawElement(
+					'td', [ 'class' => 'path-type' ], $datanode['Type']
+				) . Html::rawElement(
+					'td', [ 'class' => 'path-dbref' ], $html
+				) . Html::rawElement(
+					'td', [ 'class' => 'path-comment' ], $this->getComment( $datanode )
+				)
+			);
+		}
+		$table .= $this->getFooter();
+		return $table;
+	}
+
+	/**
+	 * Creates a table of all datanodes and their info.
+	 *
+	 * Note that this is only really called as a parameter to the
+	 * {{#pathwayInfo}} parser function.  See MediaWiki::wp-gpml-xrefs
+	 * defined in WikiPathways::GPML
+	 *
+	 * Note similarity to interactionAnnotations() below.
+	 *
+	 * @return array
+	 */
+	public function datanodes() {
+		// Check for uniqueness, based on textlabel and xref
+		$nodes = $this->getUniqueNodes();
+
+		// Create collapse button
+		$nrShow = 5;
+		$button = Pathway::toggleElement( "dnTable", count( $nodes ), $nrShow );
+
+		if ( count( $nodes ) == 0 ) {
+			$table = "<cite>No datanodes</cite>";
 		} else {
-			$table = "";
+			// Sort and iterate over all elements
+			$table = $this->getDataNodesTable( $nodes, $nrShow );
 		}
+		return [ $button . $table, 'isHTML' => 1, 'noparse' => 1 ];
+	}
+
+	/**
+	 * Creates a table of all interactions and their info.
+	 *
+	 * Note that this is only really called as a parameter to the
+	 * {{#pathwayInfo}} parser function.  See MediaWiki::wp-gpml-xrefs
+	 * defined in WikiPathways::GPML
+	 *
+	 * Note similiarity to datanodes() above.
+	 *
+	 * @return array
+	 */
+	public function interactionAnnotations() {
+		$annotations = $this->getUniqueAnnotations();
+
+		// Create collapse button
+		$nrShow = 5;
+		$button = Pathway::toggleElement( "inTable", count( $annotations ), $nrShow );
+
+		if ( count( $annotations ) == 0 ) {
+			$table = "<cite>No annotated interactions</cite>";
+		} else {
+			// sort and iterate over all elements'
+			$table = $this->getAnnotationsTable( $annotations, $nrShow );
+		}
+		return [ $button . $table, 'isHTML' => 1, 'noparse' => 1 ];
+	}
+
+	private function getAnnotationsHeader() {
+		return Html::openElement( 'table', [
+			"class" => "wikitable sortable",
+			"id" => "inTable"
+		] ) . Html::openElement( "tbody" )
+			. Html::element( "th", null, wfMessage( "wp-annotations-source" ) )
+			. Html::element( "th", null, wfMessage( "wp-annotations-target" ) )
+			. Html::element( "th", null, wfMessage( "wp-annotations-type" ) )
+			. Html::element( "th", null, wfMessage( "wp-annotations-dbref" ) )
+			. Html::element( "th", null, wfMessage( "wp-annotations-comment" ) );
+	}
+
+	private function getAnnotationsTable( array $nodes, $nrShow ) {
+		$table = $this->getAnnotationsHeader();
+
+		// Sort and iterate over all elements
+		ksort( $nodes );
+		$row = 0;
+		foreach ( $nodes as $datanode ) {
+			$xref = $int->Xref;
+			$xds = (string)$xref['Database'];
+			$xid = trim( $xref['ID'] );
+			$int = $datanode->getEdge();
+
+			$html = $this->getXrefHTML( $xid, $xds, $xref, $xref['ID'] );
+
+			$table .= Html::rawElement(
+				"tr", [ 'class' => ( $row++ < $nrShow ? "" : "toggleMe" ) ],
+				Html::rawElement(
+					'td', [ 'class' => 'path-source' ], $datanode->getSource()['TextLabel']
+				) . Html::rawElement(
+					'td', [ 'class' => 'path-targert', 'align' => 'center' ],
+					$datanode->getTarget()['TextLabel']
+				) . Html::rawElement(
+					'td', [ 'class' => 'path-type', 'align' => 'center' ],
+					$datanode->getType()
+				) . Html::rawElement(
+					'td', [ 'class' => 'path-dbref', 'align' => 'center' ], $html
+				) . Html::rawElement(
+					'td', [ 'class' => 'path-comment' ], $this->getComment( $int )
+				)
+			);
+		}
+		$table .= $this->getFooter();
 		return $table;
 	}
 }

@@ -50,5 +50,14 @@
 	"wp-pathway-info-no-type": "No type requested from #pathwayInfo",
 	"wp-pathway-info-wrong-param": "$1 is not a valid typpe parameter for #pathwayInfo",
 	"wp-pageditor-id-needed": "No ID was specified",
-	"wp-pageditor-type-needed": "No type was specified"
+	"wp-pageditor-type-needed": "No type was specified",
+	"wp-pathwayinfo-name": "Name",
+	"wp-pathwayinfo-type": "Type",
+	"wp-pathwayinfo-dbref": "Database reference",
+	"wp-pathwayinfo-comment": "Comment",
+	"wp-annotations-source": "Source",
+	"wp-annotations-target": "Target",
+	"wp-annotations-type": "Type",
+	"wp-annotations-dbref": "Database reference",
+	"wp-annotations-dbref": "Comment"
 }
