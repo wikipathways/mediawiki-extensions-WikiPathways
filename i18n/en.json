@@ -59,5 +59,6 @@
 	"wp-annotations-target": "Target",
 	"wp-annotations-type": "Type",
 	"wp-annotations-dbref": "Database reference",
-	"wp-annotations-dbref": "Comment"
+	"wp-annotations-dbref": "Comment",
+	"wp-xref-additional": "Show additional info and linkouts"
 }

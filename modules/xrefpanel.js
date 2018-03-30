@@ -1,33 +1,14 @@
-
-if (typeof(XrefPanel_dataSourcesUrl) == "undefined") {
-	//TODO change to BD webservice call, once available
-	var XrefPanel_dataSourcesUrl = '/extensions/WikiPathways/PathwayViewer/datasources.txt';
-}
-if (typeof(XrefPanel_bridgeUrl) == "undefined") {
-	//Disable bridgedb webservice queries if url is not specified
-	var XrefPanel_bridgeUrl = '';
-}
-if (typeof(XrefPanel_searchUrl) == "undefined") {
-	var XrefPanel_searchUrl = false;
-}
-if (typeof(XrefPanel_lookupAttributes) == "undefined") {
-	var XrefPanel_lookupAttributes = true;
-}
-
-/**
- * Change this if the base path of the script (and resource files) is
- * different than the page root.
- */
-if (typeof(XrefPanel_imgPath) == "undefined") {
-	var XrefPanel_imgPath = wgServer + '/' + wgScriptPath
-		+ '/extensions/WikiPathways/images/';
-}
-
 /**
  * A panel that displays information for an xref.
  * The xref information is provided by a bridgedb web service.
  */
-var XrefPanel = {};
+var XrefPanel = function(){};
+
+XrefPanel.dataSourcesUrl = mw.config.get( "XrefPanel.dataSourcesUrl" );
+XrefPanel.bridgeUrl = mw.config.get( "XrefPanel.bridgeUrl" );
+XrefPanel.searchUrl = mw.config.get( "XrefPanel.searchUrl" );
+XrefPanel.lookupAttributes = mw.config.get( "XrefPanel.lookupAttributes" );
+XrefPanel.imgPath = mw.config.get( "XrefPanel.imgPath" );
 
 /**
  * Contains the url pattern for each
@@ -53,7 +34,7 @@ XrefPanel.systemCodes = {};
 XrefPanel.xrefHooks = [];
 
 XrefPanel.createLoadImage = function(){
-	return '<img src="' + XrefPanel_imgPath + '/progress.gif" />';
+	return '<img src="' + XrefPanel.imgPath + '/progress.gif" />';
 };
 
 /**
@@ -74,7 +55,7 @@ XrefPanel.ignoreAttributes = {
 };
 
 XrefPanel.getBaseUrl = function(){
-	var url = XrefPanel_bridgeUrl;
+	var url = XrefPanel.bridgeUrl;
 	//Remove trailing slash
 	if (url && url.substr(-1) === "/") {
 		url = url.substr(0, url.length - 1);
@@ -136,9 +117,9 @@ XrefPanel.createErrorCallback = function($div, msg){
 	};
 };
 
-if(XrefPanel_lookupAttributes) {
+if(XrefPanel.lookupAttributes) {
 	XrefPanel.infoHooks.push(function(id, datasource, symbol, species){
-		if (XrefPanel_bridgeUrl) {
+		if (XrefPanel.bridgeUrl) {
 			var $div = $('<div id="bridgeInfo">' + XrefPanel.createLoadImage() + ' loading info...</div>');
 			XrefPanel.queryProperties(id, datasource, species, XrefPanel.createInfoCallback($div), XrefPanel.createErrorCallback($div, 'Unable to load info.'));
 			return $div;
@@ -153,8 +134,8 @@ if(XrefPanel_lookupAttributes) {
  * Add an info hook for search.wikipathways.org.
  */
 XrefPanel.infoHooks.push(function(id, datasource, symbol, species){
-	if (XrefPanel_searchUrl && id && datasource) {
-		var url = XrefPanel_searchUrl.replace('$ID', id).replace('$DATASOURCE', XrefPanel.systemCodes[datasource]);
+	if (XrefPanel.searchUrl && id && datasource) {
+		var url = XrefPanel.searchUrl.replace('$ID', id).replace('$DATASOURCE', XrefPanel.systemCodes[datasource]);
 		var $div = $('<div />');
 		var $a = $('<a target="_blank" href="' + url + '"></a>').attr('title', 'Find other pathways with ' + symbol + '...').html('<span style="float:left" class="ui-icon ui-icon-search" />Find pathways with ' + symbol + '...');
 		var $p = $('<p />');
@@ -373,7 +354,7 @@ XrefPanel.loadDataSources = function(){
 			}
 		}
 	};
-	$.get(XrefPanel_dataSourcesUrl, {}, callback);
+	$.get(XrefPanel.dataSourcesUrl, {}, callback);
 };
 
 XrefPanel.log = function(msg) {

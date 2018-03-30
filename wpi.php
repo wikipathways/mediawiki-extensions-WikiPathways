@@ -17,6 +17,8 @@
  */
 namespace WikiPathways;
 
+use Exception;
+use RequestContext;
 use Title;
 
 $IP = dirname( dirname( __DIR__ ) ) . "/mediawiki";
@@ -30,25 +32,53 @@ require "$IP/includes/WebStart.php";
  */
 class wpi {
 
-	/**
-	 * Handle the request
-	 *
-	 * @param array $arg that are passed via $_GET
-	 */
-	public static function handleRequest( $arg ) {
-		if ( !isset( $arg['action'] ) ) {
+	private static $req;
+
+	private static function getAction() {
+		$action = self::$req->getVal( 'action' );
+		if ( !$action ) {
 			throw new Exception( "No action given!" );
 		}
-		$action = $arg['action'];
-		if ( !isset( $arg['pwTitle'] ) ) {
+		return $action;
+	}
+
+	private static function getPWTitle() {
+		$pwTitle = self::$req->getVal( 'pwTitle' );
+		if ( !$pwTitle ) {
 			throw new Exception( "No pwTitle given!" );
 		}
-		$pwTitle = $arg['pwTitle'];
-		if ( !isset( $arg['oldid'] ) && $action !== "downloadFile" &&
+		$pwTitle = Title::newFromText( $pwTitle, NS_PATHWAY );
+		if ( !$pwTitle ) {
+			throw new Exception( "Invalid title given!" );
+		}
+		return $pwTitle;
+	}
+
+	private static function getOldID() {
+		$oldid = self::$req->getVal( 'oldid' );
+		if ( !$oldid && $action !== "downloadFile" &&
 			 $action !== "delete" ) {
 			throw new Exception( "No oldId given!" );
 		}
-		$oldId = $arg['oldid'];
+		return $oldid;
+	}
+
+	private static function getType() {
+		$type = self::$req->getVal( 'type' );
+		if ( !$type ) {
+			throw new Exception( "No type given!" );
+		}
+		return $type;
+	}
+
+	/**
+	 * Handle the request
+	 */
+	public static function handleRequest() {
+		self::$req = RequestContext::getMain()->getRequest();
+		$action = self::getAction();
+		$pwTitle = self::getPWTitle();
+		$oldId = self::getOldId();
 
 		switch ( $action ) {
 		case 'launchCytoscape':
@@ -58,10 +88,8 @@ class wpi {
 			self::launchGenMappConverter( self::createPathwayObject( $pwTitle, $oldId ) );
 			break;
 		case 'downloadFile':
-			if ( !isset( $arg['type'] ) ) {
-				throw new Exception( "No type given!" );
-			}
-			self::downloadFile( $arg['type'], $pwTitle );
+			$type = self::getType();
+			self::downloadFile( $type, $pwTitle );
 			break;
 		case 'revert':
 			self::revert( $pwTitle, $oldId );
@@ -77,10 +105,10 @@ class wpi {
 	/**
 	 * Utility function to import the required javascript for the xref panel
 	 * @param Title $pwTitle the pathway
-	 * @param int $oldid the version
+	 * @param int $oldId the version
 	 * @return Pathway
 	 */
-	public static function createPathwayObject( Title $pwTitle, $oldid ) {
+	public static function createPathwayObject( Title $pwTitle, $oldId ) {
 		$pathway = Pathway::newFromTitle( $pwTitle );
 		if ( $oldId ) {
 			$pathway->setActiveRevision( $oldId );
@@ -121,7 +149,6 @@ class wpi {
 		// Redirect to old page
 		$url = $pathway->getTitleObject()->getFullURL();
 		header( "Location: $url" );
-		exit;
 	}
 
 	/**
@@ -139,7 +166,7 @@ class wpi {
 		$webstart = str_replace( "CODE_BASE", WPI_URL . "/applet/", $webstart );
 
 		// This exits script
-		self::sendWebstart( $webstart, $pathway->name(), "genmapp.jnlp" );
+		self::sendWebstart( $webstart, "genmapp.jnlp" );
 	}
 
 	/**
@@ -154,18 +181,17 @@ class wpi {
 		$webstart = str_replace( "CODE_BASE", WPI_URL . "/bin/cytoscape/", $webstart );
 
 		// This exits script
-		self::sendWebstart( $webstart, $pathway->name(), "cytoscape.jnlp" );
+		self::sendWebstart( $webstart, "cytoscape.jnlp" );
 	}
 
 	/**
 	 * Send some JNLP bits and quit
 	 *
 	 * @param string $webstart to bootstrap
-	 * @param string $tmpname of pathway
 	 * @param string $filename of jnlp
 	 */
 	public static function sendWebstart(
-		$webstart, $tmpname, $filename = "wikipathways.jnlp"
+		$webstart, $filename = "wikipathways.jnlp"
 	) {
 		ob_start();
 		ob_clean();
@@ -174,7 +200,6 @@ class wpi {
 		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
 		header( "Content-Disposition: attachment; filename=\"{$filename}\"" );
 		echo $webstart;
-		exit;
 	}
 
 	/**
@@ -198,7 +223,7 @@ class wpi {
 	 * @param string $fileType we want to download
 	 * @param Title $pwTitle of file
 	 */
-	public static function downloadFile( $fileType, $pwTitle ) {
+	public static function downloadFile( $fileType, Title $pwTitle ) {
 		$pathway = Pathway::newFromTitle( $pwTitle );
 		if ( !$pathway->isReadable() ) {
 			throw new Exception( "You don't have permissions to view this pathway" );
@@ -208,15 +233,11 @@ class wpi {
 			self::launchGenMappConverter( $pathway );
 		}
 		ob_start();
-		$oldid = $_REQUEST['oldid'];
+		$oldid = self::$req->getVal( 'oldid' );
 		if ( $oldid ) {
 			$pathway->setActiveRevision( $oldid );
 		}
-		// Register file type for caching
-		Pathway::registerFileType( $fileType );
-
-		$file = $pathway->getFileLocation( $fileType );
-		$fn = $pathway->getFileName( $fileType );
+		$filename = $pathway->getFileLocation( $fileType );
 		$mime = MimeTypes::getMimeType( $fileType );
 		if ( !$mime ) {
 			$mime = "text/plain";
@@ -225,12 +246,23 @@ class wpi {
 		ob_clean();
 		header( "Content-type: $mime" );
 		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-		header( "Content-Disposition: attachment; filename=\"$fn\"" );
+		header( "Content-Disposition: attachment; filename=\"$filename\"" );
 		// header("Content-Length: " . filesize($file));
 		set_time_limit( 0 );
-		@readfile( $file );
-		exit();
+
+		self::sendFile( $filename );
+		// for any file, if fpassthru() is disabled
+	}
+
+	private static function sendFile( $filename ) {
+		$file = fopen( $filename, 'rb' );
+		if ( $file !== false ) {
+			while ( !feof( $file ) ) {
+				echo fread( $file, 4096 );
+			}
+			fclose( $file );
+		}
 	}
 }
 
-wpi::handleRequest( $_GET );
+wpi::handleRequest();

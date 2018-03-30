@@ -29,9 +29,36 @@ use Parser;
 use Html;
 
 class XrefPanel {
-	public static function renderXref( $input, $argv, Parser $parser ) {
-		$this->parser->getOutput()->addModules( [ "wpi.XrefPanel" ] );
+	private static $panelConfig = false;
 
+	public static function onMakeGlobalVariablesScript(
+		array &$vars, OutputPage $outputPage
+	) {
+		if ( self::$panelConfig ) {
+			global $wgScriptPath, $wgScriptPath, $wgServer;
+			global $wpiXrefPanelDisableAttributes;
+			$outputPage->addModules( [ "wpi.XrefPanel" ] );
+
+			$vars["XrefPanel.dataSourcesUrl"]
+				= '/extensions/WikiPathways/PathwayViewer/datasources.txt';
+			$vars["XrefPanel.bridgeUrl"]
+				= WPI_URL . '/extensions/bridgedb.php';
+			$vars["XrefPanel.searchUrl"]
+				= SITE_URL . '/index.php?title=Special:SearchPathways'
+				. '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
+			$vars["XrefPanel.lookupAttributes"]
+				= !$wpiXrefPanelDisableAttributes;
+			$vars["XrefPanel.imgPath"]
+				= $wgServer . '/' . $wgScriptPath . '/extensions/WikiPathways/images/';
+		}
+	}
+
+	public static function addXrefResourceLoader( Parser $parser ) {
+		self::$panelConfig = true;
+	}
+
+	public static function renderXref( $input, $argv, Parser $parser ) {
+		self::addXrefResourceLoader( $parser );
 		return self::getXrefHTML(
 			$argv['id'], $argv['datasource'], $input, $argv['species']
 		);
@@ -46,7 +73,7 @@ class XrefPanel {
 	) {
 		$html = $text
 			  . Html::element( 'img', [
-				  'title' => 'Show additional info and linkouts',
+				  'title' => wfMessage( 'wp-xref-additional' )->plain(),
 				  'class' => 'xrefPanel',
 				  'data-xrefID' => $xrefID,
 				  'data-dataSource' => $datasource,
@@ -56,35 +83,5 @@ class XrefPanel {
 			  ] );
 
 		return $html;
-	}
-
-	public static function getJsSnippets() {
-		global $wpiXrefPanelDisableAttributes, $wpiBridgeUrl,
-		$wpiBridgeUseProxy;
-
-		$js = [];
-
-		$js[] = 'XrefPanel_searchUrl = "' . SITE_URL
-		. '/index.php?title=Special:SearchPathways'
-		. '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
-		if ( $wpiXrefPanelDisableAttributes ) {
-			$js[] = 'XrefPanel_lookupAttributes = false;';
-		}
-
-		$bridge = "XrefPanel_dataSourcesUrl = '" . WPI_CACHE_PATH
-		. "/datasources.txt';\n";
-
-		if ( $wpiBridgeUrl !== false ) {
-			if ( !isset( $wpiBridgeUrl ) || $wpiBridgeUseProxy ) {
-				// Point to bridgedb proxy by default
-				$bridge .= "XrefPanel_bridgeUrl = '" . WPI_URL
-				. '/extensions/bridgedb.php' . "';\n";
-			} else {
-				$bridge .= "XrefPanel_bridgeUrl = '$wpiBridgeUrl';\n";
-			}
-		}
-		$js[] = $bridge;
-
-		return $js;
 	}
 }
