@@ -789,9 +789,12 @@ class Pathway {
 
 	/**
 	 * Check if PathVisio-Java can convert from GPML to the given file type
+	 *
+	 * @param string $fileType to check
+	 * @return bool
 	 */
 	public static function isConvertableByPathVisio( $fileType ) {
-		return in_array( $fileType, array_keys( self::$fileTypesConvertableByPathVisio ) );
+		return isset( self::$fileTypesConvertableByPathVisio[ $fileType ] );
 	}
 
 	/**
@@ -1513,9 +1516,10 @@ class Pathway {
 	private function saveConvertedByPathVisioCache( $fileType ) {
 		# Convert gpml to fileType
 		$gpmlFile = realpath( $this->getFileLocation( FILETYPE_GPML ) );
-		wfDebugLog( "Pathway",  "Saving $gpmlFile to $fileType" );
 		$conFile = $this->getFileLocation( $fileType, false );
 		$dir = dirname( $conFile );
+		wfDebugLog( "Pathway",  "Saving $gpmlFile to $fileType in $conFile" );
+
 		if ( !is_dir( $dir ) && !wfMkdirParents( $dir ) ) {
 			throw new MWException( "Couldn't make directory: $dir" );
 		}
@@ -1553,15 +1557,15 @@ class Pathway {
 		$msg = wfShellExec( $cmd, $status, [], [ 'memory' => 0 ] );
 
 		if ( $status != 0 ) {
-			throw new Exception(
-				"Unable to convert to $outFile:\n"
-				. "<BR>Status:$status\n<BR>Message:$msg\n"
-				. "<BR>Command:$cmd<BR>"
+			throw new MWException(
+				"Unable to convert to $outFile:\n\n"
+				. "Status: $status\n\nMessage: $msg\n\n"
+				. "Command: $cmd"
 			);
 			wfDebugLog( "Pathway",
-				"Unable to convert to $outFile:\n"
-				. "<BR>Status:$status\n<BR>Message:$msg\n"
-				. "<BR>Command:$cmd<BR>"
+				"Unable to convert to $outFile:"
+				. "Status: $status   Message:$msg  "
+				. "Command: $cmd"
 			);
 		}
 		return true;
