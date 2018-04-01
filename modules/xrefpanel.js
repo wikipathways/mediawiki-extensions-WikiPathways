@@ -193,7 +193,6 @@ XrefPanel.registerTrigger = function(elm, id, datasource, species, symbol) {
  */
 XrefPanel.create = function(id, datasource, species, symbol){
 	//Try to use cached version if exists.
-	symbol = symbol["0"];
 	var $content = XrefPanel.getCachedContent(id, datasource, species, symbol);
 	if ($content) {
 		return $content;
@@ -211,11 +210,16 @@ XrefPanel.create = function(id, datasource, species, symbol){
 	//Add the info section
 	var $infodiv = $content.find('.xrefinfo');
 	var title = symbol ? '<h3>' + symbol + '</h3>' : '';
-	var txt = '<b>Annotated with: </b>' + XrefPanel.createXrefLink(id, datasource, true);
-	if (!id)
-		txt = '<b><font color="red">Invalid annotation, missing identifier!</font></b>';
-	if (!datasource)
+	var txt;
+	if ( !id && !datasource ) {
+		txt = '<b><font color="red">Invalid annotation, missing identifier and datasource!</font></b>';
+	} else if (!datasource) {
 		txt = '<b><font color="red">Invalid annotation, missing datasource!</font></b>';
+	} else if (!id) {
+		txt = '<b><font color="red">Invalid annotation, missing id!</font></b>';
+	} else {
+		txt = '<b>Annotated with: </b>' + XrefPanel.createXrefLink(id, datasource, true);
+	}
 	$infodiv.append(title + '<div>' + txt + '</div>');
 
 	//Run hooks that may add items to the info
@@ -269,7 +273,10 @@ XrefPanel.create = function(id, datasource, species, symbol){
 			var ds = dataSources[dsi];
 			var xrefHtml = '<table>';
 			for (var i in xrefs[ds]) {
-				xrefHtml += '<tr>' + XrefPanel.createXrefLink(xrefs[ds][i], ds, false);
+				xrefHtml += '<tr>';
+				if ( xrefs[ds][i] && ds ) {
+					xrefHtml += XrefPanel.createXrefLink(xrefs[ds][i], ds, false);
+				}
 			}
 			$accordion.append('<h3><a href="#">' + ds + '</a></h3>');
 			var $xdiv = $('<div />').html(xrefHtml + '</table>');
@@ -302,7 +309,6 @@ XrefPanel.create = function(id, datasource, species, symbol){
 		$content.find('.xreflinks').empty();
 	}
 	return $content;
-
 };
 
 XrefPanel.createXrefLink = function(id, datasource, withDataSourceLabel){
@@ -340,7 +346,6 @@ XrefPanel.loadDataSources = function(){
 	var callback = function(data, textStatus){
 		//Parse the datasources file and fill the url object
 		if (textStatus == 'success' || textStatus == 'notmodified') {
-			console.log( "loadDataSources: " + textStatus );
 			var lines = data.split("\n");
 			for (var l in lines) {
 				var cols = lines[l].split("\t", -1);
@@ -384,7 +389,7 @@ $(document).ready( function() {
 		document.getElementsByClassName( "xrefPanel" ),
 		function( el ) {
 			XrefPanel.registerTrigger(
-				el, el.dataset.xrefID, el.dataset.dataSource,
+				el, el.dataset.xrefid, el.dataset.datasource,
 				el.dataset.species, el.dataset.label
 			);
 		}

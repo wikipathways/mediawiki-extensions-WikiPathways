@@ -25,8 +25,9 @@
 
 namespace WikiPathways;
 
-use Parser;
 use Html;
+use OutputPage;
+use Parser;
 
 class XrefPanel {
 	private static $panelConfig = false;
@@ -34,23 +35,21 @@ class XrefPanel {
 	public static function onMakeGlobalVariablesScript(
 		array &$vars, OutputPage $outputPage
 	) {
-		if ( self::$panelConfig ) {
-			global $wgScriptPath, $wgScriptPath, $wgServer;
-			global $wpiXrefPanelDisableAttributes;
-			$outputPage->addModules( [ "wpi.XrefPanel" ] );
+		global $wgScriptPath, $wgScriptPath, $wgServer;
+		global $wpiXrefPanelDisableAttributes;
+		$outputPage->addModules( [ "wpi.XrefPanel" ] );
 
-			$vars["XrefPanel.dataSourcesUrl"]
-				= '/extensions/WikiPathways/PathwayViewer/datasources.txt';
-			$vars["XrefPanel.bridgeUrl"]
-				= WPI_URL . '/extensions/bridgedb.php';
-			$vars["XrefPanel.searchUrl"]
-				= SITE_URL . '/index.php?title=Special:SearchPathways'
-				. '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
-			$vars["XrefPanel.lookupAttributes"]
-				= !$wpiXrefPanelDisableAttributes;
-			$vars["XrefPanel.imgPath"]
-				= $wgServer . '/' . $wgScriptPath . '/extensions/WikiPathways/images/';
-		}
+		$vars["XrefPanel.dataSourcesUrl"]
+			= '/extensions/WikiPathways/PathwayViewer/datasources.txt';
+		$vars["XrefPanel.bridgeUrl"]
+			= WPI_URL . '/bridgedb.php';
+		$vars["XrefPanel.searchUrl"]
+			= SITE_URL . '/index.php?title=Special:SearchPathways'
+			. '&doSearch=1&ids=$ID&codes=$DATASOURCE&type=xref";';
+		$vars["XrefPanel.lookupAttributes"]
+			= !$wpiXrefPanelDisableAttributes;
+		$vars["XrefPanel.imgPath"]
+			= $wgServer . '/' . $wgScriptPath . '/extensions/WikiPathways/images/';
 	}
 
 	public static function addXrefResourceLoader( Parser $parser ) {
@@ -75,8 +74,8 @@ class XrefPanel {
 			  . Html::element( 'img', [
 				  'title' => wfMessage( 'wp-xref-additional' )->plain(),
 				  'class' => 'xrefPanel',
-				  'data-xrefID' => $xrefID,
-				  'data-dataSource' => $datasource,
+				  'data-xrefid' => $xrefID,
+				  'data-datasource' => $datasource,
 				  'data-species' => $species,
 				  'data-label' => $label,
 				  'src' => SITE_URL . '/extensions/WikiPathways/images/info.png'

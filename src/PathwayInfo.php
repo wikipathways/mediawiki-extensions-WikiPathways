@@ -283,12 +283,19 @@ class PathwayInfo extends PathwayData {
 		ksort( $nodes );
 		$row = 0;
 		foreach ( $nodes as $datanode ) {
-			$xref = $int->Xref;
-			$xds = (string)$xref['Database'];
-			$xid = trim( $xref['ID'] );
+			$xref = [];
+			if ( isset( $int->Xref ) ) {
+				$xref = $int->Xref;
+			}
+			$xds = "";
+			$xid = "";
+			if ( isset( $xref['Database'] ) ) {
+				$xds = (string)$xref['Database'];
+				$xid = trim( $xref['ID'] );
+			}
 			$int = $datanode->getEdge();
 
-			$html = $this->getXrefHTML( $xid, $xds, $xref, $xref['ID'] );
+			$html = $this->getXrefHTML( $xid, $xds, $xref, $xid );
 
 			$table .= Html::rawElement(
 				"tr", [ 'class' => ( $row++ < $nrShow ? "" : "toggleMe" ) ],

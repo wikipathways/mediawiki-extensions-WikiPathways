@@ -130,7 +130,10 @@
 		"userCan": "WikiPathways\\PermissionManager::checkRestrictions",
 		"SkinTemplateContentActions": "WikiPathways\\PermissionManager::addPermissionTab",
 		"UnknownAction": "WikiPathways\\PermissionManager::permissionTabAction",
-		"MakeGlobalVariablesScript": "WikiPathways\\CurationTag::onMakeGlobalVariablesScript"
+		"MakeGlobalVariablesScript": [
+			"WikiPathways\\CurationTag::onMakeGlobalVariablesScript",
+			"WikiPathways\\XrefPanel::onMakeGlobalVariablesScript"
+		]
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -189,7 +192,8 @@
 				"xrefpanel.css"
 			],
 			"dependencies": [
-				"jquery.ui.dialog"
+				"jquery.ui.dialog",
+				"jquery.ui.accordion"
 			]
 		}
 	},

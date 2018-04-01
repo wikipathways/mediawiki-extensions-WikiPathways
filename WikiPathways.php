@@ -129,7 +129,7 @@ require_once "$IP/extensions/BiblioPlus/BiblioPlus.php";
 
 wfLoadSkin( "Vector" );
 
-$wfSearchPagePath = WPI_URL . "/extensions/SearchPathways";
+$wfSearchPagePath = WPI_URL . "/";
 $wgCaptchaClass = 'QuestyCaptcha';
 
 // Set to true if you want to exclude Bots from the reporting - Can be omitted.
@@ -372,9 +372,6 @@ $wgEmergencyContact = "wikipathways@gladstone.ucsf.edu";
 $wgPasswordSender = "no-reply@wikipathways.com";
 
 $wgContentHandlerTextFallback = 'serialize';
-
-// Only load jquery when required by extension
-$jsRequireJQuery = false;
 
 // Disable email on test server
 $wgEnableEmail = true;
