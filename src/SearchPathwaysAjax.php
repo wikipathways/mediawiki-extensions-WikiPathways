@@ -19,43 +19,72 @@ namespace WikiPathways;
 
 use AjaxResponse;
 use DOMDocument;
-use WikiPathways\XRef;
+use WikiPathways\Xref;
 
 class SearchPathwaysAjax {
+	/**
+	 * @param string $ids Comma-separated list of IDs
+	 * @param string $codes Comma-separated list of codes
+	 * @return array of xrefs
+	 */
 	public static function parToXref( $ids, $codes ) {
 		$ids = explode( ',', $ids );
 		$codes = explode( ',', $codes );
-		if ( count( $xrefs ) > count( $codes ) ) {
+		$singleCode = null;
+		$total = count( $ids );
+		// CHECK: $total in the following line was count($xrefs), but $xrefs was not defined
+		// I think that was a bug and they meant count($ids), but I'm not sure.
+		if ( $total > count( $codes ) ) {
 			$singleCode = $codes[0];
 		}
-		for ( $i = 0; $i < count( $ids ); $i += 1 ) {
+		for ( $i = 0; $i < $total; $i += 1 ) {
 			if ( $singleCode ) {
-				$c = $singleCode;
+				$code = $singleCode;
 			} else {
-				$c = $codes[$i];
+				$code = $codes[$i];
 			}
-			$x = new XRef( $ids[$i], $c );
-			$xrefs[] = $x;
+			$xrefs[] = new Xref( $ids[$i], $code );
 		}
 		return( $xrefs );
 	}
 
-	public static function doSearch( $query, $species, $ids, $codes, $type ) {
-		if ( !$type || $type == '' ) {
+	private static function normalizeType( $type ) {
+		if ( !$type ) {
 			$type = 'query';
 		}
-		if ( ( !$query || $query == '' ) && $type == 'query' ) {
+		return $type;
+	}
+
+	private static function normalizeQuery( $query, $type ) {
+		if ( !$query && $type == 'query' ) {
 			$query = 'glucose';
 		}
+		return $query;
+	}
+
+	private static function normalizeSpecies( $species ) {
 		if ( $species == 'ALL SPECIES' ) {
 			$species = '';
 		}
+		return $species;
+	}
+
+	private static function getSearchResults( $type, $query, $species, $ids, $codes, $xrefs ) {
 		if ( $type == 'query' ) {
 			$results = PathwayIndex::searchByText( $query, $species );
 		} elseif ( $type == 'xref' ) {
 			$xrefs = self::parToXref( $ids, $codes );
 			$results = PathwayIndex::searchByXref( $xrefs, true );
 		}
+		return [ $xrefs, $results ];
+	}
+
+	public static function doSearch( $query, $species, $ids, $codes, $type ) {
+		$type = self::normalizeType( $type );
+		$query = self::normalizeQuery( $query, $type );
+		$species = self::normalizeSpecies( $species );
+		list( $xrefs, $results )
+			= self::getSearchResults( $type, $query, $species, $ids, $codes, $xrefs );
 		$doc = new DOMDocument();
 		$root = $doc->createElement( "results" );
 		$doc->appendChild( $root );
@@ -100,13 +129,13 @@ class SearchPathwaysAjax {
 		$root = $doc->createElement( "results" );
 		$doc->appendChild( $root );
 
-		$ni = $doc->createElement( "searchid" );
-		$ni->appendChild( $doc->createTextNode( $searchId ) );
-		$root->appendChild( $ni );
+		$newId = $doc->createElement( "searchid" );
+		$newId->appendChild( $doc->createTextNode( $searchId ) );
+		$root->appendChild( $newId );
 
-		$nh = $doc->createElement( "htmlcontent" );
-		$nh->appendChild( $doc->createTextNode( $html ) );
-		$root->appendChild( $nh );
+		$newHtml = $doc->createElement( "htmlcontent" );
+		$newHtml->appendChild( $doc->createTextNode( $html ) );
+		$root->appendChild( $newHtml );
 
 		$resp = new AjaxResponse( trim( $doc->saveXML() ) );
 		$resp->setContentType( "text/xml" );
