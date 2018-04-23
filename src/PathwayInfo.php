@@ -271,7 +271,7 @@ class PathwayInfo extends PathwayData {
 		$button = Pathway::toggleElement( "inTable", count( $annotations ), $nrShow );
 
 		if ( count( $annotations ) == 0 ) {
-			$table = "<cite>No annotated interactions</cite>";
+			$table = wfMessage( "wp-annotations-no-cite" );
 		} else {
 			// sort and iterate over all elements'
 			$table = $this->getAnnotationsTable( $annotations, $nrShow );
@@ -298,17 +298,10 @@ class PathwayInfo extends PathwayData {
 		ksort( $nodes );
 		$row = 0;
 		foreach ( $nodes as $datanode ) {
-			$xref = [];
-			if ( isset( $int->Xref ) ) {
-				$xref = $int->Xref;
-			}
-			$xds = "";
-			$xid = "";
-			if ( isset( $xref['Database'] ) ) {
-				$xds = (string)$xref['Database'];
-				$xid = trim( $xref['ID'] );
-			}
 			$int = $datanode->getEdge();
+			$xref = $int->Xref;
+			$xds = (string)$xref['Database'];
+			$xid = trim( $xref['ID'] );
 
 			$html = $this->getXrefHTML( $xid, $xds, $xref, $xid );
 

@@ -53,12 +53,13 @@
 	"wp-pageditor-type-needed": "No type was specified",
 	"wp-pathwayinfo-name": "Name",
 	"wp-pathwayinfo-type": "Type",
-	"wp-pathwayinfo-dbref": "Database reference",
+	"wp-pathwayinfo-dbref": "Database&nbsp;reference",
 	"wp-pathwayinfo-comment": "Comment",
 	"wp-annotations-source": "Source",
 	"wp-annotations-target": "Target",
 	"wp-annotations-type": "Type",
-	"wp-annotations-dbref": "Database reference",
+	"wp-annotations-dbref": "Database&nbsp;reference",
 	"wp-annotations-comment": "Comment",
+	"wp-annotations-no-cite": "<cite>No annotated interactions</cite>",
 	"wp-xref-additional": "Show additional info and linkouts"
 }
