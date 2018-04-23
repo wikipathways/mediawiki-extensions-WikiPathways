@@ -110,14 +110,29 @@ class PathwayInfo extends PathwayData {
 		return $nodes;
 	}
 
+	private function getTextLabel( $elm ) {
+		if ( isset( $elm['TextLabel'] ) ) {
+			return $elm['TextLabel'];
+		}
+		return '';
+	}
+
+	private function getSource( $elm ) {
+		return $this->getTextLabel( $elm->getSource() );
+	}
+
+	private function getTarget( $elm ) {
+		return $this->getTextLabel( $elm->getTarget() );
+	}
+
 	private function getUniqueAnnotations() {
 		$all = $this->getAllAnnotatedInteractions();
 		$nodes = [];
 
 		foreach ( $all as $elm ) {
 			if ( $elm->getEdge()->Xref['ID'] != "" && $elm->getEdge()->Xref['Database'] != "" ) {
-				$key = $elm->getSource()['TextLabel'];
-				$key .= $elm->getTarget()['TextLabel'];
+				$key = $this->getSource( $elm );
+				$key .= $this->getTarget( $elm );
 				$key .= $elm->getType();
 				$key .= $elm->getEdge()->Xref['ID'];
 				$key .= $elm->getEdge()->Xref['Database'];
@@ -300,10 +315,10 @@ class PathwayInfo extends PathwayData {
 			$table .= Html::rawElement(
 				"tr", [ 'class' => ( $row++ < $nrShow ? "" : "toggleMe" ) ],
 				Html::rawElement(
-					'td', [ 'class' => 'path-source' ], $datanode->getSource()['TextLabel']
+					'td', [ 'class' => 'path-source' ], $this->getSource( $datanode )
 				) . Html::rawElement(
 					'td', [ 'class' => 'path-targert', 'align' => 'center' ],
-					$datanode->getTarget()['TextLabel']
+					$this->getTarget( $datanode )
 				) . Html::rawElement(
 					'td', [ 'class' => 'path-type', 'align' => 'center' ],
 					$datanode->getType()
