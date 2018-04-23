@@ -30,20 +30,9 @@ class SearchPathwaysAjax {
 	public static function parToXref( $ids, $codes ) {
 		$ids = explode( ',', $ids );
 		$codes = explode( ',', $codes );
-		$singleCode = null;
 		$total = count( $ids );
-		// CHECK: $total in the following line was count($xrefs), but $xrefs was not defined
-		// I think that was a bug and they meant count($ids), but I'm not sure.
-		if ( $total > count( $codes ) ) {
-			$singleCode = $codes[0];
-		}
 		for ( $i = 0; $i < $total; $i += 1 ) {
-			if ( $singleCode ) {
-				$code = $singleCode;
-			} else {
-				$code = $codes[$i];
-			}
-			$xrefs[] = new Xref( $ids[$i], $code );
+			$xrefs[] = new Xref( $ids[$i], $codes[$i] );
 		}
 		return( $xrefs );
 	}
