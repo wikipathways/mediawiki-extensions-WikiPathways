@@ -21,7 +21,14 @@
 namespace WikiPathways;
 
 class PathwaysPagerFactory {
-	static function get( $type, $species, $tag, $sortOrder ) {
+	/**
+	 * @param string $type of pager
+	 * @param string $species to limit to
+	 * @param string $tag to search for
+	 * @param string $sortOrder to display in
+	 * @return PathwaysPager objec
+	 */
+	public static function get( $type, $species, $tag, $sortOrder ) {
 		switch ( $type ) {
 		case 'list':
 			return new ListPathwaysPager( $species, $tag, $sortOrder );
