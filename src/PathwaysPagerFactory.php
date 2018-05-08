@@ -22,22 +22,19 @@ namespace WikiPathways;
 
 class PathwaysPagerFactory {
 	/**
-	 * @param string $type of pager
-	 * @param string $species to limit to
-	 * @param string $tag to search for
-	 * @param string $sortOrder to display in
-	 * @return PathwaysPager objec
+	 * @param BrowsePathways $page object to use
+	 * @return PathwaysPager
 	 */
-	public static function get( $type, $species, $tag, $sortOrder ) {
-		switch ( $type ) {
+	public static function get( BrowsePathways $page ) {
+		switch ( $page->view ) {
 		case 'list':
-			return new ListPathwaysPager( $species, $tag, $sortOrder );
+			return new ListPathwaysPager( $page );
 		  break;
 		case 'single':
-			return new SinglePathwaysPager( $species, $tag, $sortOrder );
+			return new SinglePathwaysPager( $page );
 		  break;
 		default:
-			return new ThumbPathwaysPager( $species, $tag, $sortOrder );
+			return new ThumbPathwaysPager( $page );
 		}
 	}
 }

@@ -18,8 +18,11 @@
 namespace WikiPathways;
 
 class SinglePathwaysPager extends BasePathwaysPager {
-	function __construct( $species, $tag, $sortOrder ) {
-		parent::__construct( $species, $tag, $sortOrder );
+	/**
+	 * @param BrowsePathways $page object to use
+	 */
+	public function __construct( BrowsePathways $page ) {
+		parent::__construct( $page );
 
 		$this->mLimitsShown = [ 5 ];
 		$this->mDefaultLimit = 5;

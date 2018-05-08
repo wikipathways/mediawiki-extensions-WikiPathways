@@ -37,7 +37,7 @@ class OntologyTags {
 	 * @param string &$text to change
 	 * @SuppressWarnings(UnusedFormalParameter)
 	 */
-	public function onHeader( Parser $parser, &$text ) {
+	public static function onHeader( Parser $parser, &$text ) {
 		$text = preg_replace_callback(
 			'/<!-- ENCODED_CONTENT ([0-9a-zA-Z\\+]+=*) -->/',
 			function ( $matches ) {

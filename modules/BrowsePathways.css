@@ -1,0 +1,32 @@
+.browsePathways {
+	height: 205px;
+	float: left;
+	padding: 1em;
+}
+
+.browsePathways .thumbinner {
+	width: 182px;
+}
+
+.infiniteMoreLink {
+	float: right;
+	clear: both;
+}
+
+.infiniteContainer {
+	overflow: hidden;
+}
+
+.browseNavBar {
+	overflow: auto;
+	width: 100%;
+}
+
+.browseNavBar .prevNav {
+	float: left;
+}
+
+.browseNavBar .nextNav {
+	float: right;
+}
+

@@ -3,7 +3,7 @@
 	"version": "1.0",
 	"license-name": "GPL-2.0+",
 	"author": [
-		"[http://mwstake.org Mark A. Hershberger]",
+		"[http://nichework.com Mark A. Hershberger]",
 		"..."
 	],
 	"requires": {
@@ -156,6 +156,17 @@
 			],
 			"styles": [
 				"ToggleButton.css"
+			]
+		},
+		"wpi.browsePathways": {
+			"position": "top",
+			"styles": [
+				"BrowsePathways.css"
+			]
+		},
+		"wpi.browsePathwaysScript": {
+			"scripts": [
+				"BrowsePathways.js"
 			]
 		},
 		"wpi.PageEditor": {

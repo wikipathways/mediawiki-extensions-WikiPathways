@@ -21,50 +21,69 @@ use Title;
 
 class ThumbPathwaysPager extends BasePathwaysPager {
 
-	function __construct( $species, $tag, $sortOrder ) {
-		parent::__construct( $species, $tag, $sortOrder );
+	/**
+	 * @param BrowsePathways $page object to use
+	 */
+	public function __construct( BrowsePathways $page ) {
+		parent::__construct( $page );
 
 		$this->mLimit = 10;
 	}
 
-	function getStartBody() {
-		return "<div class='infinite-container'>";
+	/**
+	 * @return string bit of html
+	 */
+	public function getStartBody() {
+		return "<div class='infiniteContainer'>";
 	}
 
-	function getEndBody() {
+	/**
+	 * @return string bit of html
+	 */
+	public function getEndBody() {
 		return "</div>";
 	}
 
-	function getNavigationBar() {
-		global $wgLang;
+	/**
+	 * @return string bit of html
+	 */
+	public function getNavigationBar() {
+		$linkTexts = [
+			'prev' => '',
+			'next' => $this->msg( 'nextn' )->numParams( $this->mLimit )->escaped(),
+			'first' => '',
+			'last' => ''
+		];
+		$pagingLinks = $this->getPagingLinks( $linkTexts );
 
-		/* Link to nowhere by default */
-		$link = "<a class='infinite-more-link' href='data:'></a>";
-
-		$queries = $this->getPagingQueries();
-		if ( isset( $queries['next'] ) && $queries['next'] ) {
-			$link = \Linker::linkKnown(
-				$this->getTitle(),
-				wfMessage( 'nextn' )->params( $wgLang->formatNum( $this->mLimit ) )->text(),
-				[ "class" => 'infinite-more-link' ],
-				$queries['next']
-			);
-		}
+		$link = \Linker::linkKnown(
+			$this->getTitle(),
+			$pagingLinks['next'],
+			[ "class" => 'infiniteMoreLink' ]
+		);
 
 		return $link;
-;
 	}
 
-	function getTopNavigationBar() {
+	/**
+	 * @return string bit of html
+	 */
+	public function getTopNavigationBar() {
 		return "";
 	}
 
-	function getBottomNavigationBar() {
+	/**
+	 * @return string bit of html
+	 */
+	public function getBottomNavigationBar() {
 		return $this->getNavigationBar();
 	}
 
-	/* From getDownloadURL in PathwayPage */
-	function formatRow( $row ) {
+	/**
+	 * @param array|stdClass $row Database row
+	 * @return string
+	 */
+	public function formatRow( $row ) {
 		$title = Title::newFromDBkey( $this->nsName .":". $row->page_title );
 		$pathway = Pathway::newFromTitle( $title );
 

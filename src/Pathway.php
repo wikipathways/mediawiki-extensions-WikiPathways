@@ -39,18 +39,18 @@ class Pathway {
 
 	private static $fileTypesConvertableByPathVisio = [
 		FILETYPE_GPML => FILETYPE_GPML,
-#		FILETYPE_PDF => FILETYPE_PDF,
+		# FILETYPE_PDF => FILETYPE_PDF,
 		FILETYPE_PNG => FILETYPE_PNG,
-#		FILETYPE_PWF => FILETYPE_PWF,
+		# FILETYPE_PWF => FILETYPE_PWF,
 		FILETYPE_TXT => FILETYPE_TXT,
-#		FILETYPE_BIOPAX => FILETYPE_BIOPAX,
+		# FILETYPE_BIOPAX => FILETYPE_BIOPAX,
 	];
 
 	private static $fileTypes = [
-#		FILETYPE_PDF => FILETYPE_PDF,
-#		FILETYPE_PWF => FILETYPE_PWF,
+		# FILETYPE_PDF => FILETYPE_PDF,
+		# FILETYPE_PWF => FILETYPE_PWF,
 		FILETYPE_TXT => FILETYPE_TXT,
-#		FILETYPE_BIOPAX => FILETYPE_BIOPAX,
+		# FILETYPE_BIOPAX => FILETYPE_BIOPAX,
 		FILETYPE_IMG => FILETYPE_IMG,
 		FILETYPE_GPML => FILETYPE_GPML,
 		FILETYPE_PNG => FILETYPE_IMG,
@@ -77,21 +77,25 @@ class Pathway {
 	// Manages permissions for private pathways
 	private $permissionMgr;
 
+	// GPML Converter
+	private $converter;
+
 	/**
 	 * Constructor for this class.
-	 * @param int $id The pathway identifier
+	 * @param int $pathId The pathway identifier
 	 * @param bool $updateCache whether to update the cache
 	 */
-	public function __construct( $id = null, $updateCache = false ) {
-		if ( $id === null ) {
+	public function __construct( $pathId = null, $updateCache = false ) {
+		if ( $pathId === null ) {
 			throw new Exception(
 				"id argument missing in constructor for Pathway"
 			);
 		}
 
-		$this->pwPageTitle = Title::newFromText( $id, NS_PATHWAY );
+		$this->pwPageTitle = Title::newFromText( $pathId, NS_PATHWAY );
 		$this->id = $this->pwPageTitle->getDbKey();
 		$this->revision = $this->getLatestRevision();
+		$this->converter = new Converter( $this->id );
 		if ( $updateCache ) {
 			$this->updateCache();
 		}
@@ -365,10 +369,10 @@ class Pathway {
 		}
 		$allPathways = [];
 		$dbr = wfGetDB( DB_REPLICA );
-		$ns = NS_PATHWAY;
+		$namespace = NS_PATHWAY;
 		$res = $dbr->select(
 			'page', 'page_title',
-			[ 'page_namespace' => $ns, 'page_is_redirect' => 0 ], __METHOD__
+			[ 'page_namespace' => $namespace, 'page_is_redirect' => 0 ], __METHOD__
 		);
 		foreach ( $res as $row ) {
 			try {
@@ -421,8 +425,8 @@ class Pathway {
 	 */
 	public static function newFromTitle( Title $title, $checkCache = false ) {
 		// Remove url and namespace from title
-		$id = self::parseIdentifier( $title );
-		return new Pathway( $id, $checkCache );
+		$pathId = self::parseIdentifier( $title );
+		return new Pathway( $pathId, $checkCache );
 	}
 
 	/**
@@ -690,11 +694,11 @@ class Pathway {
 	public function findCaseInsensitive() {
 		$title = strtolower( $this->getTitleObject()->getDbKey() );
 		$dbr = wfGetDB( DB_REPLICA );
-		$ns = NS_PATHWAY;
+		$namespace = NS_PATHWAY;
 		$res = $dbr->select(
 			"page", "page_id",
 			[
-				"page_namespace" => $ns,
+				"page_namespace" => $namespace,
 				"page_is_redirect" => 0,
 				"LOWER( page_title )" => $title
 			], __METHOD__ );
@@ -751,19 +755,23 @@ class Pathway {
 			$this->updateCache( FILETYPE_GPML );
 		}
 
-		$this->pvjson = Converter::gpml2pvjson(
+		$this->pvjson = $this->converter->gpml2pvjson(
 			file_get_contents( $gpmlPath ),
 			[ "identifier" => $identifier,
 			  "version" => $version,
 			  "organism" => $organism ]
 		);
-		wfDebugLog( "Pathway",  "Converted gpml to pvjson\n" );
-		$this->savePvjsonCache();
-		return $this->pvjson;
+		if ( $this->pvjson ) {
+			wfDebugLog( "Pathway",  "Converted gpml to pvjson\n" );
+			$this->savePvjsonCache();
+			return $this->pvjson;
+		}
+$err = error_get_last();throw new MWException( "Couldn't convert '{$this->pvjson}': {$err['message']}" );
 	}
 
 	/**
 	 * Get the SVG for the given JSON
+	 * @return string
 	 */
 	public function getSvg() {
 		wfDebugLog( "Pathway",  "getSvg() called\n" );
@@ -782,7 +790,7 @@ class Pathway {
 		wfDebugLog( "Pathway",  "need to get pvjson in order to get svg\n" );
 		$pvjson = $this->getPvjson();
 		wfDebugLog( "Pathway",  "got pvjson in process of getting svg\n" );
-		$svg = Converter::pvjson2svg( $pvjson, [ "static" => false ] );
+		$svg = $this->converter->getpvjson2svg( $pvjson, [ "static" => false ] );
 		wfDebugLog( "Pathway",  "got svg\n" );
 		$this->svg = $svg;
 		return $svg;
@@ -840,7 +848,6 @@ class Pathway {
 		if ( $updateCache ) {
 			$this->updateCache( $fileType );
 		}
-
 		global $wpiFileCache;
 		return "$wpiFileCache/" . $this->getSubdirAndFile( $fileType );
 	}
@@ -866,12 +873,12 @@ class Pathway {
 	 *
 	 * @param string $fileType the file type to get the name for (one of the FILETYPE_* constants)
 	 * @param bool $updateCache whether to update the cache (if needed) or not
+	 * @return string
 	 */
 	public function getFileURL( $fileType, $updateCache = true ) {
-		if ( $updateCache ) {
-			$this->updateCache( $fileType );
-		}
-		return $wgScriptPath . $this->getFileLocation( $fileType );
+		global $IP, $wpiFileCache;
+		$cachePath = substr( $wpiFileCache, strlen( $IP ) );
+		return "$cachePath/" . $this->getSubdirAndFile( $fileType, $updateCache );
 	}
 
 	/**
@@ -887,13 +894,13 @@ class Pathway {
 	 */
 	public function getFileTitle( $fileType ) {
 		// Append revision number if it's not the most recent
-		$rev_stuffix = '';
+		$refStuffix = '';
 		if ( $this->revision ) {
-			$rev_stuffix = "_" . $this->revision;
+			$refStuffix = "_" . $this->revision;
 		}
 		return Title::newFromText(
-			$this->getIdentifier() . $rev_stuffix . "." . $fileType,
-			NS_IMAGE
+			$this->getIdentifier() . $refStuffix . "." . $fileType,
+			NS_FILE
 		);
 	}
 
@@ -932,7 +939,7 @@ class Pathway {
 		$title = Title::newFromText( $filtered, NS_FILE );
 		if ( !$title ) {
 			throw new Exception(
-				"Invalid file title for pathway " + $fileName
+				"Invalid file title for pathway " + $filtered
 			);
 		}
 		return $title->getDBKey();
@@ -960,8 +967,8 @@ class Pathway {
 	 * @return int
 	 */
 	public function getFirstRevisionAfterRev( $rev ) {
-		$r = Revision::newFromId( $rev );
-		return $r->getNext();
+		$rev = Revision::newFromId( $rev );
+		return $rev->getNext();
 	}
 
 	/**
@@ -1002,22 +1009,22 @@ class Pathway {
 	public static function createNewPathway(
 		$gpmlData, $description = "New pathway"
 	) {
-		$id = self::generateUniqueId();
-		$pathway = new Pathway( $id, false );
+		$newId = self::generateUniqueId();
+		$pathway = new Pathway( $newId, false );
 		if ( $pathway->exists() ) {
 			throw new Exception(
-				"Unable to generate unique id, $id already exists"
+				"Unable to generate unique id, $newId already exists"
 			);
 		}
 		$pathway->updatePathway( $gpmlData, $description );
-		$pathway = new Pathway( $id );
+		$pathway = new Pathway( $newId );
 		return $pathway;
 	}
 
 	private static function generateUniqueId() {
 		// Get the highest identifier
 		$dbr = wfGetDB( DB_REPLICA );
-		$ns = NS_PATHWAY;
+		$namespace = NS_PATHWAY;
 		$prefix = self::$ID_PREFIX;
 		$likePrefix = $dbr->buildLike(
 			$prefix . $dbr->anyChar() . $dbr->anyString()
@@ -1026,7 +1033,7 @@ class Pathway {
 		$res = $dbr->select(
 			"page", "page_title",
 			[
-				'page_namespace' => $ns, 'page_is_redirect' => 0,
+				'page_namespace' => $namespace, 'page_is_redirect' => 0,
 				'page_title' . $likePrefix
 			], __METHOD__,
 			[
@@ -1048,7 +1055,7 @@ class Pathway {
 
 		$res2 = $dbr->select(
 			'archive', 'ar_title',
-			[ 'ar_namespace' => $ns, 'ar_title'. $likePrefix ],
+			[ 'ar_namespace' => $namespace, 'ar_title'. $likePrefix ],
 			__METHOD__,
 			[
 				'ORDER BY' => [
@@ -1327,13 +1334,6 @@ class Pathway {
 		}
 	}
 
-	private function deleteImagePage( $reason ) {
-		$title = $this->getFileTitle( FILETYPE_IMG );
-		self::deleteArticle( $title, $reason );
-		$img = new Image( $title );
-		$img->delete( $reason );
-	}
-
 	/**
 	 * Delete a MediaWiki article
 	 *
@@ -1386,16 +1386,9 @@ class Pathway {
 				case FILETYPE_JSON:
 					$this->savePvjsonCache();
 					break;
-				// *
 				case FILETYPE_IMG:
 					$this->saveSvgCache();
 					break;
-				// */
-				/*
-				case FILETYPE_PNG:
-					$this->savePngCache();
-					break;
-				//*/
 				default:
 					$this->saveConvertedByPathVisioCache( $fileType );
 			}

@@ -207,7 +207,7 @@ class PathwayThumb {
 			// Use image dimensions, don't scale
 			$boxwidth  = $width;
 			$boxheight = $height;
-			$thumbUrl  = $img->getViewURL();
+			$thumbUrl  = $pathway->getFileURL( FILETYPE_IMG );
 		} else {
 			$param[ 'width' ] = $boxwidth;
 			if ( $boxheight !== false ) {
@@ -215,7 +215,7 @@ class PathwayThumb {
 			}
 			$thumb = $img->transform( $param, 0 );
 			if ( $thumb ) {
-				$thumbUrl = $thumb->getUrl();
+				$thumbUrl = $pathway->getFileURL( FILETYPE_IMG );
 				$boxwidth = $thumb->getWidth();
 				$boxheight = $thumb->getHeight();
 			} else {
@@ -240,9 +240,10 @@ class PathwayThumb {
 		}
 		if ( $error ) {
 			$s .= htmlspecialchars( $error );
-		} elseif ( !$img->exists() ) {
-			$s .= "Image does not exist";
 		} else {
+			if ( !$img->exists() ) {
+				$pathway->updateCache( FILETYPE_IMG );
+			}
 			$s .= '<a href="'.$href.'" class="internal" title="'.$alt.'">'.
 			'<img src="'.$thumbUrl.'" alt="'.$alt.'" ' .
 			'width="'.$boxwidth.'" height="'.$boxheight.'" ' .
@@ -261,7 +262,7 @@ class PathwayThumb {
 	) {
 		global $wgContLang, $wgUser;
 
-		$imgURL = $pathway->getImage()->getURL();
+		$imgURL = $pathway->getFileURL( FILETYPE_IMG );
 		$editorState = 'disabled';
 		if ( $wgUser->isLoggedIn() && $wgUser->isEmailConfirmed() ) {
 			$editorState = 'closed';
@@ -269,7 +270,7 @@ class PathwayThumb {
 
 		$gpml = $pathway->getFileURL( FILETYPE_GPML );
 		$img = $pathway->getImage();
-		$imgURL = $img->getURL();
+		$imgURL = $pathway->getFileURL( FILETYPE_IMG );
 
 		$identifier = $pathway->getIdentifier();
 		$version = $pathway->getLatestRevision();
@@ -285,7 +286,7 @@ class PathwayThumb {
 		. '<div class="thumbinner" style="width: 900px; '
 		. 'padding: 3px 6px 30px 3px; height: 635px; '
 		. 'min-width: 700px; max-width: 100%;">';
-		$thumbUrl = $img->getViewURL();
+		$thumbUrl = $pathway->getFileURL( FILETYPE_IMG );
 
 		$s .= '<div class="internal" style="width: 900px; min-width: 700px;'
 		. 'max-width: 100%; height: 600px; margin: auto; align: center;">

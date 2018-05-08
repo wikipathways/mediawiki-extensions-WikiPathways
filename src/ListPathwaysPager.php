@@ -21,6 +21,7 @@ namespace WikiPathways;
 
 use ResultWrapper;
 use Title;
+use Html;
 
 class ListPathwaysPager extends BasePathwaysPager {
 	protected $columnItemCount;
@@ -30,12 +31,10 @@ class ListPathwaysPager extends BasePathwaysPager {
 	const COLUMN_COUNT = 3;
 
 	/**
-	 * @param string $species to limit to
-	 * @param string $tag to match
-	 * @param string $sortOrder to display in
+	 * @param BrowsePathways $page object to use
 	 */
-	public function __construct( $species, $tag, $sortOrder ) {
-		parent::__construct( $species, $tag, $sortOrder );
+	public function __construct( BrowsePathways $page ) {
+		parent::__construct( $page );
 
 		// We know we have 300, so we'll put 100 in each column
 		$this->mLimitsShown = [ $this->columnSize * self::COLUMN_COUNT ];
@@ -71,52 +70,21 @@ class ListPathwaysPager extends BasePathwaysPager {
 	}
 
 	/**
-	 * @return string bit of html
-	 */
-	public function getNavigationBar() {
-		global $wgLang;
-
-		$link = "";
-		$queries = $this->getPagingQueries();
-		$opts = [ 'parsemag', 'escapenoentities' ];
-
-		if ( isset( $queries['prev'] ) && $queries['prev'] ) {
-			$link .= $this->getSkin()->makeKnownLinkObj(
-				$this->getTitle(),
-				wfMessage( 'prevn', $opts, $wgLang->formatNum( $this->mLimit ) )->text(),
-				wfArrayToCGI( $queries['prev'], $this->getDefaultQuery() ), '', '',
-				"style='float: left;'"
-			);
-		}
-
-		if ( isset( $queries['next'] ) && $queries['next'] ) {
-			$link .= $this->getSkin()->makeKnownLinkObj(
-				$this->getTitle(),
-				wfMessage( 'nextn', $opts, $wgLang->formatNum( $this->mLimit ) )->text(),
-				wfArrayToCGI( $queries['next'], $this->getDefaultQuery() ), '', '',
-				"style='float: right;'"
-			);
-		}
-
-		return $link;
-	}
-
-	/**
+	 * No infinite paging, both are the same.
+	 *
 	 * @return string bit of html
 	 */
 	public function getTopNavigationBar() {
-		$bar = $this->getNavigationBar();
-
-		return "<div class='listNavBar top'>$bar</div>";
+		return $this->getNavigationBar();
 	}
 
 	/**
+	 * No infinite paging, both are the same.
+	 *
 	 * @return string bit of html
 	 */
 	public function getBottomNavigationBar() {
-		$bar = $this->getNavigationBar();
-
-		return "<div class='listNavBar bottom'>$bar</div>";
+		return $this->getNavigationBar();
 	}
 
 	/**

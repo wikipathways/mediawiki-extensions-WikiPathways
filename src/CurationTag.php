@@ -127,52 +127,72 @@ class CurationTag {
 
 	/**
 	 * Returns true if you the revision should be used.
+	 *
+	 * @param string $tagname to check
+	 * @return bool
 	 */
 	public static function useRevision( $tagname ) {
 		return self::getTagAttr( $tagname, "useRevision" ) !== null;
 	}
 
+	/**
+	 * @param string $tagname to check
+	 * @return string
+	 */
 	public static function newEditHighlight( $tagname ) {
 		return self::getTagAttr( $tagname, "newEditHighlight" );
 	}
 
+	/**
+	 * @param string $tagname to check
+	 * @return string
+	 */
 	public static function highlightAction( $tagname ) {
 		return self::getTagAttr( $tagname, "highlightAction" );
 	}
 
+	/**
+	 * @param string $tagname to check
+	 * @return string
+	 */
 	public static function bureaucratOnly( $tagname ) {
 		return self::getTagAttr( $tagname, 'bureaucrat' );
 	}
 
+	/**
+	 * @return string
+	 */
 	public static function defaultTag() {
-		$r = self::getTagDefinition()->xpath( 'Tag[@default]' );
-		if ( count( $r ) === 0 ) {
+		$list = self::getTagDefinition()->xpath( 'Tag[@default]' );
+		if ( count( $list ) === 0 ) {
 			throw new MWException( "curationtags-no-tags" );
 		}
-		if ( count( $r ) > 1 ) {
+		if ( count( $list ) > 1 ) {
 			throw new MWException( "curationtags-multiple-tags" );
 		}
-		return (string)$r[0]['name'];
+		return (string)$list[0]['name'];
 	}
 
 	/**
 	 * Return a list of top tags
+	 * @return array
 	 */
 	public static function topTags() {
-		$r = self::topTagsWithLabels();
-		return array_values( $r );
+		$list = self::topTagsWithLabels();
+		return array_values( $list );
 	}
 
 	/**
 	 * Return a list of top tags indexed by label.
+	 * @return array
 	 */
 	public static function topTagsWithLabels() {
-		$r = self::getTagDefinition()->xpath( 'Tag[@topTag]' );
-		if ( count( $r ) === 0 ) {
+		$list = self::getTagDefinition()->xpath( 'Tag[@topTag]' );
+		if ( count( $list ) === 0 ) {
 			throw new MWException( "No top tags specified!  Please set [[CurationTagsDefinition]] with at least one top tag." );
 		}
 		$top = [];
-		foreach ( $r as $tag ) {
+		foreach ( $list as $tag ) {
 			$top[(string)$tag['displayName']] = (string)$tag['name'];
 		}
 
@@ -181,29 +201,37 @@ class CurationTag {
 
 	/**
 	 * Get the names of all available curation tags.
+	 *
+	 * @return array of names
 	 */
 	public static function getTagNames() {
 		$xpath = 'Tag/@name';
-		$dn = self::getTagDefinition()->xpath( $xpath );
+		$def = self::getTagDefinition()->xpath( $xpath );
 		$names = [];
-		foreach ( $dn as $e ) { $names[] = $e['name'];
+		foreach ( $def as $e ) {
+			$names[] = $e['name'];
 		}
 		return $names;
 	}
 
 	/**
 	 * Returns a list of tags that the user can select.
+	 *
+	 * @return array
 	 */
 	public static function getUserVisibleTagNames() {
 		global $wgUser;
 		$groups = array_flip( $wgUser->getGroups() );
 		$isBureaucrat = isset( $groups['bureaucrat'] );
 		$visible = self::topTagsWithLabels();
-		$top = array_flip( $visible ); /* Quick way to check if this is an already-visible top-tag */
-		$rest = []; // holds all the tags, not just the visible ones
+		/* Quick way to check if this is an already-visible top-tag */
+		$top = array_flip( $visible );
+		/* holds all the tags, not just the visible ones */
+		$rest = [];
 
 		foreach ( self::getTagNames() as $tag ) {
-			$tag = (string)$tag; /* SimpleXMLElements means lots of problems */
+			/* SimpleXMLElements means lots of problems */
+			$tag = (string)$tag;
 			if ( self::bureaucratOnly( $tag ) ) {
 				if ( isset( $top[$tag] ) ) {
 					throw new MWException( "Bureaucrat-only tags cannot be top tags! Choose one or the other for '$tag'" );
@@ -214,7 +242,8 @@ class CurationTag {
 						$label = self::getDisplayName( $tag );
 					}
 					$visible[$label] = $tag;
-					$rest[] = $tag; /* Also add it to the list of all tags */
+					/* Also add it to the list of all tags */
+					$rest[] = $tag;
 				}
 			} else {
 				$rest[] = $tag;
@@ -227,7 +256,7 @@ class CurationTag {
 	/**
 	 * Get all pages that have the given curation tag.
 	 *
-	 * @param  $name The tag name
+	 * @param string $tagname The tag name
 	 * @return An array with page ids
 	 */
 	public static function getPagesForTag( $tagname ) {
@@ -236,7 +265,7 @@ class CurationTag {
 
 	/**
 	 * Get the SimpleXML representation of the tag definition
-	 **/
+	 */
 	public static function getTagDefinition() {
 		if ( !self::$tagDefinition ) {
 			$ref = wfMessage( self::$tagList )->plain();
@@ -306,17 +335,19 @@ class CurationTag {
 		return $curTags;
 	}
 
-	public static function getCurationImagesForTitle( $title ) {
-		$pageId = $title->getArticleId();
-		$tags = self::getCurationTags( $pageId );
+	/**
+	 * @param Title $title of pathway
+	 * @return array of icons
+	 */
+	public static function getCurationImagesForTitle( Title $title ) {
+		$tags = self::getCurationTags( $title->getArticleId() );
 
 		$icon = [];
 		foreach ( $tags as $tag ) {
-			if ( $i = self::getIcon( $tag->getName() ) ) {
-				$icon[self::getDisplayName( $tag->getName() )] =
-				[
-				"img" => $i,
-				"tag" => $tag->getName()
+			$img = self::getIcon( $tag->getName() );
+			if ( $img ) {
+				$icon[self::getDisplayName( $tag->getName() )] = [
+					"img" => $img, "tag" => $tag->getName()
 				];
 			}
 		}
@@ -346,7 +377,7 @@ class CurationTag {
 
 	/**
 	 * Get the curation tag history for all pages
-	 **/
+	 */
 	public static function getAllHistory( $fromTime = 0 ) {
 		$allhist = MetaTag::getAllHistory( '', $fromTime );
 		$hist = [];
@@ -360,7 +391,7 @@ class CurationTag {
 
 	/**
 	 * Checks if the tagname is a curation tag
-	 **/
+	 */
 	public static function isCurationTag( $tagName ) {
 		$expr = "/^" . self::$tagPrefix . "/";
 		return preg_match( $expr, $tagName );

@@ -51,17 +51,19 @@ class PageEditor {
 
 		$parser->getOutput()->addModules( [ "wpi.PageEditor" ] );
 		$title = $parser->getTitle();
-		$mayEdit = $title->userCan( 'edit' ) ? true : false;
+		$mayEdit = $title->userCan( 'edit' );
 
 		// Add javascript
 		$pwId = $title->getText();
-		$script = Html::element( 'div',
-								 [ 'id' => 'pageEditor',
-								   'data-target' => $targetId,
-								   'data-type' => $type,
-								   'data-input' => $input,
-								   'data-pw' => $pwId,
-								   'data-editable' => $mayEdit ] );
+		$script = Html::element(
+			'div', [
+				'id' => 'pageEditor',
+				'data-target' => $targetId,
+				'data-type' => $type,
+				'data-input' => $input,
+				'data-pw' => $pwId,
+				'data-editable' => $mayEdit
+			] );
 
 		return $script;
 	}

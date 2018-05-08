@@ -21,149 +21,175 @@
  */
 namespace WikiPathways;
 
+use HTMLForm;
+use OOUI\FormLayout;
+use OOUI\FieldLayout;
+use OOUI\DropdownInputWidget;
+use OOUI\HorizontalLayout;
 use SpecialPage;
 use Title;
-use Xml;
 
 class BrowsePathways extends SpecialPage {
 
-	protected $maxPerPage  = 960;
-	protected $name        = 'BrowsePathways';
-	static private $defaultView = "thumbs";
-	static private $views  = [ "list", "thumbs" ];
-	static private $sortOptions = [ 'A-Z', 'creation date', 'last edit date', 'most viewed' ];
+	private $offset;
+	private $name = 'BrowsePathways';
+	// Second is default
+	static private $views = [ "list", "thumbs" ];
 
 	// Determines, which message describes the input field 'nsfrom' (->SpecialPrefixindex.php)
 	public $nsfromMsg = 'browsepathwaysfrom';
-	protected $species;
-	protected $tag;
-	protected $sortOrder;
+	private $species;
+	private $tag;
 
+	/**
+	 * @param string $empty ignored
+	 * @SuppressWarnings(UnusedFormalParameter)
+	 */
 	public function __construct( $empty = null ) {
 		parent::__construct( $this->name );
 	}
 
-	public function execute( $par ) {
-		global $wgOut, $wgRequest;
+	/**
+	 * @param string $par url stem
+	 * @SuppressWarnings(UnusedFormalParameter)
+	 */
+	public function execute( $par = null ) {
+		$this->getOutput()->setPagetitle( wfMessage( "browsepathways" ) );
 
-		$wgOut->setPagetitle( wfMessage( "browsepathways" ) );
+		// Back compat for old links.
+		$this->species = $this->getRequest()->getVal( "browse", 'Homo_sapiens' );
+		$this->tag     = $this->getRequest()->getVal( "tag", CurationTag::defaultTag() );
+		$this->view    = $this->getRequest()->getVal( "view", self::$views[1] );
 
-		$this->species   = $wgRequest->getVal( "browse", 'Homo_sapiens' );
-		$this->tag       = $wgRequest->getVal( "tag", CurationTag::defaultTag() );
-		$this->view      = $wgRequest->getVal( "view", self::$defaultView );
-		$this->sortOrder = $wgRequest->getVal( "sort", 0 );
-		$nsForm = $this->pathwayForm();
+		// Also need to pass
+		$this->offset = $this->getRequest()->getVal( "offset", null );
 
-		$wgOut->addHtml( $nsForm . '<hr />' );
+		$this->pathwayForm();
 
-		$pager = PathwaysPagerFactory::get( $this->view, $this->species, $this->tag, $this->sortOrder );
-		$wgOut->addHTML(
+		$pager = PathwaysPagerFactory::get( $this );
+
+		// We have different nav bars for inifinite paging
+		$this->getOutput()->addHTML(
 			$pager->getTopNavigationBar() .
 			$pager->getBody() .
 			$pager->getBottomNavigationBar()
 		);
-		return;
 	}
 
-	protected function getSortingOptionsList() {
-		$arr = self::$sortOptions;
-
-		$sel = "\n<select onchange='this.form.submit()' name='sort' class='namespaceselector'>\n";
-		foreach ( $arr as $key => $label ) {
-			$sel .= $this->makeSelectionOption( $key, $this->sortOrder, $label );
-		}
-		$sel .= "</select>\n";
-		return $sel;
+	/**
+	 * @return string
+	 */
+	public function getSpecies() {
+		return $this->species;
 	}
 
-	protected function getSpeciesSelectionList() {
+	/**
+	 * @return string
+	 */
+	public function getTag() {
+		return $this->tag;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getView() {
+		return $this->view;
+	}
+
+	private function getSpeciesSelectionList() {
 		$arr = Pathway::getAvailableSpecies();
 		asort( $arr );
 		$all = wfMessage( 'browsepathways-all-species' )->plain();
 		$arr[] = $all;
-		/* $arr[] = wfMessage('browsepathways-uncategorized-species' )->plain(); Don't look for uncategorized species */
 
-		$sel = "\n<select onchange='this.form.submit()' name='browse' class='namespaceselector'>\n";
+		$list = [];
 		foreach ( $arr as $label ) {
 			$value = Title::newFromText( $label )->getDBKey();
 			if ( $label === $all ) {
 				$value = "---";
 			}
-			$sel .= $this->makeSelectionOption( $value, $this->species, $label );
+			$list[] = [ 'data' => $value, 'label' => $label ];
 		}
-		$sel .= "</select>\n";
-		return $sel;
+		return $list;
 	}
 
-	protected function getTagSelectionList() {
-		$sel = "<select onchange='this.form.submit()' name='tag' class='namespaceselector'>\n";
+	private function getTagSelectionList() {
+		$ret = [];
 		foreach ( CurationTag::getUserVisibleTagNames() as $display => $tag ) {
 			if ( is_array( $tag ) ) {
 				$tag = "---";
 			}
-			$sel .= $this->makeSelectionOption( $tag, $this->tag, $display );
+			$ret[] = [ "label" => $display, "data" => $tag ];
 		}
-		$sel .= "</select>\n";
-		return $sel;
+		return $ret;
 	}
 
-	protected function getViewSelectionList() {
-		$sel = "\n<select onchange='this.form.submit()' name='view' class='namespaceselector'>\n";
-		foreach ( self::$views as $s ) {
-			$sel .= $this->makeSelectionOption( $s, $this->view, wfMessage( "browsepathways-view-" . $s )->plain() );
+	private function getViewSelectionList() {
+		$ret = [];
+		foreach ( self::$views as $view ) {
+			$ret[] = [
+				"label" => wfMessage( "browsepathways-view-$view" )->plain(),
+				"data" => $view
+			];
 		}
-		$sel .= "</select>\n";
-		return $sel;
-	}
-
-	protected function makeSelectionOption( $item, $selected, $display = null ) {
-		$attr = [ "value" => $item ];
-		if ( null === $display ) {
-			$display = $item;
-		}
-		if ( $item == $selected ) {
-			$attr['selected'] = 1;
-		}
-
-		return "\t" . Xml::element( "option", $attr, $display ) . "\n";
+		return $ret;
 	}
 
 	/**
 	 * HTML for the top form
 	 *
-	 * @param  string Species to show pathways for
-	 * @return string
+	 * @return HTMLForm
 	 */
 	public function pathwayForm() {
-		global $wgScript;
-		$t = SpecialPage::getTitleFor( $this->name );
+		$title = SpecialPage::getTitleFor( $this->name );
 
-		/**
-		 * Species Selection
-		 */
-		$speciesSelect = $this->getSpeciesSelectionList();
-		$tagSelect     = $this->getTagSelectionList();
-		$viewSelect    = $this->getViewSelectionList();
-		$sortSelect    = $this->getSortingOptionsList();
-		$submitbutton = '<noscript><input type="submit" value="Go" name="pick" /></noscript>';
-
-		$out = "<form method='get' action='{$wgScript}'>";
-		$out .= '<input type="hidden" name="title" value="'.$t->getPrefixedText().'" />';
-		$out .= "
-<table id='nsselect' class='allpages'>
-	<tr>
-		<td align='right'>". wfMessage( "browsepathways-select-species" )->plain() ."</td>
-		<td align='left'>$speciesSelect</td>
-		<td align='right'>". wfMessage( "browsepathways-select-collection" )->plain() ."</td>
-		<td align='left'>$tagSelect</td>
-		<td align='right'>". wfMessage( "browsepathways-select-view" )->plain() ."</td>
-		<td align='left'>$viewSelect</td>
-		<td>$submitbutton</td>
-	</tr>
-</table>
-";
-
-		$out .= '</form>';
-		return $out;
+		$this->getOutput()->addModules( 'wpi.browsePathwaysScript' );
+		$this->getOutput()->enableOOUI();
+		$this->getOutput()->addHTML( new FormLayout( [
+			"method" => "GET",
+			"action" => $title,
+			"id" => "browsePathwayForm",
+			"items" => [
+				new HorizontalLayout( [
+					"label" => "Form layout",
+					"items" => [
+						new FieldLayout(
+							new DropdownInputWidget( [
+								"name" => "browse",
+								"id" => "browseSelection",
+								"options" => $this->getSpeciesSelectionList(),
+								"value" => $this->getSpecies(),
+							] ),
+							[
+								"label" => wfMessage( "browsepathways-select-species" )->plain()
+							]
+						),
+						new FieldLayout(
+							new DropdownInputWidget( [
+								"name" => "tag",
+								"id" => "tagSelection",
+								"options" => $this->getTagSelectionList(),
+								"value" => $this->getTag(),
+							] ),
+							[
+								"label" => wfMessage( "browsepathways-select-collection" )->plain()
+							]
+						),
+						new FieldLayout(
+							new DropdownInputWidget( [
+								"name" => "view",
+								"id" => "viewSelection",
+								"options" => $this->getViewSelectionList(),
+								"value" => $this->getView(),
+							] ),
+							[
+								"label" => wfMessage( "browsepathways-select-view" )->plain()
+							]
+						),
+					]
+				] )
+			]
+		] ) );
 	}
 }
