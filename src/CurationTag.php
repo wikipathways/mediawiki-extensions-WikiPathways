@@ -347,7 +347,8 @@ class CurationTag {
 			$img = self::getIcon( $tag->getName() );
 			if ( $img ) {
 				$icon[self::getDisplayName( $tag->getName() )] = [
-					"img" => $img, "tag" => $tag->getName()
+					"img" => __DIR__ . '/../modules/' . $img,
+					"tag" => $tag->getName()
 				];
 			}
 		}

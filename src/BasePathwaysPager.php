@@ -26,13 +26,14 @@ use File;
 use Html;
 use ThumbnailImage;
 use Title;
+use UnregisteredLocalFile;
 
 abstract class BasePathwaysPager extends AlphabeticPager {
 	protected $species;
 	protected $tag;
 	protected $sortOrder;
 	protected $nameSpace = NS_PATHWAY;
-	protected $nsName;
+	protected $nsName = "Pathway";
 
 	/* 20k is probably too much */
 	const MAX_IMG_SIZE = 20480;
@@ -84,6 +85,16 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 		// $suffix = $thumb->thumbName( [ "width" => self::MAX_IMG_WIDTH ] );
 		// return self::imgToData( $thumb, $suffix );
 		return self::imgToData( $thumb, self::MAX_IMG_WIDTH );
+	}
+
+	/**
+	 * @param File $file that has image
+	 * @param int $width to get
+	 * @return string
+	 */
+	public static function pathToData( $path, $mime ) {
+		$data = file_get_contents( $path );
+		return "data:" . $mime . ";base64," . base64_encode( $data );
 	}
 
 	/**
@@ -387,15 +398,15 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 
 		$tagLabel = Html::openElement( "span", [ 'class' => 'tagIcons' ] );
 		foreach ( $tags as $label => $attr ) {
-			$img = wfLocalFile( $attr['img'] );
+			$img = self::pathToData( $attr['img'], "image/png" );
 			$imgLink = Html::element( 'img', [
-				'src' => $this->imgToData( $img ),
+				'src' => $img,
 				"title" => $label
 			] );
 			$href = $this->getRequest()->appendQueryValue(
 				"tag", $attr['tag']
 			);
-			$tagLabel .= Html::element( 'a', [ 'href' => $href ], $imgLink );
+			$tagLabel .= Html::rawElement( 'a', [ 'href' => $href ], $imgLink );
 		}
 		$tagLabel .= Html::closeElement( 'span' );
 		return $tagLabel;
