@@ -50,7 +50,9 @@ class ThumbPathwaysPager extends BasePathwaysPager {
 	public function getNavigationBar() {
 		$linkTexts = [
 			'prev' => '',
-			'next' => $this->msg( 'nextn' )->numParams( $this->mLimit )->escaped(),
+			'next' => $this->msg( 'nextn' )->numParams(
+				$this->mLimit
+			)->escaped(),
 			'first' => '',
 			'last' => ''
 		];
@@ -93,7 +95,8 @@ class ThumbPathwaysPager extends BasePathwaysPager {
 			$row = "<b>";
 			$endRow = "</b>";
 		}
-
-		return $row.$this->getThumb( $pathway, $this->formatTags( $title ) ).$endRow;
+		return $row . $this->getThumb(
+			$pathway, $this->formatTags( $title )
+		) . $endRow;
 	}
 }

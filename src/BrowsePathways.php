@@ -36,7 +36,8 @@ class BrowsePathways extends SpecialPage {
 	// Second is default
 	static private $views = [ "list", "thumbs" ];
 
-	// Determines, which message describes the input field 'nsfrom' (->SpecialPrefixindex.php)
+	// Determines, which message describes the input field 'nsfrom'
+	// (->SpecialPrefixindex.php)
 	public $nsfromMsg = 'browsepathwaysfrom';
 	private $species;
 	private $tag;
@@ -57,9 +58,15 @@ class BrowsePathways extends SpecialPage {
 		$this->getOutput()->setPagetitle( wfMessage( "browsepathways" ) );
 
 		// Back compat for old links.
-		$this->species = $this->getRequest()->getVal( "browse", 'Homo_sapiens' );
-		$this->tag     = $this->getRequest()->getVal( "tag", CurationTag::defaultTag() );
-		$this->view    = $this->getRequest()->getVal( "view", self::$views[1] );
+		$this->species = $this->getRequest()->getVal(
+			"browse", 'Homo_sapiens'
+		);
+		$this->tag     = $this->getRequest()->getVal(
+			"tag", CurationTag::defaultTag()
+		);
+		$this->view    = $this->getRequest()->getVal(
+			"view", self::$views[1]
+		);
 
 		// Also need to pass
 		$this->offset = $this->getRequest()->getVal( "offset", null );
@@ -116,7 +123,9 @@ class BrowsePathways extends SpecialPage {
 
 	private function getTagSelectionList() {
 		$ret = [];
-		foreach ( CurationTag::getUserVisibleTagNames() as $display => $tag ) {
+		foreach (
+			CurationTag::getUserVisibleTagNames() as $display => $tag
+		) {
 			if ( is_array( $tag ) ) {
 				$tag = "---";
 			}
@@ -129,7 +138,9 @@ class BrowsePathways extends SpecialPage {
 		$ret = [];
 		foreach ( self::$views as $view ) {
 			$ret[] = [
-				"label" => wfMessage( "browsepathways-view-$view" )->plain(),
+				"label" => wfMessage(
+					"browsepathways-view-$view"
+				)->plain(),
 				"data" => $view
 			];
 		}
@@ -153,41 +164,34 @@ class BrowsePathways extends SpecialPage {
 			"items" => [
 				new HorizontalLayout( [
 					"label" => "Form layout",
-					"items" => [
-						new FieldLayout(
-							new DropdownInputWidget( [
-								"name" => "browse",
-								"id" => "browseSelection",
-								"options" => $this->getSpeciesSelectionList(),
-								"value" => $this->getSpecies(),
-							] ),
-							[
-								"label" => wfMessage( "browsepathways-select-species" )->plain()
-							]
-						),
-						new FieldLayout(
-							new DropdownInputWidget( [
-								"name" => "tag",
-								"id" => "tagSelection",
-								"options" => $this->getTagSelectionList(),
-								"value" => $this->getTag(),
-							] ),
-							[
-								"label" => wfMessage( "browsepathways-select-collection" )->plain()
-							]
-						),
-						new FieldLayout(
-							new DropdownInputWidget( [
-								"name" => "view",
-								"id" => "viewSelection",
-								"options" => $this->getViewSelectionList(),
-								"value" => $this->getView(),
-							] ),
-							[
-								"label" => wfMessage( "browsepathways-select-view" )->plain()
-							]
-						),
-					]
+					"items" => [ new FieldLayout( new DropdownInputWidget( [
+						"name" => "browse",
+						"id" => "browseSelection",
+						"options" => $this->getSpeciesSelectionList(),
+						"value" => $this->getSpecies(),
+					] ), [
+						"label" => wfMessage(
+							"browsepathways-select-species"
+						)->plain()
+					] ), new FieldLayout( new DropdownInputWidget( [
+						"name" => "tag",
+						"id" => "tagSelection",
+						"options" => $this->getTagSelectionList(),
+						"value" => $this->getTag(),
+					] ), [
+						"label" => wfMessage(
+							"browsepathways-select-collection"
+						)->plain()
+					] ), new FieldLayout( new DropdownInputWidget( [
+						"name" => "view",
+						"id" => "viewSelection",
+						"options" => $this->getViewSelectionList(),
+						"value" => $this->getView(),
+					] ), [
+						"label" => wfMessage(
+							"browsepathways-select-view"
+						)->plain()
+					] ), ]
 				] )
 			]
 		] ) );

@@ -751,6 +751,11 @@ class Pathway {
 		$version = $this->getActiveRevision();
 		$organism = $this->getSpecies();
 
+		if ( !$gpmlPath ) {
+			error_log( "No file for GPML!" );
+			return null;
+		}
+
 		if ( !file_exists( $gpmlPath ) ) {
 			$this->updateCache( FILETYPE_GPML );
 		}
@@ -766,7 +771,9 @@ class Pathway {
 			$this->savePvjsonCache();
 			return $this->pvjson;
 		}
-$err = error_get_last();throw new MWException( "Couldn't convert '{$this->pvjson}': {$err['message']}" );
+		$err = error_get_last();
+		error_log( "Trouble converting $gpmlPath: {$err['message']}" );
+		return null;
 	}
 
 	/**

@@ -24,6 +24,7 @@ use Article;
 use AlphabeticPager;
 use File;
 use Html;
+use ThumbnailImage;
 use Title;
 
 abstract class BasePathwaysPager extends AlphabeticPager {
@@ -50,8 +51,12 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 		}
 
 		$linkTexts = [
-			'prev' => $this->msg( 'prevn' )->numParams( $this->mLimit )->escaped(),
-			'next' => $this->msg( 'nextn' )->numParams( $this->mLimit )->escaped(),
+			'prev' => $this->msg( 'prevn' )->numParams(
+				$this->mLimit
+			)->escaped(),
+			'next' => $this->msg( 'nextn' )->numParams(
+				$this->mLimit
+			)->escaped(),
 			'first' => '',
 			'last' => ''
 		];
@@ -75,28 +80,32 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 	 * @param File $thumb to get data for
 	 * @return string
 	 */
-	public static function thumbToData( File $thumb ) {
-		$suffix = $thumb->thumbName( [ "width" => self::MAX_IMG_WIDTH ] );
-		return self::imgToData( $thumb, $suffix );
+	public static function thumbToData( ThumbnailImage $thumb ) {
+		// $suffix = $thumb->thumbName( [ "width" => self::MAX_IMG_WIDTH ] );
+		// return self::imgToData( $thumb, $suffix );
+		return self::imgToData( $thumb, self::MAX_IMG_WIDTH );
 	}
 
 	/**
-	 * @param File $img to embed
-	 * @param string $suffix type
+	 * @param ThumbnailImage $img to embed
+	 * @param int $width type
 	 * @return string
 	 */
-	public static function imgToData( File $img, $suffix = null ) {
-		$path = $img->getLocalRefPath( $suffix );
-
+	public static function imgToData(
+		ThumbnailImage $img, $width = self::MAX_IMG_WIDTH
+	) {
+		$file = $img->getFile();
+		$path = $file->getLocalRefPath();
 		if (
-			$img->isLocal() && $img->exists()
-			&& $img->getSize() < self::MAX_IMG_SIZE
+			$file->isLocal() && $file->exists()
+			&& $file->getSize() < self::MAX_IMG_SIZE
 		) {
 			$data = file_get_contents( $path );
-			return "data:" . $img->getMimeType() . ";base64,"
+			return "data:" . $file->getMimeType() . ";base64,"
 						   . base64_encode( $data );
 		}
-		return $img->getThumbUrl( $suffix );
+		// return $img->getThumbUrl( $suffix );
+		return $file->createThumb( $width );
 	}
 
 	/**
@@ -155,19 +164,24 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 			$this->tag = $page->getTag();
 		} else {
 			$label = CurationTag::getUserVisibleTagNames();
-			$this->tag = $label[ wfMessage( 'browsepathways-all-tags' )->plain() ];
+			$this->tag = $label[ wfMessage(
+				'browsepathways-all-tags'
+			)->plain() ];
 		}
 
-		// Following bit copy-pasta from Pager's IndexPager with some bits replace
-		// so we don't rely on $this->getOffset() in the constructor
+		// Following bit copy-pasta from Pager's IndexPager with some
+		// bits replace so we don't rely on $this->getOffset() in the
+		// constructor
 
-		// NB: the offset is quoted, not validated. It is treated as an
-		// arbitrary string to support the widest variety of index types. Be
-		// careful outputting it into HTML!
+		// NB: the offset is quoted, not validated. It is treated as
+		// an arbitrary string to support the widest variety of index
+		// types. Be careful outputting it into HTML!
 		$this->mOffset = $this->getOffset();
 
 		// Use consistent behavior for the limit options
-		$this->mDefaultLimit = intval( $this->getUser()->getOption( 'rclimit' ) );
+		$this->mDefaultLimit = intval(
+			$this->getUser()->getOption( 'rclimit' )
+		);
 		$this->mLimit = $this->getLimit();
 
 		$this->mIsBackwards = $this->isBackwards();
@@ -181,7 +195,8 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 		} elseif ( is_array( $index ) ) {
 			// First element is the default
 			reset( $index );
-			list( $this->mOrderType, $this->mIndexField ) = each( $index );
+			$this->mOrderType = key( $index );
+			$this->mIndexField = current( $index );
 		} else {
 			// $index is not an array
 			$this->mOrderType = null;
@@ -218,97 +233,146 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 		if ( $this->species !== '---' ) {
 			$species = preg_replace( "/_/", " ", $this->species );
 			$qinf['tables'][] = 'tag as t2';
-			$qinf['join_conds']['tag as t2'] = [ 'JOIN', 't2.page_id = page.page_id' ];
+			$qinf['join_conds']['tag as t2']
+				= [ 'JOIN', 't2.page_id = page.page_id' ];
 			$qinf['conds']['t2.tag_text'] = $species;
 		}
 
 		return $qinf;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getIndexField() {
 		return 't1.tag_text';
 	}
 
-	public function getGPMLlink( $pathway ) {
+	/**
+	 * Get html to point to a pathway.
+	 *
+	 * @param Pathway $pathway to use
+	 * @return string
+	 */
+	public function getGPMLlink( Pathway $pathway ) {
 		if ( $pathway->getActiveRevision() ) {
 			$oldid = "&oldid={$pathway->getActiveRevision()}";
 		}
-		return XML::Element(
+		return Html::Element(
 			"a",
 			[
-				"href" => WPI_SCRIPT_URL . "?action=downloadFile&type=gpml&pwTitle="
+				"href" => WPI_SCRIPT_URL
+				. "?action=downloadFile&type=gpml&pwTitle="
 				. $pathway->getTitleObject()->getFullText() . $oldid
 			], " (gpml) "
 		);
 	}
 
-	public function getThumb(
-		$pathway, $icons, $boxwidth = self::MAX_IMG_WIDTH, $withText = true
-	) {
-		global $wgContLang;
-
-		$label = $pathway->name() . '<br/>';
+	private function getLabel( $pathway, $icons ) {
+		$label = $pathway->name() . Html::element( 'br' );
 		if ( $this->species === '---' ) {
-			$label .= "(" . $pathway->species() . ")<br/>";
+			$label .= "(" . $pathway->species() . Html::element( "br" );
 		}
-		$label .= $icons;
+		return $label . $icons;
+	}
 
-		$boxheight = -1;
-		$href = $pathway->getFullURL();
-		$class = "browsePathways infiniteItem";
+	private function startThumb( Pathway $pathway, $boxwidth ) {
 		$pathId = $pathway->getTitleObject();
-		$textalign = $wgContLang->isRTL() ? ' style="text-align:right"' : '';
+		$href = $pathway->getFullURL();
 		$oboxwidth = $boxwidth + 2;
+		$class = "browsePathways infiniteItem";
 
-		$this->getOutput()->addModuleStyles( [ 'wpi.browsePathways' ] );
+		return Html::openElement( "div", [
+			'id' => $pathId, 'class' => $class
+		] ) . Html::openElement( 'div', [
+			'class' => 'thumbinner', 'style' => "width:{$oboxwidth}px;"
+		] ) . Html::openElement( 'a', [
+			'href' => $href, 'class' => 'internal'
+		] );
+	}
 
-		$show = "<div id='{$pathId}' class='{$class}'>"
-		   . "<div class='thumbinner' style='width:{$oboxwidth}px;'>"
-		   . '<a href="'.$href.'" class="internal">';
-
-		$link = "";
+	/**
+	 * Get html for img
+	 *
+	 * @param Pathway $pathway to get html for
+	 * @param int $boxwidth the width of the ... box
+	 * @return string html
+	 */
+	public function getImgElement( Pathway $pathway, $boxwidth ) {
 		$img = $pathway->getImage();
-
 		if ( !$img->exists() ) {
 			$pathway->updateCache( FILETYPE_PNG );
 		}
-		$thumbUrl = '';
-		$error = '';
+		$boxheight = -1;
 
-		$width  = $img->getWidth();
-		$height = $img->getHeight();
+		$thumb = $img->transform( [
+			'width' => $boxwidth, 'height' => $boxheight
+		] );
 
-		$thumb = $img->transform( [ 'width' => $boxwidth, 'height' => $boxheight ] );
+		$ret = Html::element( "span", [ "class" => "error" ], $img->getLastError() );
 		if ( $thumb ) {
-			$thumbUrl = $this->thumbToData( $img );
+			$width  = $img->getWidth();
+			$height = $img->getHeight();
+
+			/* No link to download $link = $this->getGPMLlink( $pathway ); */
+			$thumbUrl = $this->thumbToData( $thumb );
 			$boxwidth = $thumb->getWidth();
 			$boxheight = $thumb->getHeight();
-		} else {
-			$error = $img->getLastError();
-		}
-
-		if ( $thumbUrl == '' ) {
-			// Couldn't generate thumbnail? Scale the image client-side.
-			$thumbUrl = $img->getViewURL();
-			if ( $boxheight == -1 ) {
+			if ( $thumbUrl === '' ) {
+				// Couldn't generate thumbnail? Scale the image client-side.
+				$thumbUrl = $img->getViewURL();
 				// Approximate...
-				$boxheight = intval( $height * $boxwidth / $width );
+				$boxheight = min(
+					intval( $height * $boxwidth / $width ), 200
+				);
 			}
+			$ret = Html::element( "img", [
+				'src' => $thumbUrl,
+				'width' => $boxwidth,
+				'height' => $boxheight,
+				'longdesc' => $pathway->getFullURL(),
+				'class' => 'thuumbimage'
+			] );
 		}
-		if ( $error ) {
-			$show .= htmlspecialchars( $error );
-		} else {
-			$show .= '<img src="'.$thumbUrl.'" '.
-				  'width="'.$boxwidth.'" height="'.$boxheight.'" ' .
-				  'longdesc="'.$href.'" class="thumbimage" />';
-			/* No link to download $link = $this->getGPMLlink( $pathway ); */
-		}
+		return $ret;
+	}
 
-		$show .= '</a>';
+	private function endThumb( $pathway, $icons, $withText = true ) {
+		global $wgContLang;
+
+		$show = '';
 		if ( $withText ) {
-			$show .= $link.'<div class="thumbcaption"'.$textalign.'>'.$label."</div>";
+			$textalign = $wgContLang->isRTL()
+					   ? [ 'style' => "text-align:right" ]
+					   : [];
+
+			$show .= Html::rawElement(
+				'div', array_merge(
+					[ 'class' => "thumbcaption" ], $textalign
+				), $this->getLabel( $pathway, $icons ) );
 		}
-		$show .= "</div></div>";
+		return $show . Html::closeElement( 'a' ). Html::closeElement( "div" )
+					 . Html::closeElement( "div" );
+	}
+
+	/**
+	 * @param Pathway $pathway to get the thumbnail for
+	 * @param string $icons html for representing tags
+	 * @param int $boxwidth max width
+	 * @param bool $withText show text or no
+	 * @return string
+	 */
+	public function getThumb(
+		Pathway $pathway,
+		$icons,
+		$boxwidth = self::MAX_IMG_WIDTH,
+		$withText = true
+	) {
+		$this->getOutput()->addModuleStyles( [ 'wpi.browsePathways' ] );
+
+		$show = $this->startThumb( $pathway, $boxwidth );
+		$show .= $this->getImgElement( $pathway, $boxwidth );
+		$show .= $this->endThumb( $pathway, $icons, $withText );
 
 		return str_replace( "\n", ' ', $show );
 	}
@@ -321,17 +385,19 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 		$tags = CurationTag::getCurationImagesForTitle( $title );
 		ksort( $tags );
 
-		$tagLabel = "<span class='tagIcons'>";
+		$tagLabel = Html::openElement( "span", [ 'class' => 'tagIcons' ] );
 		foreach ( $tags as $label => $attr ) {
 			$img = wfLocalFile( $attr['img'] );
 			$imgLink = Html::element( 'img', [
 				'src' => $this->imgToData( $img ),
 				"title" => $label
 			] );
-			$href = $this->getRequest()->appendQueryValue( "tag", $attr['tag'] );
-			$tagLabel .= Html::element( 'a', [ 'href' => $href ], null ) . $imgLink . "</a>";
+			$href = $this->getRequest()->appendQueryValue(
+				"tag", $attr['tag']
+			);
+			$tagLabel .= Html::element( 'a', [ 'href' => $href ], $imgLink );
 		}
-		$tagLabel .= "</span>";
+		$tagLabel .= Html::closeElement( 'span' );
 		return $tagLabel;
 	}
 }
