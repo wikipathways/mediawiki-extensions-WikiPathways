@@ -25,8 +25,10 @@ namespace WikiPathways;
 
 use Article;
 use Exception;
+use FSFileBackend;
 use Html;
 use Linker;
+use LocalRepo;
 use MWException;
 use Revision;
 use Title;
@@ -54,6 +56,13 @@ class Pathway {
 		FILETYPE_IMG => FILETYPE_IMG,
 		FILETYPE_GPML => FILETYPE_GPML,
 		FILETYPE_PNG => FILETYPE_IMG,
+	];
+
+	private static $mimeType = [
+		FILETYPE_TXT => "text/plain",
+		FILETYPE_IMG => "image/svg+xml",
+		FILETYPE_PNG => "image/png",
+		FILETYPE_GPML => "text/xml",
 	];
 
 	// The title object for the pathway page
@@ -834,7 +843,7 @@ class Pathway {
 		if ( !$hash ) {
 			$hash = md5( $this->getIdentifier() );
 		}
-		$subdir = substr( $hash, 0, 2 ) . '/' . substr( $hash, 2, 2 );
+		$subdir = substr( $hash, 0, 1 ) . '/' . substr( $hash, 0, 2 );
 		return $subdir;
 	}
 
@@ -1402,15 +1411,37 @@ class Pathway {
 		}
 	}
 
+	private static $repo;
+	private function setupRepo() {
+		global $wgUploadPath;
+		global $wgUploadDirectory;
+
+		self::$repo = new LocalRepo( [
+			"name" => "PathwayRepo",
+			"backend" => new FSFileBackend( [
+				"name" => "PathwayBackend",
+				"domainId" => "wikipathways",
+				'basePath' => $wgUploadDirectory . "/wikipathways"
+			] ),
+			"url" => $wgUploadPath . "/wikipathways"
+		] );
+	}
+
+	private function getRepo() {
+		return self::$repo;
+	}
+
 	/**
 	 * Get the MW image
 	 *
+	 * @param string $type of image
 	 * @return UnregisteredLocalFile
 	 */
 	protected function getImgObject( $type ) {
-		return UnregisteredLocalFile::newFromTitle(
-			$this->getFileTitle( $type ),
-			\RepoGroup::singleton()->getLocalRepo()
+		$this->setupRepo();
+		return new UnregisteredLocalFile(
+			false, $this->getRepo(),
+			$this->getFileLocation( $type ), self::$mimeType[$type]
 		);
 	}
 
@@ -1422,7 +1453,9 @@ class Pathway {
 	public function getImage() {
 		// This makes it more in a wiki way.
 		$img = $this->getImgObject( FILETYPE_IMG );
-		if ( !$img->exists() ) {
+		$path = $this->getFileLocation( FILETYPE_IMG );
+
+		if ( !file_exists( $path ) ) {
 			/* Avoid calling this unless we need to */
 			$this->updateCache( FILETYPE_IMG );
 		}

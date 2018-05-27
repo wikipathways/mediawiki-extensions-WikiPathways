@@ -193,6 +193,7 @@ class PathwayThumb {
 		$error = '';
 
 		$width = $height = 0;
+
 		if ( $img->exists() ) {
 			$width  = $img->getWidth();
 			$height = $img->getHeight();
