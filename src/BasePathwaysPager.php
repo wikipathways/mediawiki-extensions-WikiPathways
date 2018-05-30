@@ -24,9 +24,10 @@ use Article;
 use AlphabeticPager;
 use File;
 use Html;
+use RequestContext;
+use SpecialPage;
 use ThumbnailImage;
 use Title;
-use UnregisteredLocalFile;
 
 abstract class BasePathwaysPager extends AlphabeticPager {
 	protected $species;
@@ -403,8 +404,8 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 				'src' => $img,
 				"title" => $label
 			] );
-			$href = $this->getRequest()->appendQueryValue(
-				"tag", $attr['tag']
+			$href = RequestContext::getMain()->getTitle()->getFullURL(
+				$this->getRequest()->appendQueryValue( "tag", $attr['tag'] )
 			);
 			$tagLabel .= Html::rawElement( 'a', [ 'href' => $href ], $imgLink );
 		}
