@@ -23,6 +23,7 @@ namespace WikiPathways;
 use Article;
 use AlphabeticPager;
 use File;
+use FSFile;
 use Html;
 use RequestContext;
 use SpecialPage;
@@ -89,8 +90,8 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 	}
 
 	/**
-	 * @param File $file that has image
-	 * @param int $width to get
+	 * @param File $path that has image
+	 * @param int $mime type of the image
 	 * @return string
 	 */
 	public static function pathToData( $path, $mime ) {
@@ -108,10 +109,8 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 	) {
 		$file = $img->getFile();
 		$path = $file->getLocalRefPath();
-		if (
-			$file->isLocal() && $file->exists()
-			&& $file->getSize() < self::MAX_IMG_SIZE
-		) {
+
+		if ( file_exists( $path ) ) {
 			$data = file_get_contents( $path );
 			return "data:" . $file->getMimeType() . ";base64,"
 						   . base64_encode( $data );
@@ -312,10 +311,8 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 	 */
 	public function getImgElement( Pathway $pathway, $boxwidth ) {
 		$img = $pathway->getImage();
-		if ( !$img->exists() ) {
-			$pathway->updateCache( FILETYPE_PNG );
-		}
 		$boxheight = -1;
+		$img->setLocalReference( new FSFile( $img->getPath() ) );
 
 		$thumb = $img->transform( [
 			'width' => $boxwidth, 'height' => $boxheight
@@ -330,6 +327,7 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 			$thumbUrl = $this->thumbToData( $thumb );
 			$boxwidth = $thumb->getWidth();
 			$boxheight = $thumb->getHeight();
+
 			if ( $thumbUrl === '' ) {
 				// Couldn't generate thumbnail? Scale the image client-side.
 				$thumbUrl = $img->getViewURL();
@@ -402,7 +400,8 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 			$img = self::pathToData( $attr['img'], "image/png" );
 			$imgLink = Html::element( 'img', [
 				'src' => $img,
-				"title" => $label
+				'class' => 'pathTag',
+				'title' => $label
 			] );
 			$href = RequestContext::getMain()->getTitle()->getFullURL(
 				$this->getRequest()->appendQueryValue( "tag", $attr['tag'] )
