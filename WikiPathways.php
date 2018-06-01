@@ -390,28 +390,3 @@ $wgRSSUrlWhitelist = [
 	"https://wikipathways.github.io/academy/curators/curators_list.xml",
 	"https://groups.google.com/forum/feed/wikipathways-discuss/msgs/rss_v2_0.xml"
 ];
-
-// Register AJAX functions
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagNames";
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagData";
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::saveTag";
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::removeTag";
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getAvailableTags";
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTagHistory";
-$wgAjaxExportList[] = "WikiPathways\CurationTagsAjax::getTags";
-$wgAjaxExportList[] = "WikiPathways\\PageEditor::save";
-$wgAjaxExportList[] = "jsGetResults";
-$wgAjaxExportList[] = "jsSearchPathways";
-
-// FIXME this is here because the shim needs to be in a global context
-function jsGetAuthors( $pageId, $limit = '', $includeBots = false ) {
-	return \WikiPathways\GPML\AuthorInfoList::jsGetAuthors( $pageId, $limit, $includeBots );
-}
-function jsSearchPathways( $pageId, $species, $ids, $codes, $type ) {
-	return \WikiPathways\SearchPathwaysAjax::doSearch(
-		$pageId, $species, $ids, $codes, $type
-	);
-}
-function jsGetResults( $batch, $searchId ) {
-	return \WikiPathways\SearchPathwaysAjax::getResults( $batch, $searchId );
-}

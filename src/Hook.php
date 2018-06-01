@@ -27,6 +27,25 @@ use ParserOutput;
 use Title;
 
 class Hook {
+
+	static $c = 0;
+	public static function onRegistration() {
+		global $wgAjaxExportList;
+
+		// Register AJAX functions
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::getTagNames";
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::getTagData";
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::saveTag";
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::removeTag";
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::getAvailableTags";
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::getTagHistory";
+		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::getTags";
+		$wgAjaxExportList[] = "WikiPathways\\PageEditor::save";
+		$wgAjaxExportList[] = "WikiPathways\\SearchPathwaysAjax::doSearch";
+		$wgAjaxExportList[] = "WikiPathways\\SearchPathwaysAjax::getResults";
+		// $wgAjaxExportList[] = "jsGetResults";
+		// $wgAjaxExportList[] = "jsSearchPathways";
+	}
 	// Probably better to put this in parser init hook
 	public static function pathwayViewer() {
 		global $wgParser;

@@ -27,7 +27,7 @@ SearchPathways.doSearch = function() {
 	$.ajax(
 		mw.util.wikiScript() + '?' + $.param( {
 			action: 'ajax',
-			rs: "jsSearchPathways",
+			rs: "WikiPathways\\SearchPathwaysAjax::doSearch",
 			rsargs: [query, species, ids, codes, type]
 		} ), {
 			complete: SearchPathways.processResults,
@@ -86,7 +86,7 @@ SearchPathways.loadBatch = function() {
 	$.ajax(
 		mw.util.wikiScript() + '?' + $.param( {
 			action: 'ajax',
-			rs: "jsGetResults",
+			rs: "WikiPathways\\SearchPathwaysAjax::getResults",
 			rsargs: [batch, SearchPathways.currentSearchId]
 		} ), {
 			complete: SearchPathways.processBatch,

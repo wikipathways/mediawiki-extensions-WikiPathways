@@ -98,13 +98,10 @@
 		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
 		"WikiPathways\\wpi": "wpi.php"
 	},
-	"AjaxEportList": [
-		"SearchPathwaysAjax::doSearch",
-		"SearchPathwaysAjax::getResults"
-	],
 	"ExtensionFunctions": [
 		"WikiPathways\\Hook::pathwayViewer"
 	],
+	"callback": "WikiPathways\\Hook::onRegistration",	
 	"Hooks": {
 		"ContentGetParserOutput": "WikiPathways\\Hook::onContentGetParserOutput",
 		"AbortNewAccount": "abortOnBadDomain",

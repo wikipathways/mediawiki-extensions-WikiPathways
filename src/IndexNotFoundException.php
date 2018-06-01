@@ -20,11 +20,11 @@ namespace WikiPathways;
 use Exception;
 
 class IndexNotFoundException extends Exception {
-	public function __construct( Exception $e = null ) {
+	public function __construct( $e = null ) {
 		if ( $e ) {
 			parent::__construct( $e->getMessage() );
 		} else {
-			parent::__construct( 'Unable to locate lucene index service. Please specify the base url for the index service as $indexServiceUrl in pass.php' );
+			parent::__construct( wfMessage( 'wp-lucene-not-set' ) );
 		}
 	}
 }

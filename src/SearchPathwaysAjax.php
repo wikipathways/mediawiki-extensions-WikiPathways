@@ -58,7 +58,7 @@ class SearchPathwaysAjax {
 		return $species;
 	}
 
-	private static function getSearchResults( $type, $query, $species, $ids, $codes, $xrefs ) {
+	private static function getSearchResults( $type, $query, $species, $ids, $codes ) {
 		if ( $type == 'query' ) {
 			$results = PathwayIndex::searchByText( $query, $species );
 		} elseif ( $type == 'xref' ) {
@@ -73,7 +73,7 @@ class SearchPathwaysAjax {
 		$query = self::normalizeQuery( $query, $type );
 		$species = self::normalizeSpecies( $species );
 		list( $xrefs, $results )
-			= self::getSearchResults( $type, $query, $species, $ids, $codes, $xrefs );
+			= self::getSearchResults( $type, $query, $species, $ids, $codes );
 		$doc = new DOMDocument();
 		$root = $doc->createElement( "results" );
 		$doc->appendChild( $root );

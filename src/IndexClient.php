@@ -20,6 +20,7 @@ namespace WikiPathways;
 
 use Exception;
 use HttpRequest;
+use MWException;
 use SearchHit;
 use SimpleXMLElement;
 
@@ -29,6 +30,10 @@ use SimpleXMLElement;
  */
 class IndexClient {
 	private static function doQuery( $url ) {
+		if ( !extension_loaded( "curl" ) ) {
+			throw new MWException( "Please install curl for PHP" );
+		}
+
 		$ch = curl_init( $url );
 
 		// curl_setopt( $ch, CURLOPT_POSTFIELDS, $data_string );
@@ -41,7 +46,7 @@ class IndexClient {
 
 		if ( $info['http_code'] != 200 ) {
 			$success = false;
-			throw new IndexNotFoundException( $e );
+			throw new IndexNotFoundException( \Status::newFatal( 'wp-lucene-not-working' ) );
 		}
 
 		curl_close( $ch );
@@ -157,6 +162,9 @@ class IndexClient {
 		$url = self::getServiceUrl() . "xrefs/" . urlencode( $source ) . "/"
 			 . urlencode( $code );
 
+		if ( !extension_loaded( "curl" ) ) {
+			throw new MWException( "Please install curl for PHP" );
+		}
 		$ch = curl_init( $url );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
@@ -185,4 +193,3 @@ class IndexClient {
 		return $indexServiceUrl;
 	}
 }
-
