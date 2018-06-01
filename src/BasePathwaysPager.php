@@ -310,40 +310,48 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 	 * @return string html
 	 */
 	public function getImgElement( Pathway $pathway, $boxwidth ) {
-		$img = $pathway->getImage();
+		$img = $pathway->getImage( FILETYPE_PNG );
 		$boxheight = -1;
-		$img->setLocalReference( new FSFile( $img->getPath() ) );
+		$path = $img->getPath();
+		$img->setLocalReference( new FSFile( $path ) );
 
-		$thumb = $img->transform( [
-			'width' => $boxwidth, 'height' => $boxheight
-		] );
-
-		$ret = Html::element( "span", [ "class" => "error" ], $img->getLastError() );
-		if ( $thumb ) {
-			$width  = $img->getWidth();
-			$height = $img->getHeight();
-
-			/* No link to download $link = $this->getGPMLlink( $pathway ); */
-			$thumbUrl = $this->thumbToData( $thumb );
-			$boxwidth = $thumb->getWidth();
-			$boxheight = $thumb->getHeight();
-
-			if ( $thumbUrl === '' ) {
-				// Couldn't generate thumbnail? Scale the image client-side.
-				$thumbUrl = $img->getViewURL();
-				// Approximate...
-				$boxheight = min(
-					intval( $height * $boxwidth / $width ), 200
-				);
-			}
-			$ret = Html::element( "img", [
-				'src' => $thumbUrl,
-				'width' => $boxwidth,
-				'height' => $boxheight,
-				'longdesc' => $pathway->getFullURL(),
-				'class' => 'thuumbimage'
+		if ( file_exists( $path ) ) {
+			$thumb = $img->transform( [
+				'width' => $boxwidth, 'height' => $boxheight
 			] );
+
+			$ret = Html::element( "span", [ "class" => "error" ], $img->getLastError() );
+			if ( $thumb ) {
+				$width  = $img->getWidth();
+				$height = $img->getHeight();
+
+				/* No link to download $link = $this->getGPMLlink( $pathway ); */
+				$thumbUrl = $this->thumbToData( $thumb );
+				$boxwidth = $thumb->getWidth();
+				$boxheight = $thumb->getHeight();
+
+				if ( $thumbUrl === '' ) {
+					// Couldn't generate thumbnail? Scale the image client-side.
+					$thumbUrl = $img->getViewURL();
+					// Approximate...
+					$boxheight = min(
+						intval( $height * $boxwidth / $width ), 200
+					);
+				}
+				$ret = Html::element( "img", [
+					'src' => $thumbUrl,
+					'width' => $boxwidth,
+					'height' => $boxheight,
+					'longdesc' => $pathway->getFullURL(),
+					'class' => 'thuumbimage'
+				] );
+			}
+		} else {
+			$ret = Html::element(
+				"span", [ "class" => "error" ], "Image for pathway doesn't exist!"
+			);
 		}
+
 		return $ret;
 	}
 

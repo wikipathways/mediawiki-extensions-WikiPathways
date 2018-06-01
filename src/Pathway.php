@@ -849,15 +849,17 @@ class Pathway {
 
 	private function getSubdirAndFile( $fileType ) {
 		$dir = $this->getSubdir();
-		$fn = $this->getFileName( $fileType );
+		$filename = $this->getFileName( $fileType );
 
-		return "$dir/$fn";
+		return "$dir/$filename";
 	}
 
 	/**
 	 * Gets the path that points to the cached file
-	 * @param string $fileType the file type to get the name for (one of the FILETYPE_* constants)
+	 * @param string $fileType the file type to get the name for (one
+	 * of the FILETYPE_* constants)
 	 * @param bool $updateCache whether to update the cache (if needed) or not
+	 * @return string
 	 */
 	public function getFileLocation( $fileType, $updateCache = true ) {
 		// Make sure to have up to date version
@@ -880,8 +882,8 @@ class Pathway {
 			// Make sure to have up to date version
 			$this->updateCache( $fileType );
 		}
-		$fn = $this->getFileName( $fileType );
-		return wfLocalFile( $fn );
+		$filename = $this->getFileName( $fileType );
+		return wfLocalFile( $filename );
 	}
 
 	/**
@@ -1418,16 +1420,19 @@ class Pathway {
 
 		self::$repo = new LocalRepo( [
 			"name" => "PathwayRepo",
+			"url" => $wgUploadPath . "/wikipathways",
 			"backend" => new FSFileBackend( [
 				"name" => "PathwayBackend",
 				"domainId" => "wikipathways",
 				'basePath' => $wgUploadDirectory . "/wikipathways"
 			] ),
-			"url" => $wgUploadPath . "/wikipathways"
 		] );
 	}
 
 	private function getRepo() {
+		if ( !self::$repo ) {
+			$this->setupRepo();
+		}
 		return self::$repo;
 	}
 
@@ -1438,7 +1443,6 @@ class Pathway {
 	 * @return UnregisteredLocalFile
 	 */
 	protected function getImgObject( $type ) {
-		$this->setupRepo();
 		return new UnregisteredLocalFile(
 			false, $this->getRepo(),
 			$this->getFileLocation( $type ), self::$mimeType[$type]
@@ -1450,14 +1454,13 @@ class Pathway {
 	 *
 	 * @return LocalFile
 	 */
-	public function getImage() {
+	public function getImage( $type = FILETYPE_IMG ) {
 		// This makes it more in a wiki way.
-		$img = $this->getImgObject( FILETYPE_IMG );
-		$path = $this->getFileLocation( FILETYPE_IMG );
-
+		$img = $this->getImgObject( $type );
+		$path = $this->getFileLocation( $type );
 		if ( !file_exists( $path ) ) {
 			/* Avoid calling this unless we need to */
-			$this->updateCache( FILETYPE_IMG );
+			$this->updateCache( $type );
 		}
 
 		return $img;
@@ -1576,6 +1579,9 @@ class Pathway {
 	 */
 	public static function convertWithPathVisio( $gpmlFile, $outFile ) {
 		global $wgMaxShellMemory;
+		if ( file_exists( $outFile ) ) {
+			return true;
+		}
 
 		$gpmlFile = realpath( $gpmlFile );
 
@@ -1611,8 +1617,10 @@ class Pathway {
 		// Only write cache if there is GPML
 		if ( $gpml ) {
 			$file = $this->getFileObj( FILETYPE_GPML, false );
-			$file->publish( $gpml );
-			wfDebugLog( "Pathway",  "GPML CACHE SAVED: " . $file->getPath() );
+			if ( !$file->exists() ) {
+				$file->publish( $gpml );
+				wfDebugLog( "Pathway",  "GPML CACHE SAVED: " . $file->getPath() );
+			}
 		}
 	}
 
@@ -1621,17 +1629,21 @@ class Pathway {
 		// This function is always called when GPML is converted to pvjson; which is not the case for SVG.
 		$pvjson = $this->pvjson;
 
+		$file = $this->getFileLocation( FILETYPE_JSON, false );
 		if ( !$pvjson ) {
 			$pvjson = $this->getPvjson();
 		}
 
 		if ( !$pvjson ) {
-			wfDebugLog( "Pathway",  "Invalid pvjson, so cannot savePvjsonCache." );
+			wfDebugLog(
+				"Pathway", "Invalid pvjson, so cannot savePvjsonCache."
+			);
 			return;
 		}
 
-		$file = $this->getFileLocation( FILETYPE_JSON, false );
-		wfDebugLog( "Pathway",  "savePvjsonCache: Need to write pvjson to $file\n" );
+		wfDebugLog(
+			"Pathway",  "savePvjsonCache: Need to write pvjson to $file\n"
+		);
 		self::writeFile( $file, $pvjson );
 
 		if ( !file_exists( $file ) ) {
@@ -1643,6 +1655,7 @@ class Pathway {
 	private function saveSvgCache() {
 		wfDebugLog( "Pathway",  "saveSvgCache() called\n" );
 		$gpmlPath = $this->getFileLocation( FILETYPE_GPML, false );
+		$file = $this->getFileLocation( FILETYPE_IMG, false );
 		if ( !$gpmlPath || !file_exists( $gpmlPath ) ) {
 			throw new MWException( "saveSvgCache() failed: GPML unavailable." );
 		}
@@ -1651,7 +1664,6 @@ class Pathway {
 			wfDebugLog( "Pathway",  "Unable to convert to svg, so cannot saveSvgCache." );
 			return;
 		}
-		$file = $this->getFileLocation( FILETYPE_IMG, false );
 		self::writeFile( $file, $svg );
 		if ( !file_exists( $file ) ) {
 			throw new Exception( "Unable to save svg" );
