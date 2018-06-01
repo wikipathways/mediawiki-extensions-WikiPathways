@@ -188,7 +188,9 @@ SearchPathways.showError = function(e, details) {
 	if(details) {
 	 html += "<PRE>" + details + "</PRE>";
 	}
-	div.innerHTML = html;
+	if ( div ) {
+		div.innerHTML = html;
+	}
 };
 
 SearchPathways.getRequestXML = function(xhr) {

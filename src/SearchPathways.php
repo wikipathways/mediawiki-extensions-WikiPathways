@@ -57,11 +57,11 @@ class SearchPathways extends \SpecialPage {
 		}
 
 		$out->addModules( [ "wpi.searchPathways" ] );
+		$this->showForm( $query, $species, $ids, $codes, $type );
 		// Submit button pressed
 		if ( $req->getVal( 'doSearch' ) == '1' ) {
 			global $wgScriptPath;
 
-			$this->showForm( $query, $species, $ids, $codes, $type );
 			$out->addHTML(
 				Html::rawElement(
 					"div", [ "id" => "searchResults" ], Html::rawElement(
@@ -70,12 +70,10 @@ class SearchPathways extends \SpecialPage {
 					) . "Loading..."
 				) .
 				Html::rawElement(
-					"div", [ "id" => "more" ] ),
+					"div", [ "id" => "more" ] ) .
 				Html::rawElement(
 					"div", [ "id" => "error" ] )
 			);
-		} else {
-			$this->showForm( $query, $species, $ids, $codes, $type );
 		}
 	}
 
