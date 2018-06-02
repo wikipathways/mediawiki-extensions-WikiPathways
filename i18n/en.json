@@ -63,5 +63,6 @@
 	"wp-annotations-no-cite": "<cite>No annotated interactions</cite>",
 	"wp-xref-additional": "Show additional info and linkouts",
 	"wp-lucene-not-working": "Please set $indexServiceUrl in pass.php to a working Lucene endpoint",
-	"wp-lucene-not-set": "Unable to locate lucene index service. Please specify the base url for the index service as $indexServiceUrl in pass.php"
+	"wp-lucene-not-set": "Unable to locate lucene index service. Please specify the base url for the index service as $indexServiceUrl in pass.php",
+	"wp-pathway-no-thumbnail": "Thumbnail for pathway doesn't exist!"
 }

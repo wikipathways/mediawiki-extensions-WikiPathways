@@ -23,12 +23,11 @@ namespace WikiPathways;
 use Article;
 use AlphabeticPager;
 use File;
-use FSFile;
 use Html;
 use RequestContext;
-use SpecialPage;
 use ThumbnailImage;
 use Title;
+use WikiPathways\PathwayCache\Factory;
 
 abstract class BasePathwaysPager extends AlphabeticPager {
 	protected $species;
@@ -310,12 +309,11 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 	 * @return string html
 	 */
 	public function getImgElement( Pathway $pathway, $boxwidth ) {
-		$img = $pathway->getImage( FILETYPE_PNG );
+		$png = Factory::getCache( "PNG", $pathway );
+		$img = $png->getImgObject();
 		$boxheight = -1;
-		$path = $img->getPath();
-		$img->setLocalReference( new FSFile( $path ) );
 
-		if ( file_exists( $path ) ) {
+		if ( $png->isCached() ) {
 			$thumb = $img->transform( [
 				'width' => $boxwidth, 'height' => $boxheight
 			] );
@@ -326,7 +324,7 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 				$height = $img->getHeight();
 
 				/* No link to download $link = $this->getGPMLlink( $pathway ); */
-				$thumbUrl = $this->thumbToData( $thumb );
+				$thumbUrl = $png->getUrl();
 				$boxwidth = $thumb->getWidth();
 				$boxheight = $thumb->getHeight();
 
@@ -348,7 +346,7 @@ abstract class BasePathwaysPager extends AlphabeticPager {
 			}
 		} else {
 			$ret = Html::element(
-				"span", [ "class" => "error" ], "Image for pathway doesn't exist!"
+				"span", [ "class" => "error" ], wfMessage( "wp-pathway-no-thumbnail" )
 			);
 		}
 

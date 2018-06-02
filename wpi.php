@@ -18,8 +18,10 @@
 namespace WikiPathways;
 
 use Exception;
+use MWException;
 use RequestContext;
 use Title;
+use WikiPathways\PathwayCache\Factory;
 
 $IP = dirname( dirname( __DIR__ ) ) . "/mediawiki";
 putenv( "MW_INSTALL_PATH=$IP" );
@@ -237,30 +239,23 @@ class wpi {
 		if ( $oldid ) {
 			$pathway->setActiveRevision( $oldid );
 		}
-		$filename = $pathway->getFileLocation( $fileType );
+		$file = Factory::getCache( $fileType, $pathway );
 		$mime = MimeTypes::getMimeType( $fileType );
 		if ( !$mime ) {
 			$mime = "text/plain";
 		}
 
-		ob_clean();
-		header( "Content-type: $mime" );
-		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-		header( "Content-Disposition: attachment; filename=\"$filename\"" );
-		// header("Content-Length: " . filesize($file));
-		set_time_limit( 0 );
+		if ( $file->isCached() ) {
+			ob_clean();
+			header( "Content-type: $mime" );
+			header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+			header( sprintf( 'Content-Disposition: attachment; filename="%s"', $file->getName() ) );
+			// header("Content-Length: " . filesize($file));
+			set_time_limit( 0 );
 
-		self::sendFile( $filename );
-		// for any file, if fpassthru() is disabled
-	}
-
-	private static function sendFile( $filename ) {
-		$file = fopen( $filename, 'rb' );
-		if ( $file !== false ) {
-			while ( !feof( $file ) ) {
-				echo fread( $file, 4096 );
-			}
-			fclose( $file );
+			echo $file->fetchText();
+		} else {
+			throw new MWException( "Couldn't generate file" );
 		}
 	}
 }

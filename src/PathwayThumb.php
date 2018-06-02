@@ -23,9 +23,11 @@ namespace WikiPathways;
 
 use Exception;
 use LocalFile;
+use MWException;
 use RepoGroup;
-use WikiPathways\GPML\Content;
 use Title;
+use WikiPathways\GPML\Content;
+use WikiPathways\PathwayCache\Factory;
 
 class PathwayThumb {
 
@@ -187,7 +189,11 @@ class PathwayThumb {
 	) {
 		global $wgContLang;
 
-		$img = $pathway->getImage();
+		$png = Factory::getCache( "PNG", $pathway );
+		if ( !$png->isCached() ) {
+			throw new MWException( "Problem generating cache for " . $pathway );
+		}
+		$img = $png->getImgObject();
 
 		$thumbUrl = '';
 		$error = '';
@@ -242,9 +248,6 @@ class PathwayThumb {
 		if ( $error ) {
 			$s .= htmlspecialchars( $error );
 		} else {
-			if ( !$img->exists() ) {
-				$pathway->updateCache( FILETYPE_IMG );
-			}
 			$s .= '<a href="'.$href.'" class="internal" title="'.$alt.'">'.
 			'<img src="'.$thumbUrl.'" alt="'.$alt.'" ' .
 			'width="'.$boxwidth.'" height="'.$boxheight.'" ' .

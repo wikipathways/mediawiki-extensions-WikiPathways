@@ -54,6 +54,14 @@
 		"WikiPathways\\Organism": "src/Organism.php",
 		"WikiPathways\\PagePermission": "src/PagePermission.php",
 		"WikiPathways\\PathwayBibliography": "src/PathwayBibliography.php",
+		"WikiPathways\\PathwayCache\\Factory": "src/PathwayCache/Factory.php",
+		"WikiPathways\\PathwayCache\\Base": "src/PathwayCache/Base.php",
+		"WikiPathways\\PathwayCache\\GPML": "src/PathwayCache/GPML.php",
+		"WikiPathways\\PathwayCache\\JSON": "src/PathwayCache/JSON.php",
+		"WikiPathways\\PathwayCache\\PNG": "src/PathwayCache/PNG.php",
+		"WikiPathways\\PathwayCache\\PathVisioConvertible": "src/PathwayCache/PathVisioConvertible.php",
+		"WikiPathways\\PathwayCache\\TXT": "src/PathwayCache/TXT.php",
+		"WikiPathways\\PathwayCache\\SVG": "src/PathwayCache/SVG.php",
 		"WikiPathways\\PathwayContributionsByAuthor": "src/PathwayContributionsByAuthor.php",
 		"WikiPathways\\PathwayData": "src/PathwayData.php",
 		"WikiPathways\\PathwayHistory": "src/PathwayHistory.php",
@@ -101,7 +109,7 @@
 	"ExtensionFunctions": [
 		"WikiPathways\\Hook::pathwayViewer"
 	],
-	"callback": "WikiPathways\\Hook::onRegistration",	
+	"callback": "WikiPathways\\Hook::onRegistration",
 	"Hooks": {
 		"ContentGetParserOutput": "WikiPathways\\Hook::onContentGetParserOutput",
 		"AbortNewAccount": "abortOnBadDomain",
@@ -210,12 +218,6 @@
 		"remoteExtPath": "WikiPathways/modules"
 	},
 	"config": {
-		"_prefix": "whoiswatching_",
-		"nametype": "RealName",
-		"allowaddingpeople": false,
-		"showifzero": true,
-		"showwatchingusers": false,
-		"maxPicklistUsers": 10
 	},
 	"manifest_version": 1
 }
