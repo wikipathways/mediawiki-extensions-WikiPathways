@@ -388,5 +388,10 @@ $wpiEnableOtag = true;
 // Enable RSS feeds from front page
 $wgRSSUrlWhitelist = [
 	"https://wikipathways.github.io/academy/curators/curators_list.xml",
+	"https://groups.google.com/group/wikipathways-discuss/feed/rss_v2_0_msgs.xml",
 	"https://groups.google.com/forum/feed/wikipathways-discuss/msgs/rss_v2_0.xml"
 ];
+$wgRSSAllowImageTag = true;
+$wgAllowImageTag = true;
+$wgRSSUrlNumberOfAllowedRedirects = 1;
+$wgAllowExternalImages = true;
