@@ -1,12 +1,12 @@
 #pathway_counts_select {
-	width: 800px;
+    width: 800px;
 }
 
 #pathway_counts_select p {
-	margin: 0px;
+    margin: 0px;
 }
 
 .graph {
-	width: 100%;
-	height: 500px;
+    width: 100%;
+    height: 500px;
 }

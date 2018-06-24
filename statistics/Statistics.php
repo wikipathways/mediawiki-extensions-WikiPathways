@@ -24,64 +24,70 @@
  */
 namespace WikiPathways\Statistics;
 
-class Statistics {
-	static private $excludeTags = [
-		"Curation:Tutorial"
-	];
+class Statistics
+{
+    static private $excludeTags = [
+    "Curation:Tutorial"
+    ];
 
-	/**
-	 * @param resource $fout handle to write to
-	 * @param array $counts of frequency counts
-	 * @param bool $includeKey whenter to include the key in the output
-	 */
-	public static function writeFrequencies( $fout, array $counts, $includeKey = false ) {
-		arsort( $counts );
-		$i = 0;
-		foreach ( array_keys( $counts ) as $u ) {
-			$row = [ $i, $counts[$u] ];
-			if ( $includeKey ) {
-				array_unshift( $row, $u );
-			}
-			fwrite( $fout, implode( "\t", $row ) . "\n" );
-			$i += 1;
-		}
-	}
+    /**
+     * @param resource $fout       handle to write to
+     * @param array    $counts     of frequency counts
+     * @param bool     $includeKey whenter to include the key in the output
+     */
+    public static function writeFrequencies( $fout, array $counts, $includeKey = false ) 
+    {
+        arsort($counts);
+        $i = 0;
+        foreach ( array_keys($counts) as $u ) {
+            $row = [ $i, $counts[$u] ];
+            if ($includeKey ) {
+                array_unshift($row, $u);
+            }
+            fwrite($fout, implode("\t", $row) . "\n");
+            $i += 1;
+        }
+    }
 
-	/**
-	 * Get page ids to exclude based on a test/tutorial curation tag.
-	 * @return array of of pages to exclude
-	 */
-	public static function getExcludeByTag() {
-		$exclude = [];
-		foreach ( self::$excludeTags as $tag ) {
-			$exclude = array_merge( $exclude, CurationTag::getPagesForTag( $tag ) );
-		}
-		return $exclude;
-	}
+    /**
+     * Get page ids to exclude based on a test/tutorial curation tag.
+  *
+     * @return array of of pages to exclude
+     */
+    public static function getExcludeByTag() 
+    {
+        $exclude = [];
+        foreach ( self::$excludeTags as $tag ) {
+            $exclude = array_merge($exclude, CurationTag::getPagesForTag($tag));
+        }
+        return $exclude;
+    }
 
-	/**
-	 * Get an array of timestamps, one for each month from $tsStart
-	 * to $tsEnd. Timestamps are in MW format.
-	 * @param int $tsStart
-	 * @param int $tsEnd
-	 * @return string[] dates
-	 */
-	public static function getTimeStampPerMonth( $tsStart, $tsEnd ) {
-		$startD = (int)substr( $tsStart, 6, 2 );
-		$startM = (int)substr( $tsStart, 4, 2 );
-		$startY = (int)substr( $tsStart, 0, 4 );
-		$ts = [];
-		$tsCurr = $tsStart;
-		$monthIncr = 0;
-		while ( $tsCurr <= $tsEnd ) {
-			$ts[] = $tsCurr;
-			$monthIncr += 1;
-			$tsCurr = date(
-				'YmdHis', mktime( 0, 0, 0, $startM + $monthIncr, $startD, $startY )
-			);
-		}
-		$nm = count( $ts );
-		logger( "Monthly interval from $tsStart to $tsEnd: $nm months." );
-		return $ts;
-	}
+    /**
+     * Get an array of timestamps, one for each month from $tsStart
+     * to $tsEnd. Timestamps are in MW format.
+  *
+     * @param  int $tsStart
+     * @param  int $tsEnd
+     * @return string[] dates
+     */
+    public static function getTimeStampPerMonth( $tsStart, $tsEnd ) 
+    {
+        $startD = (int)substr($tsStart, 6, 2);
+        $startM = (int)substr($tsStart, 4, 2);
+        $startY = (int)substr($tsStart, 0, 4);
+        $ts = [];
+        $tsCurr = $tsStart;
+        $monthIncr = 0;
+        while ( $tsCurr <= $tsEnd ) {
+            $ts[] = $tsCurr;
+            $monthIncr += 1;
+            $tsCurr = date(
+                'YmdHis', mktime(0, 0, 0, $startM + $monthIncr, $startD, $startY)
+            );
+        }
+        $nm = count($ts);
+        wfDebugLog(__CLASS__, "Monthly interval from $tsStart to $tsEnd: $nm months.");
+        return $ts;
+    }
 }

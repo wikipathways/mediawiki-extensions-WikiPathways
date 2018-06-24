@@ -85,8 +85,9 @@ class Pathway {
 	/**
 	 * Constructor for this class.
 	 * @param int $pathId The pathway identifier
+	 * @param int $revId The revision to fetch, null for latest
 	 */
-	public function __construct( $pathId = null ) {
+	public function __construct( $pathId = null, $revision = null ) {
 		if ( $pathId === null ) {
 			throw new Exception(
 				"id argument missing in constructor for Pathway"
@@ -95,7 +96,11 @@ class Pathway {
 
 		$this->pwPageTitle = Title::newFromText( $pathId, NS_PATHWAY );
 		$this->id = $this->pwPageTitle->getDbKey();
-		$this->revision = $this->getLatestRevision();
+		if ( $revision === null ) {
+			$this->revision = $this->getLatestRevision();
+		} else {
+			$this->setActiveRevision( $revision );
+		}
 	}
 
 	/**
