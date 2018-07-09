@@ -2,12 +2,12 @@
 error_reporting( E_ALL & ~E_DEPRECATED );
 ini_set( 'display_errors', 1 );
 define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
-require_once getenv( "MW_INSTALL_PATH" ) . '/includes/WebStart.php';
+require_once '/home/wikipathways.org/mediawiki/includes/WebStart.php';
 
 require_once 'OntologyFunctions.php';
 
 // Reminder: anywhere you see ??, it is php7+
-$title = $title ?? null;
+$title = $title ? $title : null;
 $tagId = $_POST['tagId'] ?? null;
 $gTagId = $_GET['tagId'] ?? null;
 $tag = $_POST['tag'] ?? null;
@@ -27,11 +27,12 @@ switch ( $action ) {
 		echo OntologyFunctions::getBioPortalSearchResults( $searchTerm );
 		break;
 
-	case 'fetch' :
-		echo OntologyFunctions::getOntologyTags( $title );
-		break;
-
 	case 'tree' :
 		echo OntologyFunctions::getBioPortalTreeResults( $gTagId );
 		break;
+
+default:
+		echo OntologyFunctions::getOntologyTags( $title );
+		break;
+
 }

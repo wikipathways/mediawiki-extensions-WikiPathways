@@ -89,6 +89,7 @@ class OntologyTags {
 		$out->addJsConfigVars( "ontologies", self::getOntologies() );
 		$out->addJsConfigVars( "opath", '/extensions/WikiPathways/otag/' );
 		$out->addJsConfigVars( "stylepath", '/extensions/WikiPathways/modules' );
+		$out->addJsConfigVars( "otagloggedIn", $userCanEdit ? true : false );
 		$out->addModules( [
 			$yuiModule, 'mw.config', 'wpi.CurationTags', 'wpi.AuthorInfo', 'wpi.XrefPanel', 'wpi.OntologyTags'
 		] );
