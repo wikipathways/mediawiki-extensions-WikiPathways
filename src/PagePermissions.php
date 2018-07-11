@@ -45,7 +45,7 @@ class PagePermissions {
 		if ( $user instanceof User ) {
 			$user = $user->getId();
 		}
-		$p = $this->permissions[$action];
+		$p = $this->permissions[$action] ?? null;
 		if ( $p ) {
 			return (bool)$p[$user];
 		}
@@ -130,3 +130,5 @@ class PagePermissions {
 		return $empty;
 	}
 }
+
+class_alias( "WikiPathways\\PagePermissions", "PagePermissions" );

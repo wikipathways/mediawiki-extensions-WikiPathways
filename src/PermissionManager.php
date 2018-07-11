@@ -184,3 +184,5 @@ class PermissionManager {
 	public static $TAG = "page_permissions"; # The name of the meta tag used to store the data
 	public static $ACTION_MANAGE = "manage_permissions";
 }
+
+class_alias( "WikiPathways\\PermissionManager", "PermissionManager" );

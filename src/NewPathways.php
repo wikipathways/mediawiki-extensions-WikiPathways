@@ -20,34 +20,31 @@
  */
 namespace WikiPathways;
 
+use Linker;
+use Title;
+
 class NewPathways extends \QueryPage {
 	public function __construct() {
 		parent::__construct( "NewPathwaysPage" );
 	}
 
-	public function execute( $par ) {
-		$this->setHeaders();
-
-		list( $limit, $offset ) = wfCheckLimits();
-
-		$rcp = new RCQueryPage();
-
-		return $rcp->doQuery( $offset, $limit );
-	}
-
-	function getName() {
+	/**
+	 * @return string
+	 */
+	public function getName() {
 		return "NewPathwaysPage";
 	}
 
-	function isExpensive() {
+	public function isExpensive() {
 		# page_counter is not indexed
 		return true;
 	}
-	function isSyndicated() {
+
+	public function isSyndicated() {
 		return false;
 	}
 
-	function getSQL() {
+	public function getSQL() {
 		$dbr = wfGetDB( DB_SLAVE );
 		$page = $dbr->tableName( 'page' );
 		$recentchanges = $dbr->tableName( 'recentchanges' );
@@ -66,11 +63,13 @@ class NewPathways extends \QueryPage {
 			AND rc_namespace=".NS_PATHWAY." ";
 	}
 
-	function formatResult( $skin, $result ) {
-		global $wgLang, $wgContLang, $wgUser;
+	public function formatResult( $skin, $result ) {
+		global $wgLang, $wgContLang;
+
 		$titleName = $result->title;
+		$titleID = Title::makeTitle( $result->namespace, $result->title );
 		try {
-			$pathway = Pathway::newFromTitle( $result->title );
+			$pathway = Pathway::newFromTitle( $titleID );
 			if ( !$pathway->isReadable() || $pathway->isDeleted() ) {
 				// Don't display this title when user is not allowed to read
 				return '';
@@ -79,16 +78,15 @@ class NewPathways extends \QueryPage {
 		} catch ( Exception $e ) {
 		}
 		$title = Title::makeTitle( $result->namespace, $titleName );
-		$id = Title::makeTitle( $result->namespace, $result->title );
-		$link = $skin->makeKnownLinkObj(
-			$id, htmlspecialchars(
+		$link = Linker::link(
+			$titleID, htmlspecialchars(
 				$wgContLang->convert( $title->getBaseText() )
 			)
 		);
 		$nv = "<b>". $wgLang->date( $result->value )
-			. "</b> by <b>" . $wgUser->getSkin()->userlink(
+			. "</b> by <b>" . Linker::userLink(
 				$result->user_id, $result->utext
 			) ."</b>";
-		return wfSpecialList( $link, $nv );
+		return $wgLang->specialList( $link, $nv );
 	}
 }
