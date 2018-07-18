@@ -59,6 +59,7 @@
 		"WikiPathways\\MostEditedPathways": "src/MostEditedPathways.php",
 		"WikiPathways\\NewPathways": "src/NewPathways.php",
 		"WikiPathways\\OntologyTags": "src/OntologyTags.php",
+		"WikiPathways\\Ontology\\Edit": "src/Ontology/Edit.php",
 		"WikiPathways\\Organism": "src/Organism.php",
 		"WikiPathways\\PageEditor": "src/PageEditor.php",
 		"WikiPathways\\PagePermissions": "src/PagePermissions.php",
