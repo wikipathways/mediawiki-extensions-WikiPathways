@@ -1,9 +1,37 @@
 <?php
-require_once 'OntologyCache.php';
+/*
+ * Copyright (C) 2018  J. David Gladstone Institutes
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @author Thomas Kelder <thomaskelder@gmail.com>
+ * @author Mark A. Hershberger <mah@nichework.com>
+ */
+namespace WikiPathways\Ontology;
 
-class OntologyFunctions {
+use AjaxResponse;
+use WikiPathways\Pathway;
+
+class Edit {
+	/**
+	 * @param string $tagId id of tag to remove
+	 * @param string $pwTitle Pathway identifier
+	 * @return string
+	 * @fixme should detect failures to remove
+	 */
 	public static function removeOntologyTag( $tagId, $pwTitle ) {
-		$dbw =& wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_MASTER );
 		$comment = "Ontology Term : '$tagId' removed !";
 		$pathway = Pathway::newFromTitle( $pwTitle );
 		$gpml = $pathway->getGpml();
@@ -23,9 +51,15 @@ class OntologyFunctions {
 		$dbw->delete( 'ontology', [ 'pw_id' => $pwTitle,'term_id' => $tagId ], __METHOD__ );
 		$gpml = $xml->asXML();
 		$pathway->updatePathway( $gpml, $comment );
-		echo "SUCCESS";
+		return "SUCCESS";
 	}
 
+	/**
+	 * @param string $tagId id of tag to add
+	 * @param string $tag tag name of tag
+	 * @param string $pwTitle Pathway identifier
+	 * @return string
+	 */
 	public static function addOntologyTag( $tagId, $tag, $pwTitle ) {
 		$comment = "Ontology Term : '$tag' added !";
 		$pathway = Pathway::newFromTitle( $pwTitle );
@@ -56,7 +90,7 @@ class OntologyFunctions {
 
 		try {
 			$pathway->updatePathway( $gpml, $comment );
-			$dbw =& wfGetDB( DB_MASTER );
+			$dbw = wfGetDB( DB_MASTER );
 			$dbw->begin();
 			$dbw->insert( 'ontology', [
 				'term_id' => $tagId,
@@ -74,25 +108,23 @@ class OntologyFunctions {
 		}
 	}
 
+	/**
+	 * @param string $pwId
+	 * @return string (json format)
+	 */
 	public static function getOntologyTags( $pwId ) {
-		$count = 0;
-		$title = $pwId;
 		$resultArray = [];
-		$dbr = wfGetDB( DB_SLAVE );
-		$query = "SELECT * FROM `ontology` " . "WHERE `pw_id` = '$title' ORDER BY `ontology`";
-		$res = $dbr->query( $query );
-		$row = $dbr->fetchObject( $res );
-		while ( $row ) {
-			$term['term_id'] = $row->term_id;
-			$term['term'] = $row->term;
-			$term['ontology'] = $row->ontology;
-			$resultArray['Resultset'][] = $term;
-			$count++;
-			$row = $dbr->fetchObject( $res );
+		$dbr = wfGetDB( DB_REPLICA );
+		$res = $dbr->select(
+			'ontology', [ 'term_id', 'term', 'ontology' ], [ 'pw_id' => $pwId ], __METHOD__,
+			[ "ORDER BY `ontology`" ]
+		);
+		foreach ( $res as $row ) {
+			$resultArray['Resultset'][] = $row;
 		}
-		$dbr->freeResult( $res );
-		$resultJSON = json_encode( $resultArray );
-		return $resultJSON;
+		$resp = new AjaxResponse( json_encode( $resultArray ) );
+		$resp->setContentType( "application/json" );
+		return $resp;
 	}
 
 	public static function getOntologyTagPath( $tagId ) {
@@ -218,3 +250,4 @@ class OntologyFunctions {
 		return $resultJSON;
 	}
 }
+class_alias( "WikiPathways\\Ontology\\Edit", "OntologyFunctions" );

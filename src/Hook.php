@@ -42,7 +42,7 @@ class Hook {
 		$wgAjaxExportList[] = "WikiPathways\\CurationTagsAjax::getTags";
 		$wgAjaxExportList[] = "WikiPathways\\PageEditor::save";
 		$wgAjaxExportList[] = "WikiPathways\\SearchPathwaysAjax::doSearch";
-		$wgAjaxExportList[] = "WikiPathways\\SearchPathwaysAjax::getResults";
+		$wgAjaxExportList[] = "WikiPathways\\Ontology\\Edit::getOntologyTags";
 		// $wgAjaxExportList[] = "jsGetResults";
 		// $wgAjaxExportList[] = "jsSearchPathways";
 	}
