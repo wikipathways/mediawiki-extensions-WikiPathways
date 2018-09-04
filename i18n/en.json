@@ -38,7 +38,6 @@
 	"wp-searchpathway-search": "Search form",
 	"wp-searchpathway-dosearch": "Search",
 	"wp-searchpathway-search-help": "Tip: use AND, OR, *, ?, parentheses or quotes",
-	"wp-ontology-tags.json": "[\n  \"Format: <Ontology Name> <Ontology ID> <VersionID>\",\n  \"For this page only: Only the array elements will be used, comments can be put in strings like this\",\n  [\n    \"Pathway Ontology\",\n    \"PW:0000001\",\n    1035,\n    46237,\n    \"PW\"\n  ],\n  [\n    \"Disease\",\n    \"DOID:4\",\n    1009,\n    46309,\n    \"DOID\"\n  ],\n  [\n    \"Cell Type\",\n    \"CL:0000000\",\n    1006,\n    46163,\n    \"CL\"\n  ]\n]\n",
 	"wp-ontology-bio-portal-email": "apico@gladstone.ucsf.edu",
 	"wp-history-pager-revision": "Revision",
 	"wp-history-pager-action": "Action",

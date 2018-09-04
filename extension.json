@@ -58,8 +58,6 @@
 		"WikiPathways\\MimeTypes": "src/MimeTypes.php",
 		"WikiPathways\\MostEditedPathways": "src/MostEditedPathways.php",
 		"WikiPathways\\NewPathways": "src/NewPathways.php",
-		"WikiPathways\\OntologyTags": "src/OntologyTags.php",
-		"WikiPathways\\Ontology\\Edit": "src/Ontology/Edit.php",
 		"WikiPathways\\Organism": "src/Organism.php",
 		"WikiPathways\\PageEditor": "src/PageEditor.php",
 		"WikiPathways\\PagePermissions": "src/PagePermissions.php",
@@ -121,9 +119,6 @@
 	"Hooks": {
 		"ContentGetParserOutput": "WikiPathways\\Hook::onContentGetParserOutput",
 		"AbortNewAccount": "abortOnBadDomain",
-		"ParserAfterTidy": [
-			"WikiPathways\\OntologyTags::onHeader"
-		],
 		"ArticleSaveComplete":  [
 			"WikiPathways\\Hook::updateTags"
 		],

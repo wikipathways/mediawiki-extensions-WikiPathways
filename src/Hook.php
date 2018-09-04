@@ -43,7 +43,6 @@ class Hook {
 		$wgAjaxExportList[] = "WikiPathways\\PageEditor::save";
 		$wgAjaxExportList[] = "WikiPathways\\SearchPathwaysAjax::doSearch";
 		$wgAjaxExportList[] = "WikiPathways\\SearchPathwaysAjax::getResults";
-		$wgAjaxExportList[] = "WikiPathways\\Ontology\\Edit::getOntologyTags";
 		// $wgAjaxExportList[] = "jsGetResults";
 		// $wgAjaxExportList[] = "jsSearchPathways";
 	}
@@ -60,7 +59,6 @@ class Hook {
 			"batchDownload", "WikiPathways\\BatchDownloader::createDownloadLinks"
 		);
 		$wgParser->setHook( "recentChanges", "WikiPathways\\RecentChangesBox::create" );
-		$wgParser->setHook( "OntologyTags", "WikiPathways\\OntologyTags::tag" );
 		$wgParser->setHook( "pageEditor", "WikiPathways\\PageEditor::display" );
 
 		$wgParser->setHook(
