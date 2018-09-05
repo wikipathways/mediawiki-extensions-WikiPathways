@@ -112,6 +112,13 @@ class Pathway {
 		return $this->id;
 	}
 
+	/**
+	 * Old method to get id
+	 *
+	 * @return int
+	 */
+	public function getIdentifier() { return $this->getId(); }
+
 	public function __toString() {
 		return $this->id;
 	}
