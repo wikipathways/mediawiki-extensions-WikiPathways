@@ -107,6 +107,8 @@
 		"WikiPathways\\ThumbPathwaysPager": "src/ThumbPathwaysPager.php",
 		"WikiPathways\\TissueAnalyzer": "src/TissueAnalyzer.php",
 		"WikiPathways\\TopWishes": "src/TopWishes.php",
+		"WikiPathwaysWS\\BaseWS": "webservice2.0/webservice.php",
+		"WikiPathwaysWS\\BCWebService": "webservice2.0/webservice.lib.php",
 		"WikiPathways\\Wish": "src/Wish.php",
 		"WikiPathways\\Xref": "src/Xref.php",
 		"WikiPathways\\XrefPanel": "src/XrefPanel.php",

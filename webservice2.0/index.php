@@ -1,11 +1,14 @@
 <?php
 
+namespace WikiPathwaysWS;
+
 error_reporting( E_ALL & ~E_NOTICE );
 ini_set( "display_errors", 1 );
 
-include "webservice.lib.php";
-include "webservice.php";
-include 'ws_ext.php';
+require_once 'ws_ext.php';
+require_once 'webservice.lib.php';
+
+use WikiPathwaysWS\BCWebService;
 
 // error_reporting(E_ALL);
 // ini_set("display_errors", 1);
@@ -159,6 +162,12 @@ $exceptionhand = function ( $except ){
 	return [ "error", $except->getCode(), $except->getMessage() ];
 };
 
+#function start( $_wservices ) {
+#	return new BCWebService( $_wservices );
+#}
+#$ws = start( $_wservices );
+
 $ws = new BCWebService( $_wservices );
+
 $ws->setExceptionHandler( $exceptionhand );
 $ws->listen();
