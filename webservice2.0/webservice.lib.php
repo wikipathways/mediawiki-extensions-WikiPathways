@@ -1,510 +1,462 @@
 <?php
 
-namespace WikiPathwaysWS;
-
-require_once "webservice.php";
-
-use WikiPathwaysWS\BaseWS;
-
 /*TODO: check max file size*/
 error_reporting( E_ALL & ~E_NOTICE );
 ini_set( "display_errors", 1 );
 
-
-/**
- * Get a list of all available organisms.
- * @return array of string $organisms Array with the names of all supported organisms
-  **/
-function listOrganisms1() {
-	return 'local';
-	#return [ "organisms" => Pathway::getAvailableSpecies() ];
-}
-
-#use WikiPathways\Pathway;
-#require_once 'webservice.php';
-#require "webservice.php";
-#use WikiPathways\Webservice;
-#use WikiPathways\Webservice;
-
-#echo \WikiPathways\Webservice\listOrganisms();
-#echo WPWebservice\listOrganisms();
-echo listOrganisms1();
-$baseWS = new BaseWS();
-var_dump($baseWS);
-#echo baseWS::listOrganisms();
-
-
-
-
-
-
-
-
-
-
-
 class BCWebService {
 
-	var $functionArray;
-	var $exceptionHandler;
+var $functionArray;
+var $exceptionHandler;
 
-	var $phpdoc;
-	var $canPopulateFromPhpDoc = true;
+var $phpdoc;
+var $canPopulateFromPhpDoc = true;
 
-	function __construct( $functionArray ) {
-		$this->functionArray = $functionArray;
-	}
+function __construct( $functionArray ) {
+	$this->functionArray = $functionArray;
+}
 
-	function populateFromPhpDoc() {
-	}
+function populateFromPhpDoc() {
+}
 
-	function isParamRequired( $functionName, $paramName ) {
-	}
+function isParamRequired( $functionName, $paramName ) {
+}
 
-	function getSupportedMethod( $functionName ) {
-	/*	
-		echo $functionName;
-		var_dump( $this->functionArray[$functionName]["method"] );
-        //*/
+function getSupportedMethod( $functionName ) {
+/*	echo $functionName;
+	var_dump( $this->functionArray[$functionName]["method"] );*/
 
-		if ( is_array( $this->functionArray[$functionName] ) && array_key_exists( "method", $this->functionArray[$functionName] ) ) {
-	// var_dump( $this->functionArray[$functionName]);
-			if ( is_array( $this->functionArray[$functionName]["method"] ) ) {
-				return $this->functionArray[$functionName]["method"];
-			} else {
-				return [ $this->functionArray[$functionName]["method"] ];
-			}
+	if ( is_array( $this->functionArray[$functionName] ) && array_key_exists( "method", $this->functionArray[$functionName] ) ) {
+// var_dump( $this->functionArray[$functionName]);
+		if ( is_array( $this->functionArray[$functionName]["method"] ) ) {
+			return $this->functionArray[$functionName]["method"];
 		} else {
-			return [ "get" ];
+			return [ $this->functionArray[$functionName]["method"] ];
 		}
+	} else {
+		return [ "get" ];
 	}
+}
 
-	/*possible properties
-	fieldtype, fielddescription
-	*/
-	function getField( $functionName, $fieldName, $property="fieldtype" ) {
-		if ( isset( $this->functionArray[$functionName][$property][$fieldName] ) ) {
-			return $this->functionArray[$functionName][$property][$fieldName];
-		} else {
-			return "string";
-		}
+/*possible properties
+fieldtype, fielddescription
+*/
+function getField( $functionName, $fieldName, $property="fieldtype" ) {
+	if ( isset( $this->functionArray[$functionName][$property][$fieldName] ) ) {
+		return $this->functionArray[$functionName][$property][$fieldName];
+	} else {
+		return "string";
 	}
+}
 
-	/*
+/*
 
-	*/
-	function getFunction( $functioname, $property ) {
-		if ( isset( $this->functionArray[$functionName][$property][$fieldName] ) ) {
-					return $this->functionArray[$functionName][$property][$fieldName];
-		} else {
-					return "unknown/mixed";
-		}
+*/
+function getFunction( $functioname, $property ) {
+	if ( isset( $this->functionArray[$functionName][$property][$fieldName] ) ) {
+				return $this->functionArray[$functionName][$property][$fieldName];
+	} else {
+				return "unknown/mixed";
 	}
+}
 
-	function getSwaggerFunctionParameters( $func ) {
-		$params = [];
+function getSwaggerFunctionParameters( $func ) {
+	$params = [];
 
-		$fct = new ReflectionFunction( $func );
-			$iRequiredParameters = $fct->getNumberOfRequiredParameters();
-		  $iParameters = $fct->getNumberofParameters();
-		 $aParameter = $fct->getParameters();
-		$parameterCount = 0;
-
-		foreach ( $aParameter as $value ) {
-			$parameterCount++;			foreach ( $value as $index => $val ) {
-				$params[] = [
-					"name" => $val,
-					"required" => $parameterCount > $iRequiredParameters ? false : true,
-					"in" => "query",
-					"type" => $this->getField( $func, $val ),
-					"description" => $this->getField( $func, $val, "fielddescription" ),
-					// "type"=>"array",
-					// "collectionFormat"=>"multi"
-				];
-			}
-		}
-
-		$params[] = [
-			"name" => "format",
-			"required" => false,
-			"in" => "query",
-			"type" => "string",
-			"default" => "xml",
-			"enum" => [ "json","xml","html","dump","jpg","pdf" ],
-		];
-
-		return $params;
-	}
-
-	function parseParam( $data ) {
-		$data = explode( " ", $data, 3 );
-
-		/*if object, than an object is specified*/
-		if ( $param[1] != "object" ) {
-			$data["type"] = $data[0];
-			$data["param"] = substr( $data[1], 1 );
-			$data["description"] = $data[2];
-		} else {
-			$data = explode( " ", $data, 4 );
-			$data["type"] = $data[0];
-			$data["param"] = substr( $data[2], 1 );
-			$data["description"] = $data[3];
-		}
-		return $data;
-	}
-
-	function getDescription( $funci ) {
-				foreach ( $this->functionArray as $func => $description ) {
-				$fct = new ReflectionFunction( $func );
-				if ( $fct->getDocComment() == false ) {
-					$comment = "";
-
-	   } else { $comment = $func. " true- " .$fct->getDocComment();
-	   }
-
-				if ( preg_match_all( '/@(\w+)\s+(.*)\r?\n/m', $fct->getDocComment(), $matches ) ) {
-					  $result = $this->array_combine_( $matches[1], $matches[2] );
-
-					  preg_match( '/\*\*(.|\n*)+\* @/', $fct->getDocComment(), $matches );
-					  $match = $matches[0];
-					   // echo "->".$match."<-";
-				}
-
-				/*set description*/
-
-				if ( !isset( $this->functionArray[$func][description] ) ) {
-					$this->functionArray[$func]["description"] = $result["description"];
-				}
-
-				/*set param type and description*/
-
-				if ( is_array( $result["param"] ) ) {
-					foreach ( $result["param"] as $param ) {
-						$aParam = $this->parseParam( $param );
-						if ( !isset( $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] = swaggerTypeConverter( $aParam["type"] );
-						}
-						if ( !isset( $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] = $aParam["description"];
-						}
-					}
-				} else {
-					if ( isset( $result["param"] ) ) {
-						$aParam = $this->parseParam( $result["param"] );
-						if ( !isset( $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] = swaggerTypeConverter( $aParam["type"] );
-						}
-						if ( !isset( $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] = $aParam["description"];
-						}
-					}
-				}
-
-				if ( $aParam == "array" ) {
-					// ***
-				}
-
-				/*set return type and description*/
-							if ( !isset( $this->functionArray[$func]["returndescription"] ) ) {
-					$aReturn = $this->parseParam( $result["return"] );
-							}
-									$this->functionArray[$func]["returndescription"] = $aReturn["description"];
-									$this->functionArray[$func]["returntype"] = $aReturn["type"];
-				}
-
-				// var_dump($func);
-				// var_dump($result);
-
-				// var_dump($this->functionArray);
-	}
-
-	function array_combine_( $keys, $values ) {
-		$result = [];
-		foreach ( $keys as $i => $k ) {
-			$result[$k][] = $values[$i];
-		}
-		array_walk( $result, create_function( '&$v', '$v = (count($v) == 1)? array_pop($v): $v;' ) );
-		return $result;
-	}
-
-	function getSwaggerCalls() {
-		$swagDesc = [];
-
-		foreach ( $this->functionArray as $func => $description ) {
-			 $swagDesc["/".$func] = [];
-			 $methods = [];
-			 $comment = "";
-
-				$sm = $this->getSupportedMethod( $func );
-
-				$this->getDescription( $func );
-
-				foreach ( $sm as $sm_elem ) {
-				$methods[$sm_elem] = [
-					"description" => $comment .$func. ( isset( $this->functionArray[$func]["description"] ) ? $this->functionArray[$func]["description"] : "" ),
-					"produces" => [ "application/json", "application/xml", "text/html", "text/xml" ],
-					"parameters" => $this->getSwaggerFunctionParameters( $func ),
-					"responses" => [
-							200 => [ "description" => "everything ok" ],
-
-							],
-					];
-				if ( isset( $this->functionArray[$func]["metatags"] ) ) {  $methods[$sm_elem]["tags"] = $this->functionArray[$func]["metatags"];
-				}
-
-				// $methods[] = $sm_elem;
-				}
-			$swagDesc["/".$func] = $methods;
-
-		}
-
-		return $swagDesc;
-	}
-
-	function getSwagger() {
-		$swagger = [
-			"swagger" => "2.0",
-			"info" => [
-				"title" => "WikiPathways Webservices",
-				"version" => "1.0"
-			],
-			"host" => "webservice.wikipathways.org",
-			"schemes" => [ "http" ],
-			"basePath" => "/",
-			 "paths" => $this->getSwaggerCalls()
-			];
-
-		return json_encode( $swagger );
-	}
-
-	function setExceptionHandler( $exceptionh ) {
-		$this->exceptionHandler = $exceptionh;
-	}
-
-	function listen() {
-		//echo error_get_last();
-		if ( isset( $_REQUEST[swagger] ) ) {
-			header( 'Content-Type: application/json' );
-			echo $this->getSwagger();
-		} elseif ( isset( $_REQUEST["describe"] ) && isset( $_REQUEST["method"] ) ) {
-			$this->describeMethod();
-		} elseif ( isset( $_REQUEST["method"] ) ) {
-			if ( !isset( $_REQUEST["format"] ) ) {
-				$_REQUEST["format"] = 'XML'; // format defaults to XML
-			}
-			$data = $this->executeMethod();
-
-			$this->deliver_response( $_REQUEST["format"], $data );
-		} else {
-			$this->listWebServices();
-		}
-	}
-
-	/**
-	 * Deliver HTTP Response
-	 * @param string $format The desired HTTP response content type: [json, html, xml]
-	 * @param string $api_response The desired HTTP response data
-	 * @return void
-	 **/
-	function deliver_response( $format, $api_response, $functionName = '' ) {
-		$http_response_code = [
-			200 => 'OK',
-			400 => 'Bad Request',
-			401 => 'Unauthorized',
-			403 => 'Forbidden',
-			404 => 'Not Found'
-		];
-
-		// Set HTTP Response
-		// header('HTTP/1.1 '.$api_response['status'].' '.$http_response_code[ $api_response['status'] ]);
-
-	// echo strcasecmp($format,"json") . "-" . $format."-";
-		// Process different content types
-		if ( strcasecmp( $format, 'json' ) == 0 ) {
-			// Set HTTP Response Content Type
-			header( 'Content-Type: application/json; charset=utf-8' );
-			// Format data into a JSON response
-			$json_response = json_encode( $api_response );
-			// Deliver formatted data
-			echo $json_response;
-
-		} elseif ( strcasecmp( $format, 'xml' ) == 0 ) {
-			 // Set HTTP Response Content Type
-			header( 'Content-Type: application/xml; charset=utf-8' );
-
-		$method = $_REQUEST["method"];
-			// Format data into an XML response (This is only good at handling string data, not arrays)
-			$xml_response = "<ns1:".$method."Response xmlns:ns1='http://www.wso2.org/php/xsd' xmlns:ns2='http://www.wikipathways.org/webservice'  >\t". array_to_xml( $api_response, "ns1" ) ."\n</ns1:".$method."Response>";
-
-			echo $xml_response;
-
-		} elseif ( strcasecmp( $format, 'dump' ) == 0 ) {
-			// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
-			header( 'Content-Type: text/html; charset=utf-8' );
-
-			// Deliver formatted data
-			echo "<pre>";
-			print_r( $api_response );
-		echo "</pre>";
-		} elseif ( strcasecmp( $format, 'jpg' ) == 0 || strcasecmp( $format, 'pdf' ) == 0 || strcasecmp( $format, 'png' ) == 0 ) {
-			// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
-		$finfo = new finfo( FILEINFO_MIME );
-		$mime = $finfo->buffer( $api_response );
-
-			header( "Content-Type: $mime" );
-
-			// Deliver formatted data
-		echo $api_response;
-		} else {
-			// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
-			header( 'Content-Type: text/html; charset=utf-8' );
-			// Deliver formatted data
-			var_dump( $api_response );
-		}
-		// End script process
-		exit;
-	}
-
-	/**
-	 * Displays a list of webservices
-	 * @return void
-	 */
-
-	function listWebServices() {
-			ksort( $this->functionArray );
-			echo "<h1>List of services available</h1>";
-			foreach ( $this->functionArray as $name => $value ) {
-				echo "<h2><a href='?method=$name&describe'>".$name."</a></h2>";
-			}
-			exit;
-	}
-
-	/**
-	 * Executes a method
-	 * @return array
-	 */
-
-	function executeMethod() {
-		$_wservices = $this->functionArray;
-		$aInvokeParameter = [];
-		$response = "";
-		// ****	var_dump(findPathwaysByXref(1234, "L"));
-
-		try{
-
-			#echo $listOrganisms;
-			#var_dump($this);
-			var_dump(BaseWS::listOrganisms());
-			$fct = new ReflectionFunction( $_REQUEST["method"] );
-			$iRequiredParameters = $fct->getNumberOfRequiredParameters();
-			$aParameter = $fct->getParameters();
-
-			// echo $iRequiredParameters;
-			// print_r($aParameter);
-			// echo "<br>";
-			foreach ( $aParameter as $value ) {
-				foreach ( $value as $index => $val ) {
-					// echo '<br>-> '.$index . " - " . $val;
-					// var_dump($_FILES);
-					if ( isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) && isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) === 'file' ) {
-						$aInvokeParameter[] = $val;
-					} elseif ( isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) && $_wservices[$_REQUEST['method']]['fieldtype'][$val] === 'array' ) {
-						// echo "doing array for " .  $val;
-						if ( isset( $_REQUEST[$val] ) ) {
-							$parameters = getMultipleParameters( $val );
-							$aInvokeParameter[] = $parameters;
-							// print_r($parameters);
-						}
-					} else {
-						// if(isset($_GET[$val])) why get?
-						if ( isset( $_REQUEST[$val] ) ) {
-							$aInvokeParameter[] = $_REQUEST[$val];
-						}
-					}
-				}
-			}
-
-			$response = @$fct->invokeArgs( $aInvokeParameter );
-			// echo "". $response;
-
-		} catch ( Exception $e ) {
-			#echo error_get_last();
-			#var_dump($this);
-			var_dump($e);
-			if ( is_callable( $this->exceptionHandler ) ) {
-				$deffunc = $this->exceptionHandler;
-				$response = $deffunc( $e );
-			}
-		}
-
-		return $response;
-	}
-
-	/**
-	 * Describes a method   // displays it in HTML
-	 */
-
-	function describeMethod() {
-		$fct = new ReflectionFunction( $_REQUEST["method"] );
+	$fct = new ReflectionFunction( $func );
 		$iRequiredParameters = $fct->getNumberOfRequiredParameters();
-		$iParameters = $fct->getNumberofParameters();
-		$aParameter = $fct->getParameters();
-		echo "<h1>".$_REQUEST['method']."</h1>";
+	  $iParameters = $fct->getNumberofParameters();
+	 $aParameter = $fct->getParameters();
+	$parameterCount = 0;
 
-		$iCountRequired = 0;
-
-		$_wservices = $this->functionArray;
-
-		if ( isset( $_wservices[$_REQUEST['method']]['method'] ) ) {
-			$method = $_wservices[$_REQUEST['method']]['method'];
-
-		} else { $method = "GET";
+	foreach ( $aParameter as $value ) {
+		$parameterCount++;			foreach ( $value as $index => $val ) {
+			$params[] = [
+				"name" => $val,
+				"required" => $parameterCount > $iRequiredParameters ? false : true,
+				"in" => "query",
+				"type" => $this->getField( $func, $val ),
+				"description" => $this->getField( $func, $val, "fielddescription" ),
+				// "type"=>"array",
+				// "collectionFormat"=>"multi"
+			];
 		}
-
-		echo "<form action='index.php' method='".$method."' enctype='multipart/form-data'>";
-		// echo "<form action='index.php' method='".$method."'>";
-
-
-		foreach ( $aParameter as $value ) {
-			foreach ( $value as $index => $val ) {
-				if ( isset( $_wservices[$_REQUEST['method']]['fieldDescription'][$val] ) ) { $description = $_wservices[$_REQUEST['method']]['fieldDescription'][$val];
-
-				} else { $description = '';
-				}
-				$type = isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) ? $_wservices[$_REQUEST['method']]['fieldtype'][$val] : 'text';
-
-				if ( $iCountRequired < $iRequiredParameters ) {
-					if ( $type == 'textarea' ) {
-						echo "<b>".$val. "</b> <textarea name='$val' ></textarea> $description<br/>";
-
-					} else { echo "<b>".$val. "</b> <input type='$type' name='$val' /> $description<br/>";
-					}
-
-				} else {
-					if ( $type == 'textarea' ) {
-						echo $val. " <textarea name='$val' ></textarea> $description<br/>";
-
-					} else { echo $val. " <input type='$type' name='$val' /> $description<br/>";
-					}
-				}
-				$iCountRequired++;
-			}
-		}
-
-		echo '<p><b>Bold:</b> required parameters</p>';
-
-		echo "<input type='hidden' name='method' value='".$_REQUEST['method']."'>";
-		echo "<input type='radio' name='format' value='json' checked='checked'> JSON";
-		echo "<input type='radio' name='format' value='xml'> XML";
-		echo "<input type='radio' name='format' value='html'> HTML";
-		echo "<input type='radio' name='format' value='jpg'> JPG (not all functions support it)";
-		echo "<input type='radio' name='format' value='pdf'> PDF (not all functions support it)";
-		echo "<input type='radio' name='format' value='png'> png (not all functions support it) <br/><br/>";
-
-		echo "<input type='submit' /></form>";
-
-		// print_r($aInvokeParameter);
 	}
 
-	/*if(!isset($_GET['describe']))
-		deliver_response($_GET['format'], $response, $_GET['method']);
-	 */
+	$params[] = [
+		"name" => "format",
+		"required" => false,
+		"in" => "query",
+		"type" => "string",
+		"default" => "xml",
+		"enum" => [ "json","xml","html","dump","jpg","pdf" ],
+	];
+
+	return $params;
+}
+
+function parseParam( $data ) {
+	$data = explode( " ", $data, 3 );
+
+	/*if object, than an object is specified*/
+	if ( $param[1] != "object" ) {
+		$data["type"] = $data[0];
+		$data["param"] = substr( $data[1], 1 );
+		$data["description"] = $data[2];
+	} else {
+		$data = explode( " ", $data, 4 );
+		$data["type"] = $data[0];
+		$data["param"] = substr( $data[2], 1 );
+		$data["description"] = $data[3];
+	}
+	return $data;
+}
+
+function getDescription( $funci ) {
+			foreach ( $this->functionArray as $func => $description ) {
+			$fct = new ReflectionFunction( $func );
+			if ( $fct->getDocComment() == false ) {
+				$comment = "";
+
+   } else { $comment = $func. " true- " .$fct->getDocComment();
+   }
+
+			if ( preg_match_all( '/@(\w+)\s+(.*)\r?\n/m', $fct->getDocComment(), $matches ) ) {
+				  $result = $this->array_combine_( $matches[1], $matches[2] );
+
+				  preg_match( '/\*\*(.|\n*)+\* @/', $fct->getDocComment(), $matches );
+				  $match = $matches[0];
+				   // echo "->".$match."<-";
+			}
+
+			/*set description*/
+
+			if ( !isset( $this->functionArray[$func][description] ) ) {
+				$this->functionArray[$func]["description"] = $result["description"];
+			}
+
+			/*set param type and description*/
+
+			if ( is_array( $result["param"] ) ) {
+				foreach ( $result["param"] as $param ) {
+					$aParam = $this->parseParam( $param );
+					if ( !isset( $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] = swaggerTypeConverter( $aParam["type"] );
+					}
+					if ( !isset( $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] = $aParam["description"];
+					}
+				}
+			} else {
+				if ( isset( $result["param"] ) ) {
+					$aParam = $this->parseParam( $result["param"] );
+					if ( !isset( $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fieldtype"][ $aParam["param"] ] = swaggerTypeConverter( $aParam["type"] );
+					}
+					if ( !isset( $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] ) ) { $this->functionArray[$func]["fielddescription"][ $aParam["param"] ] = $aParam["description"];
+					}
+				}
+			}
+
+			if ( $aParam == "array" ) {
+				// ***
+			}
+
+			/*set return type and description*/
+						if ( !isset( $this->functionArray[$func]["returndescription"] ) ) {
+				$aReturn = $this->parseParam( $result["return"] );
+						}
+								$this->functionArray[$func]["returndescription"] = $aReturn["description"];
+								$this->functionArray[$func]["returntype"] = $aReturn["type"];
+			}
+
+			// var_dump($func);
+			// var_dump($result);
+
+			// var_dump($this->functionArray);
+}
+
+function array_combine_( $keys, $values ) {
+	$result = [];
+	foreach ( $keys as $i => $k ) {
+		$result[$k][] = $values[$i];
+	}
+	array_walk( $result, create_function( '&$v', '$v = (count($v) == 1)? array_pop($v): $v;' ) );
+	return $result;
+}
+
+function getSwaggerCalls() {
+	$swagDesc = [];
+
+	foreach ( $this->functionArray as $func => $description ) {
+		 $swagDesc["/".$func] = [];
+		 $methods = [];
+		 $comment = "";
+
+			$sm = $this->getSupportedMethod( $func );
+
+			$this->getDescription( $func );
+
+			foreach ( $sm as $sm_elem ) {
+			$methods[$sm_elem] = [
+				"description" => $comment .$func. ( isset( $this->functionArray[$func]["description"] ) ? $this->functionArray[$func]["description"] : "" ),
+				"produces" => [ "application/json", "application/xml", "text/html", "text/xml" ],
+				"parameters" => $this->getSwaggerFunctionParameters( $func ),
+				"responses" => [
+						200 => [ "description" => "everything ok" ],
+
+						],
+				];
+			if ( isset( $this->functionArray[$func]["metatags"] ) ) {  $methods[$sm_elem]["tags"] = $this->functionArray[$func]["metatags"];
+			}
+
+			// $methods[] = $sm_elem;
+			}
+		$swagDesc["/".$func] = $methods;
+
+	}
+
+	return $swagDesc;
+}
+
+function getSwagger() {
+	$swagger = [
+		"swagger" => "2.0",
+		"info" => [
+			"title" => "WikiPathways Webservices",
+			"version" => "1.0"
+		],
+		"host" => "webservice.wikipathways.org",
+		"schemes" => [ "http" ],
+		"basePath" => "/",
+		 "paths" => $this->getSwaggerCalls()
+		];
+
+	return json_encode( $swagger );
+}
+
+function setExceptionHandler( $exceptionh ) {
+	$this->exceptionHandler = $exceptionh;
+}
+
+function listen() {
+// echo error_get_last();
+	if ( isset( $_REQUEST[swagger] ) ) {
+		header( 'Content-Type: application/json' );
+		echo $this->getSwagger();
+	} elseif ( isset( $_REQUEST["describe"] ) && isset( $_REQUEST["method"] ) ) {
+		$this->describeMethod();
+ } elseif ( isset( $_REQUEST["method"] ) ) {
+	   if ( !isset( $_REQUEST["format"] ) ) { $_REQUEST["format"] = 'XML'; // format defaults to XML
+	   }
+	   $data = $this->executeMethod();
+
+	   $this->deliver_response( $_REQUEST["format"], $data );
+ } else {
+		$this->listWebServices();
+ }
+}
+
+/**
+ * Deliver HTTP Response
+ * @param string $format The desired HTTP response content type: [json, html, xml]
+ * @param string $api_response The desired HTTP response data
+ * @return void
+ **/
+function deliver_response( $format, $api_response, $functionName = '' ) {
+	$http_response_code = [
+		200 => 'OK',
+		400 => 'Bad Request',
+		401 => 'Unauthorized',
+		403 => 'Forbidden',
+		404 => 'Not Found'
+	];
+
+	// Set HTTP Response
+	// header('HTTP/1.1 '.$api_response['status'].' '.$http_response_code[ $api_response['status'] ]);
+
+// echo strcasecmp($format,"json") . "-" . $format."-";
+	// Process different content types
+	if ( strcasecmp( $format, 'json' ) == 0 ) {
+		// Set HTTP Response Content Type
+		header( 'Content-Type: application/json; charset=utf-8' );
+		// Format data into a JSON response
+		$json_response = json_encode( $api_response );
+		// Deliver formatted data
+		echo $json_response;
+
+	} elseif ( strcasecmp( $format, 'xml' ) == 0 ) {
+		 // Set HTTP Response Content Type
+		header( 'Content-Type: application/xml; charset=utf-8' );
+
+	$method = $_REQUEST["method"];
+		// Format data into an XML response (This is only good at handling string data, not arrays)
+		$xml_response = "<ns1:".$method."Response xmlns:ns1='http://www.wso2.org/php/xsd' xmlns:ns2='http://www.wikipathways.org/webservice'  >\t". array_to_xml( $api_response, "ns1" ) ."\n</ns1:".$method."Response>";
+
+		echo $xml_response;
+
+	} elseif ( strcasecmp( $format, 'dump' ) == 0 ) {
+		// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
+		header( 'Content-Type: text/html; charset=utf-8' );
+
+		// Deliver formatted data
+		echo "<pre>";
+		print_r( $api_response );
+	echo "</pre>";
+	} elseif ( strcasecmp( $format, 'jpg' ) == 0 || strcasecmp( $format, 'pdf' ) == 0 || strcasecmp( $format, 'png' ) == 0 ) {
+		// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
+	$finfo = new finfo( FILEINFO_MIME );
+	$mime = $finfo->buffer( $api_response );
+
+		header( "Content-Type: $mime" );
+
+		// Deliver formatted data
+	echo $api_response;
+	} else {
+		// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
+		header( 'Content-Type: text/html; charset=utf-8' );
+		// Deliver formatted data
+	var_dump( $api_response );
+	}
+	// End script process
+	exit;
+}
+
+/**
+ * Displays a list of webservices
+ * @return void
+ */
+
+function listWebServices() {
+		ksort( $this->functionArray );
+		echo "<h1>List of services available</h1>";
+		foreach ( $this->functionArray as $name => $value ) {
+			echo "<h2><a href='?method=$name&describe'>".$name."</a></h2>";
+		}
+		exit;
+}
+
+/**
+ * Executes a method
+ * @return array
+ */
+
+function executeMethod() {
+$_wservices = $this->functionArray;
+$aInvokeParameter = [];
+$response = "";
+// ****	var_dump(findPathwaysByXref(1234, "L"));
+
+  try{
+
+  $fct = new ReflectionFunction( $_REQUEST["method"] );
+  $iRequiredParameters = $fct->getNumberOfRequiredParameters();
+  $aParameter = $fct->getParameters();
+
+// echo $iRequiredParameters;
+// print_r($aParameter);
+// echo "<br>";
+  foreach ( $aParameter as $value ) {
+	foreach ( $value as $index => $val ) {
+// echo '<br>-> '.$index . " - " . $val;
+// var_dump($_FILES);
+		if ( isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) && isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) === 'file' ) {
+			$aInvokeParameter[] = $val;
+		} elseif ( isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) && $_wservices[$_REQUEST['method']]['fieldtype'][$val] === 'array' ) {
+			// echo "doing array for " .  $val;
+			if ( isset( $_REQUEST[$val] ) ) {
+				$parameters = getMultipleParameters( $val );
+				$aInvokeParameter[] = $parameters;
+				// print_r($parameters);
+			}
+		} else {
+			// if(isset($_GET[$val])) why get?
+			if ( isset( $_REQUEST[$val] ) ) {
+				$aInvokeParameter[] = $_REQUEST[$val];
+			}
+		}
+	}
+  }
+
+  $response = @$fct->invokeArgs( $aInvokeParameter );
+  // echo "". $response;
+
+  } catch ( Exception $e ) {
+	if ( is_callable( $this->exceptionHandler ) ) {
+		$deffunc = $this->exceptionHandler;
+		$response = $deffunc( $e );
+	}
+  }
+
+  return $response;
+}
+
+/**
+ * Describes a method   // displays it in HTML
+ */
+
+function describeMethod() {
+  $fct = new ReflectionFunction( $_REQUEST["method"] );
+  $iRequiredParameters = $fct->getNumberOfRequiredParameters();
+  $iParameters = $fct->getNumberofParameters();
+  $aParameter = $fct->getParameters();
+  echo "<h1>".$_REQUEST['method']."</h1>";
+
+  $iCountRequired = 0;
+
+  $_wservices = $this->functionArray;
+
+  if ( isset( $_wservices[$_REQUEST['method']]['method'] ) ) {
+	$method = $_wservices[$_REQUEST['method']]['method'];
+
+  } else { $method = "GET";
+  }
+
+  echo "<form action='index.php' method='".$method."' enctype='multipart/form-data'>";
+// echo "<form action='index.php' method='".$method."'>";
+
+
+  foreach ( $aParameter as $value ) {
+	foreach ( $value as $index => $val ) {
+	if ( isset( $_wservices[$_REQUEST['method']]['fieldDescription'][$val] ) ) { $description = $_wservices[$_REQUEST['method']]['fieldDescription'][$val];
+
+ } else { $description = '';
+ }
+		$type = isset( $_wservices[$_REQUEST['method']]['fieldtype'][$val] ) ? $_wservices[$_REQUEST['method']]['fieldtype'][$val] : 'text';
+
+		if ( $iCountRequired < $iRequiredParameters ) {
+			if ( $type == 'textarea' ) {
+				echo "<b>".$val. "</b> <textarea name='$val' ></textarea> $description<br/>";
+
+   } else { echo "<b>".$val. "</b> <input type='$type' name='$val' /> $description<br/>";
+   }
+
+		} else {
+			if ( $type == 'textarea' ) {
+				echo $val. " <textarea name='$val' ></textarea> $description<br/>";
+
+   } else { echo $val. " <input type='$type' name='$val' /> $description<br/>";
+   }
+		}
+		$iCountRequired++;
+	}
+  }
+
+  echo '<p><b>Bold:</b> required parameters</p>';
+
+  echo "<input type='hidden' name='method' value='".$_REQUEST['method']."'>";
+  echo "<input type='radio' name='format' value='json' checked='checked'> JSON";
+  echo "<input type='radio' name='format' value='xml'> XML";
+  echo "<input type='radio' name='format' value='html'> HTML";
+  echo "<input type='radio' name='format' value='jpg'> JPG (not all functions support it)";
+  echo "<input type='radio' name='format' value='pdf'> PDF (not all functions support it)";
+  echo "<input type='radio' name='format' value='png'> png (not all functions support it) <br/><br/>";
+
+  echo "<input type='submit' /></form>";
+
+// print_r($aInvokeParameter);
+}
+
+/*if(!isset($_GET['describe']))
+	deliver_response($_GET['format'], $response, $_GET['method']);
+ */
 
 }
 

@@ -1,5 +1,5 @@
 <?php
-require_once 'wpi.php';
+#require_once 'wpi.php';
 
 class IndexNotFoundException extends Exception {
 	public function __construct( Exception $e ) {
