@@ -1,5 +1,9 @@
 <?php
 
+# TODO: what namespace should this be?
+#namespace WikiPathways;
+#namespace WikiPathways\WS;
+
 $dir=dirname( realpath( __FILE__ ) );
 chdir( $dir . "/../" );
 
@@ -9,6 +13,8 @@ require_once 'src/Organism.php';
 require_once 'src/Pathway.php';
 use WikiPathways\Organism;
 use WikiPathways\Pathway;
+require_once '../OntologyTags/src/OntologyTagsFunctions.php';
+use WikiPathways\OntologyTags;
 #require_once 'extensions/otag/OntologyFunctions.php';
 chdir( $dir );
 
