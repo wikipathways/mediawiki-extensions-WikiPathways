@@ -127,7 +127,6 @@ class Hook {
 	/* http://www.pathvisio.org/ticket/1539 */
 	public static function externalLink( &$url, &$text, &$link, &$attribs = null ) {
 		global $wgExternalLinkTarget, $wgNoFollowLinks, $wgNoFollowNsExceptions;
-		wfProfileIn( __METHOD__ );
 		wfDebug( __METHOD__.": Looking at the link: $url\n" );
 
 		$linkTarget = "_blank";
@@ -166,7 +165,6 @@ class Hook {
 
 		$link = '<a href="'.$url.'" target="'.$linkTarget.'"'.$style.'>'
 		. $text.'</a>';
-		wfProfileOut( __METHOD__ );
 
 		return false;
 	}
