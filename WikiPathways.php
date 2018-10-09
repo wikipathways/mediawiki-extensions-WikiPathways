@@ -44,6 +44,7 @@ wfLoadExtensions( [
 	"SyntaxHighlight_GeSHi",
 	"TitleBlacklist",
 	"UserLoginLog",
+	"UserMerge",
 	"UserSnoop",
 	"WikiEditor",
 	"WikiPathways"
@@ -124,7 +125,6 @@ ini_set( 'memory_limit', '2048M' );
 
 require_once "$IP/extensions/ContributionScores/ContributionScores.php";
 require_once "$IP/extensions/googleAnalytics/googleAnalytics.php";
-require_once "$IP/extensions/UserMerge/UserMerge.php";
 require_once "$IP/extensions/BiblioPlus/BiblioPlus.php";
 
 wfLoadSkin( "Vector" );
