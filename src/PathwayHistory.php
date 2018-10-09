@@ -79,7 +79,6 @@ class PathwayHistory extends HistoryPager {
 		global $wgLang, $wgUser;
 
 		$rev = new Revision( $row );
-
 		$user = User::newFromId( $rev->getUser() );
 		/* Show bots
 		   if($user->isBot()) {
@@ -87,8 +86,6 @@ class PathwayHistory extends HistoryPager {
 		   return "";
 		   }
 		*/
-
-		$rev->setTitle( $this->pathway->getFileTitle( FILETYPE_GPML ) );
 
 		$revUrl = WPI_SCRIPT_URL . '?action=revert&pwTitle=' .
 				$this->pathway->getTitleObject()->getPartialURL() .
