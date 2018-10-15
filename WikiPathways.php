@@ -21,7 +21,22 @@
  */
 
 # Passwords and secrets and such
-require_once "$IP/../pass.php";
+if ( file_exists( "$IP/../pass.php" ) ) {
+    require_once "$IP/../pass.php";
+}
+
+if ( getenv( 'WP_USESSL' ) !== 'false' ) {
+    $scheme = "https";
+} else {
+    $scheme = "http";
+}
+$wgServer = "$scheme://" . getenv( 'WP_DOMAIN' );
+
+$wgDBpassword = getenv( 'WP_DBPASS' );
+$wgDBuser = getenv( 'WP_DBUSER' );
+$wgDBname = getenv( 'WP_DBNAME' );
+$wgDBhost = getenv( 'WP_DBHOST' );
+$wgSitename = "WikiPathways";
 
 wfLoadExtensions( [
 	"Cite",
@@ -49,12 +64,6 @@ wfLoadExtensions( [
 	"WikiPathways"
 ] );
 
-$wgDBname = "wikipathways";
-$wgDBuser = "wikiuser";
-
-$host = isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : "www.wikipathways.org";
-$siteURL = "//$host";
-
 $wgScriptPath = "";
 $wgExtensionAssetsPath = "{$wgScriptPath}/extensions";
 $wgStylePath = "{$wgScriptPath}/skins";
@@ -73,7 +82,7 @@ $wpiModulePath = "$wgScriptPath/extensions/WikiPathways/modules";
 $wpiScriptPath = realpath( __DIR__ );
 $wpiScript = "$wpiScriptPath/$wpiScriptFile";
 $wpiTmpPath = "$wpiScriptPath/$wpiTmpName";
-$wpiURL = "$siteURL$wpiPathName";
+$wpiURL = "$wgServer$wpiPathName";
 $wpiFileCache = "$IP/images/wikipathways";
 
 // File types
@@ -102,7 +111,7 @@ define( "NS_WISHLIST", 104 );
 define( "WPI_SCRIPT_PATH", $wpiScriptPath );
 define( "WPI_SCRIPT", $wpiScript );
 define( "WPI_TMP_PATH", $wpiTmpPath );
-define( "SITE_URL", $siteURL );
+define( "SITE_URL", $wgServer );
 define( "WPI_URL",  $wpiURL );
 define( "WPI_SCRIPT_URL", WPI_URL . '/' . $wpiScriptFile );
 define( "WPI_TMP_URL", WPI_URL . '/' . $wpiTmpName );
