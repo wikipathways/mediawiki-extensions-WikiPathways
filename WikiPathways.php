@@ -404,3 +404,5 @@ $wgRSSAllowImageTag = true;
 $wgAllowImageTag = true;
 $wgRSSUrlNumberOfAllowedRedirects = 1;
 $wgAllowExternalImages = true;
+
+$wgEnableUploads=true;
