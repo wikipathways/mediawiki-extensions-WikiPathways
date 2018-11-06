@@ -2,6 +2,12 @@
 
 #namespace WikiPathways;
 #namespace WikiPathways\WS;
+$IP = dirname( dirname( __DIR__ ) ) . "/mediawiki";
+putenv( "MW_INSTALL_PATH=$IP" );
+
+define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
+require "$IP/includes/WebStart.php";
+
 
 error_reporting( E_ALL & ~E_NOTICE );
 ini_set( "display_errors", 1 );
