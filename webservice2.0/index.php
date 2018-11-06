@@ -1,8 +1,5 @@
 <?php
 
-error_reporting( E_ALL & ~E_DEPRECATED );
-ini_set( 'display_errors', 1 );
-
 $IP = getenv( "MW_INSTALL_PATH" );
 
 define( 'MW_NO_OUTPUT_COMPRESSION', 1 );
@@ -19,13 +16,6 @@ $_wservices['listPathways'] = [
 $_wservices['getPathway'] = [
 	"metatags" => [ "Pathway information", "All functions" ],
 ];
-
-/* Array(
-		'fieldDescription' => Array(
-										'pwId' => 'Whatever you want to say',
-										'revision' => 'Whatever you want to say 2'
-								)
-);*/
 
 $_wservices["getPathwayInfo"] = [
 	"description" => "Get some general info about the pathway, such as the name, species, without downloading the GPML.",
@@ -63,10 +53,6 @@ $_wservices["createPathway"] = [
 	"method" => 'post',
 	"metatags" => [ "All functions", "Write (create/update/delete)" ],
 ];
-/*Array(
-  'method'=>'post',
-  'fieldtype'=>Array("gpml"=>"textarea")
-  );*/
 
 $_wservices["findPathwaysByText"] = [
 	"metatags" => [ "All functions", "Search" ]
