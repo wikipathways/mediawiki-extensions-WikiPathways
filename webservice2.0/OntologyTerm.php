@@ -20,16 +20,24 @@
  * @author anders
  * @author Mark A. Hershberger
  */
-
 namespace WikiPathways\WebService;
 
-use Exception;
+/**
+ * @namespace http://www.wikipathways.org/webservice
+ */
+class WSOntologyTerm {
 
-class Fault extends Exception {
+    /**
+     * @var string $ontology - the ontology to which the term belongs
+     */
+    public $ontology;
+    /**
+     * @var string $id - the ontology term identifier
+     */
+    public $id;
 
-	function __construct( $code, $reason, $role = "", $detail = "" ) {
-		$lCode = 500;
-		parent::__construct( $reason . " : " . $code  . " :  " . $detail, $lCode );
-	}
-
+    /**
+     * @var string $name - the ontology term name
+     */
+    public $name;
 }

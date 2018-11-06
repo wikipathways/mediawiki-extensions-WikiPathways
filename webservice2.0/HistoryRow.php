@@ -20,16 +20,27 @@
  * @author anders
  * @author Mark A. Hershberger
  */
-
 namespace WikiPathways\WebService;
 
-use Exception;
-
-class Fault extends Exception {
-
-	function __construct( $code, $reason, $role = "", $detail = "" ) {
-		$lCode = 500;
-		parent::__construct( $reason . " : " . $code  . " :  " . $detail, $lCode );
-	}
-
+/**
+ * @namespace http://www.wikipathways.org/webservice
+ */
+class HistoryRow {
+    /**
+     * @var string $revision - the revision number
+     **/
+    public $revision;
+    /**
+     * @var string $comment - the edit description
+     **/
+    public $comment;
+    /**
+     * @var string $revision - the username ofthe user that edited this revision
+     **/
+    public $user;
+    /**
+     * @var string $revision - the timestamp of this revision
+     **/
+    public $timestamp;
 }
+

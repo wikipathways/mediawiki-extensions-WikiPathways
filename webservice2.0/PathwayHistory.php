@@ -20,16 +20,23 @@
  * @author anders
  * @author Mark A. Hershberger
  */
-
 namespace WikiPathways\WebService;
 
-use Exception;
+/**
+ * @namespace http://www.wikipathways.org/webservice
+ */
+class PathwayHistory extends WSPathwayInfo {
+    public function __construct( $pathway ) {
+        parent::__construct( $pathway );
+    }
 
-class Fault extends Exception {
+    public function addRow( $histRow ) {
+        $history[] = $histRow;
+    }
 
-	function __construct( $code, $reason, $role = "", $detail = "" ) {
-		$lCode = 500;
-		parent::__construct( $reason . " : " . $code  . " :  " . $detail, $lCode );
-	}
-
+    /**
+     * @var array of object WSHistoryRow $history - The pathway history
+     **/
+    public $history = [];
 }
+

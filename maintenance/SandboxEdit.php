@@ -26,7 +26,7 @@ $sandbox = 'WP4';
 
 $user = $_SERVER['argv'][1];
 $pass = $_SERVER['argv'][2];
-$url = 'http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl';
+$url = 'http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl'; // FIXME DOES THIS EVEN WORK?
 if ( count( $_SERVER['argv'] ) > 3 ) { $url = $_SERVER['argv'][3];
 }
 

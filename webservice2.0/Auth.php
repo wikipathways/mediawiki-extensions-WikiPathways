@@ -20,16 +20,19 @@
  * @author anders
  * @author Mark A. Hershberger
  */
-
 namespace WikiPathways\WebService;
 
-use Exception;
+/**
+ * @namespace http://www.wikipathways.org/webservice
+ **/
+class WSAuth {
+    /**
+     * @var string $user The username
+     **/
+    public $user;
 
-class Fault extends Exception {
-
-	function __construct( $code, $reason, $role = "", $detail = "" ) {
-		$lCode = 500;
-		parent::__construct( $reason . " : " . $code  . " :  " . $detail, $lCode );
-	}
-
+    /**
+     * @var string $key The authentication key
+     **/
+    public $key;
 }

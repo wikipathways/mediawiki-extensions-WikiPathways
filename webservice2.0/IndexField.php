@@ -20,16 +20,26 @@
  * @author anders
  * @author Mark A. Hershberger
  */
-
 namespace WikiPathways\WebService;
 
-use Exception;
+/**
+ * @namespace http://www.wikipathways.org/webservice
+ */
+class WSIndexField {
+    function __construct( $name, $values ) {
+        $this->name = $name;
+        $this->values = $values;
+        $this->values = formatXml( $this->values );
+    }
 
-class Fault extends Exception {
+    /**
+     * @var string $name - the name of the index field
+     **/
+    public $name;
 
-	function __construct( $code, $reason, $role = "", $detail = "" ) {
-		$lCode = 500;
-		parent::__construct( $reason . " : " . $code  . " :  " . $detail, $lCode );
-	}
-
+    /**
+     * @var array of string - the value(s) of the field
+     **/
+    public $values;
 }
+

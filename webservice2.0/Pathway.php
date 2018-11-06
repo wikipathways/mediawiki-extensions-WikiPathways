@@ -20,16 +20,20 @@
  * @author anders
  * @author Mark A. Hershberger
  */
-
 namespace WikiPathways\WebService;
 
-use Exception;
-
-class Fault extends Exception {
-
-	function __construct( $code, $reason, $role = "", $detail = "" ) {
-		$lCode = 500;
-		parent::__construct( $reason . " : " . $code  . " :  " . $detail, $lCode );
-	}
-
+/**
+ * @namespace http://www.wikipathways.org/webservice
+ */
+class Pathway extends PathwayInfo {
+    function __construct( $pathway ) {
+        parent::__construct( $pathway );
+        $this->gpml = $pathway->getGPML();
+    }
+    /**
+     * @var string $gpml - the GPML code
+     **/
+    public $gpml;
 }
+
+
