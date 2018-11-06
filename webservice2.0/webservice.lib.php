@@ -241,7 +241,7 @@ function setExceptionHandler( $exceptionh ) {
 
 function listen() {
 // echo error_get_last();
-	if ( isset( $_REQUEST[swagger] ) ) {
+	if ( isset( $_REQUEST["swagger"] ) ) {
 		header( 'Content-Type: application/json' );
 		echo $this->getSwagger();
 	} elseif ( isset( $_REQUEST["describe"] ) && isset( $_REQUEST["method"] ) ) {
@@ -253,7 +253,7 @@ function listen() {
 
 	   $this->deliver_response( $_REQUEST["format"], $data );
  } else {
-		$this->listWebServices();
+		$this->listWebServices();f
  }
 }
 
