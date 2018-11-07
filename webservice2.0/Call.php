@@ -25,7 +25,9 @@ namespace WikiPathways\WebService;
 
 use WikiPathways\Organism;
 use WikiPathways\Pathway;
+use WikiPathways\PathwayIndex;
 use WikiPathways\OntologyTags;
+use WikiPathways\Xref;
 
 class Call {
     /**

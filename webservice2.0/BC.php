@@ -38,6 +38,14 @@ class BC {
         $this->functionArray = $functionArray;
     }
 
+    function mapMethod( $method ) {
+        return __NAMESPACE__ . '\\Call::' . $method;
+    }
+
+    function getReflectionMethod( $method ) {
+        return new ReflectionMethod( $this->mapMethod( $method ) );
+    }
+
     function populateFromPhpDoc() {
     }
 
@@ -84,7 +92,7 @@ class BC {
     function getSwaggerFunctionParameters( $func ) {
         $params = [];
 
-        $fct = new ReflectionMethod( $func );
+        $fct = $this->getReflectionMethod( $func );
         $iRequiredParameters = $fct->getNumberOfRequiredParameters();
         $iParameters = $fct->getNumberofParameters();
         $aParameter = $fct->getParameters();
@@ -136,7 +144,7 @@ class BC {
 
     function getDescription( $funci ) {
         foreach ( $this->functionArray as $func => $description ) {
-            $fct = new ReflectionMethod( $func );
+            $fct = $this->getReflectionMethod( $func );
             if ( $fct->getDocComment() == false ) {
                 $comment = "";
             } else {
@@ -380,8 +388,7 @@ class BC {
         $response = "";
 
         try{
-
-            $fct = new ReflectionMethod( $_REQUEST["method"] );
+            $fct = $this->getReflectionMethod( $_REQUEST["method"] );
             $iRequiredParameters = $fct->getNumberOfRequiredParameters();
             $aParameter = $fct->getParameters();
 
@@ -408,7 +415,7 @@ class BC {
                 }
             }
 
-            $response = $fct->invokeArgs( $aInvokeParameter );
+            $response = $fct->invokeArgs( null, $aInvokeParameter );
         } catch ( Exception $e ) {
             if ( is_callable( $this->exceptionHandler ) ) {
                 $deffunc = $this->exceptionHandler;
@@ -423,7 +430,7 @@ class BC {
      * Describes a method   // displays it in HTML
      */
     function describeMethod() {
-        $fct = new ReflectionMethod( __NAMESPACE__ . '\\Call::' . $_REQUEST["method"] );
+        $fct = $this->getReflectionMethod( $_REQUEST["method"] );
         $iRequiredParameters = $fct->getNumberOfRequiredParameters();
         $iParameters = $fct->getNumberofParameters();
         $aParameter = $fct->getParameters();
