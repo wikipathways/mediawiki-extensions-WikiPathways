@@ -173,7 +173,7 @@ class IndexClient {
 
 		if ( $info['http_code'] != 200 ) {
 			$success = false;
-			throw new IndexNotFoundException( $e );
+			throw new IndexNotFoundException( $r );
 		}
 
 		curl_close( $ch );

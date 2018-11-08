@@ -368,7 +368,9 @@ class Pathway {
 		);
 		foreach ( $res as $row ) {
 			try {
-				$pathway = self::newFromTitle( $row[0] );
+				$pathway = self::newFromTitle( Title::newFromText(
+					$row->page_title, NS_PATHWAY
+				) );
 				if ( $pathway->isDeleted() ) {
 					// Skip deleted pathways
 					continue;
@@ -377,14 +379,10 @@ class Pathway {
 					// Filter by organism
 					continue;
 				}
-				if ( !$pathway->getTitleObject()->userCanRead() ) {
-					// delete this one post 1.19
+				if( !$pathway->getTitleObject()->userCan( 'read' )) {
+					// Skip hidden pathways
 					continue;
 				}
-				// if( !$pathway->getTitleObject()->userCan( 'read' )) {
-				// // Skip hidden pathways
-				// continue;
-				// }
 
 				$allPathways[$pathway->getId()] = $pathway;
 			} catch ( Exception $e ) {
@@ -1287,6 +1285,13 @@ class Pathway {
 	}
 
 	public function getGPML() {
-		return Factory::getCache( "GPML", $this )->fetchText();
+		$rev = Revision::newFromTitle( $this->getTitleObject(), false, Revision::READ_LATEST );
+		if ( !is_object( $rev ) ) {
+			return false;
+		}
+		$gpml = $rev->getContent()->getNativeData();
+		$gpmlCache = Factory::getCache( "GPML", $this );
+		$gpmlCache->saveText( $gpml );
+		return $gpml;
 	}
 }

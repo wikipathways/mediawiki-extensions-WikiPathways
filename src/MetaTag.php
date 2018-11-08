@@ -129,8 +129,6 @@ class MetaTag {
 				$row = $dbr->fetchObject( $res );
 			} while ( $row );
 		}
-
-		$dbr->freeResult( $res );
 		return $tags;
 	}
 
@@ -511,27 +509,22 @@ class MetaTag {
 	 * @return array of MetaTagHistoryRow objects
 	 */
 	private static function queryHistory( $pageId, $tagName, $fromTime = '0' ) {
-		$nameWhere = '';
-		if ( $tagName ) {
-			$nameWhere = "'{$tagName}' AND";
-		}
+		$cond = [];
 
-		$pageWhere = '';
 		if ( $pageId ) {
-			$pageWhere = "page_id = $pageId AND";
+			$cond["page_id"] = $pageId;
 		}
 
-		$tagWhere = '';
 		if ( $tagName ) {
-			$tagWhere = "tag_name = '$tagName' AND";
+			$cond["tag_name"] = $tagName;
 		}
+
+		$cond[] = "time >= $fromTime";
 
 		$dbr = wfGetDB( DB_SLAVE );
-		$tbl = self::$TAG_HISTORY_TABLE;
-		$query = "SELECT * FROM $tbl WHERE " .
-			"$nameWhere $pageWhere $tagWhere " .
-			" time >= $fromTime ORDER BY time DESC";
-		$res = $dbr->query( $query );
+		$res = $dbr->select(
+			self::$TAG_HISTORY_TABLE, '*', $conds, __METHOD__, [ "ORDER BY" => "time DESC" ]
+		);
 		$history = [];
 		$row = $dbr->fetchObject( $res );
 		if ( $row ) {
@@ -540,7 +533,6 @@ class MetaTag {
 				$row = $dbr->fetchObject( $res );
 			} while ( $row );
 		}
-		$dbr->freeResult( $res );
 		return $history;
 	}
 }
