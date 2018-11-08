@@ -253,7 +253,7 @@ class PathwayThumb {
 			'width="'.$boxwidth.'" height="'.$boxheight.'" ' .
 			'longdesc="'.$href.'" class="thumbimage" /></a>';
 		}
-		$s .= '  <div class="thumbcaption"'.$textalign.'>'.$label."</div></div></div>";
+		$s .= "</div></div>"; #'  <div class="thumbcaption"'.$textalign.'>'.$label."</div></div></div>";
 		return str_replace( "\n", ' ', $s );
 	}
 
