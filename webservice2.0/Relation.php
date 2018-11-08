@@ -30,12 +30,12 @@ class Relation {
     public function __construct( $result ) {
         if ( $result->pwId_1 ) {
             $this->pathway1 = new PathwayInfo(
-                Pathway::newFromTitle( $result->pwId_1 )
+                Pathway::newFromTitle( Title::newFromText( $result->pwId_1, NS_PATHWAY ) );
             );
         }
         if ( $result->pwId_2 ) {
             $this->pathway2 = new PathwayInfo(
-                Pathway::newFromTitle( $result->pwId_2 )
+                Pathway::newFromTitle( Title::newFromText( $result->pwId_2, NS_PATHWAY ) );
             );
         }
         $this->type = $result->type;

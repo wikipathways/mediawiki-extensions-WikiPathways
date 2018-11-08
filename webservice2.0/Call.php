@@ -792,7 +792,9 @@ terms: " . $e );
 			);
 			$objects = [];
 			while ( $row = $dbr->fetchObject( $res ) ) {
-				$pathway = \WikiPathways\Pathway::newFromTitle( $row->pw_id );
+				$pathway = \WikiPathways\Pathway::newFromTitle(
+					Title::newFromText( $row->pw_id, NS_PATHWAY )
+				);
 				$objects[] = new PathwayInfo( $pathway );
 			}
 			$dbr->freeResult( $res );
