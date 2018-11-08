@@ -26,7 +26,7 @@ namespace WikiPathways\WebService;
  * @namespace http://www.wikipathways.org/webservice
  */
 class Pathway extends PathwayInfo {
-    function __construct( $pathway ) {
+    function __construct( \WikiPathways\Pathway $pathway ) {
         parent::__construct( $pathway );
         $this->gpml = $pathway->getGPML();
     }

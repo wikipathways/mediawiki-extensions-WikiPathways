@@ -25,7 +25,7 @@ namespace WikiPathways\WebService;
 /**
  * @namespace http://www.wikipathways.org/webservice
  */
-class WSIndexField {
+class IndexField {
     function __construct( $name, $values ) {
         $this->name = $name;
         $this->values = $values;

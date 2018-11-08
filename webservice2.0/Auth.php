@@ -25,7 +25,7 @@ namespace WikiPathways\WebService;
 /**
  * @namespace http://www.wikipathways.org/webservice
  **/
-class WSAuth {
+class Auth {
     /**
      * @var string $user The username
      **/

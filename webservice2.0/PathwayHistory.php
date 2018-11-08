@@ -25,7 +25,7 @@ namespace WikiPathways\WebService;
 /**
  * @namespace http://www.wikipathways.org/webservice
  */
-class PathwayHistory extends WSPathwayInfo {
+class PathwayHistory extends PathwayInfo {
     public function __construct( $pathway ) {
         parent::__construct( $pathway );
     }
@@ -35,7 +35,7 @@ class PathwayHistory extends WSPathwayInfo {
     }
 
     /**
-     * @var array of object WSHistoryRow $history - The pathway history
+     * @var array of object HistoryRow $history - The pathway history
      **/
     public $history = [];
 }

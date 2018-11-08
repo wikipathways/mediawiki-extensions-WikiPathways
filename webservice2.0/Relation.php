@@ -29,12 +29,12 @@ class Relation {
 
     public function __construct( $result ) {
         if ( $result->pwId_1 ) {
-            $this->pathway1 = new WSPathwayInfo(
+            $this->pathway1 = new PathwayInfo(
                 Pathway::newFromTitle( $result->pwId_1 )
             );
         }
         if ( $result->pwId_2 ) {
-            $this->pathway2 = new WSPathwayInfo(
+            $this->pathway2 = new PathwayInfo(
                 Pathway::newFromTitle( $result->pwId_2 )
             );
         }
@@ -43,12 +43,12 @@ class Relation {
     }
 
     /**
-     * @var object WSPathwayInfo $pathway1 for the first pathway
+     * @var object PathwayInfo $pathway1 for the first pathway
      */
     public $pathway1;
 
     /**
-     * @var object WSPathwayInfo $pathway2 for the second pathway
+     * @var object PathwayInfo $pathway2 for the second pathway
      */
     public $pathway2;
 

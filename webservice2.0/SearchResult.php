@@ -42,7 +42,7 @@ class SearchResult extends PathwayInfo {
             if ( in_array( $fn, $hit->getFieldNames() ) ) {
                 $v = $hit->getFieldValues( $fn );
                 if ( $v && count( $v ) > 0 ) {
-                    $this->fields[$fn] = new WSIndexField( $fn, $v );
+                    $this->fields[$fn] = new IndexField( $fn, $v );
                 }
             }
         }
@@ -54,7 +54,7 @@ class SearchResult extends PathwayInfo {
     public $score;
 
     /**
-     * @var array of object WSIndexField $fields - the url to the pathway
+     * @var array of object IndexField $fields - the url to the pathway
      **/
     public $fields;
 }

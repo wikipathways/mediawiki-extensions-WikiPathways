@@ -33,6 +33,10 @@
 		"SpecialWishList": "WikiPathways\\SpecialWishList",
 		"TissueAnalyzer": "WikiPathways\\TissueAnalyzer"
 	},
+	"AutoloadNamespaces": {
+		"WikiPathways": "src",
+		"WikiPathways\\WebService": "webservice2.0"
+	},
 	"AutoloadClasses": {
 		"WikiPathways\\BasePathwaysPager": "src/BasePathwaysPager.php",
 		"WikiPathways\\BatchDownloader": "src/BatchDownloader.php",
@@ -107,11 +111,24 @@
 		"WikiPathways\\ThumbPathwaysPager": "src/ThumbPathwaysPager.php",
 		"WikiPathways\\TissueAnalyzer": "src/TissueAnalyzer.php",
 		"WikiPathways\\TopWishes": "src/TopWishes.php",
-		"WikiPathways\\WebService\\Call": "webservice2.0/Call.php",
-		"WikiPathways\\WebService\\BC": "webservice2.0/BC.php",
 		"WikiPathways\\Wish": "src/Wish.php",
 		"WikiPathways\\Xref": "src/Xref.php",
 		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
+
+		"WikiPathways\\WebService\\BC": "webservice2.0/BC.php",
+		"WikiPathways\\WebService\\Call": "webservice2.0/Call.php",
+		"WikiPathways\\WebService\\CurationTag": "webservice2.0/CurationTag.php",
+		"WikiPathways\\WebService\\CurationTagHistory": "webservice2.0/CurationTagHistory.php",
+		"WikiPathways\\WebService\\Fault": "webservice2.0/Fault.php",
+		"WikiPathways\\WebService\\HistoryRow": "webservice2.0/HistoryRow.php",
+		"WikiPathways\\WebService\\IndexField": "webservice2.0/IndexField.php",
+		"WikiPathways\\WebService\\OntologyTerm": "webservice2.0/OntologyTerm.php",
+		"WikiPathways\\WebService\\Pathway": "webservice2.0/Pathway.php",
+		"WikiPathways\\WebService\\PathwayHistory": "webservice2.0/PathwayHistory.php",
+		"WikiPathways\\WebService\\PathwayInfo": "webservice2.0/PathwayInfo.php",
+		"WikiPathways\\WebService\\Relation": "webservice2.0/Relation.php",
+		"WikiPathways\\WebService\\SearchResult": "webservice2.0/SearchResult.php",
+
 		"WikiPathways\\wpi": "wpi.php"
 	},
 	"ExtensionFunctions": [

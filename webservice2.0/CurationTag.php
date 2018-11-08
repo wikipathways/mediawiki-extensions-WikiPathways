@@ -21,18 +21,22 @@
  * @author Mark A. Hershberger
  */
 namespace WikiPathways\WebService;
+
+use WikiPathways\Pathway;
+use Title;
+use User;
 /**
  * @namespace http://www.wikipathways.org/webservice
  **/
 class CurationTag {
     public function __construct( $metatag ) {
         $this->name = $metatag->getName();
-        $this->displayName = CurationTag::getDisplayName( $this->name );
+        $this->displayName = \WikiPathways\CurationTag::getDisplayName( $this->name );
         $title = Title::newFromId( $metatag->getPageId() );
         if ( $title ) {
             $pathway = Pathway::newFromTitle( $title );
             if ( $pathway->isReadable() && !$pathway->isDeleted() ) {
-                $this->pathway = new WSPathwayInfo( $pathway );
+                $this->pathway = new PathwayInfo( $pathway );
             }
         }
 
@@ -53,7 +57,7 @@ class CurationTag {
     public $displayName;
 
     /**
-     * @var object WSPathwayInfo $pathway The pathway this tag applies to
+     * @var object PathwayInfo $pathway The pathway this tag applies to
      */
     public $pathway;
 

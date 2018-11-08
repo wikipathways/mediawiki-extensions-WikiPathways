@@ -25,7 +25,7 @@ namespace WikiPathways\WebService;
 /**
  * @namespace http://www.wikipathways.org/webservice
  */
-class WSOntologyTerm {
+class OntologyTerm {
 
     /**
      * @var string $ontology - the ontology to which the term belongs

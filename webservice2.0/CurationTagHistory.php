@@ -21,6 +21,10 @@
  * @author Mark A. Hershberger
  */
 namespace WikiPathways\WebService;
+
+use Title;
+use User;
+
 /**
  * @namespace http://www.wikipathways.org/webservice
  **/

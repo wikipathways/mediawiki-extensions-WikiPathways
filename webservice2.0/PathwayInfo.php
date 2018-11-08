@@ -23,20 +23,23 @@
 
 namespace WikiPathways\WebService;
 
+use WikiPathways\Pathway;
+
 // Class definitions
 /**
  * @namespace http://www.wikipathways.org/webservice
  */
 class PathwayInfo {
-    function __construct( $pathway ) {
+    function __construct( Pathway $pathway ) {
         $this->id = $pathway->getIdentifier();
         $this->revision = $pathway->getLatestRevision();
         $this->species = $pathway->species();
-        $this->name = formatXml( $pathway->name() );
+        $this->name = Call::formatXml( $pathway->name() );
         $this->url = $pathway->getTitleObject()->getFullURL();
 
         // Hack to make response valid in case of missing revision
-        if ( !$this->revision ) { $this->revision = 0;
+        if ( !$this->revision ) {
+            $this->revision = 0;
         }
     }
 
