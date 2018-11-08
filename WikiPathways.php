@@ -251,7 +251,7 @@ $wgGroupPermissions['*'    ]['createtalk'] = false;
 $wgAllowSlowParserFunctions = true;
 
 # Logo
-$wgLogo = "$wgServer/extensions/WikiPathways/images/earth-or-pathway_text3_beta.png";
+$wgLogo = "$wgServer/extensions/WikiPathways/images/wplogo_new_solo.png";
 
 # Allow gpml extension and larger image files
 $wgFileExtensions = [ 'pdf', 'png', 'gif', 'jpg', 'jpeg', 'svg', 'gpml', 'mapp' ];
