@@ -27,7 +27,8 @@ class MimeTypes {
 		FILETYPE_GPML => "text/xml",
 		FILETYPE_PNG => "image/png",
 		"pdf" => "application/pdf",
-		"pwf" => "text/plain"
+		"pwf" => "text/plain",
+		"owl" => "application/vnd.biopax.rdf+xml"
 	];
 
 	/**

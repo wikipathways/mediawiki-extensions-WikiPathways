@@ -23,11 +23,11 @@ namespace WikiPathways\PathwayCache;
 use WikiPathways\Pathway;
 use WikiPathways\GPML\Converter;
 
-class PNG extends Base {
-	protected $mimeType = "image/png";
+class OWL extends Base {
+	protected $mimeType = "application/vnd.biopax.rdf+xml";
 
 	/**
-	 * Get the PNG for the given GPML
+	 * Get the OWL for the given GPML
 	 * @return string
 	 */
 	public function doRender() {
@@ -38,13 +38,13 @@ class PNG extends Base {
 			return false;
 		}
 
-		$png = $this->converter->getgpml2png(
+		$owl = $this->converter->getgpml2owl(
 			$gpml->fetchText(),
 			[]
 		);
-		if ( $png ) {
-			wfDebugLog( __METHOD__,  "Converted gpml to png\n" );
-			return $png;
+		if ( $owl ) {
+			wfDebugLog( __METHOD__,  "Converted gpml to owl\n" );
+			return $owl;
 		}
 		$err = error_get_last();
 		$pathId = $this->pathway->getId();

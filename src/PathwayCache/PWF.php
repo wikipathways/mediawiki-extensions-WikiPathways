@@ -23,11 +23,11 @@ namespace WikiPathways\PathwayCache;
 use WikiPathways\Pathway;
 use WikiPathways\GPML\Converter;
 
-class PNG extends Base {
-	protected $mimeType = "image/png";
+class PWF extends Base {
+	protected $mimeType = "text/plain";
 
 	/**
-	 * Get the PNG for the given GPML
+	 * Get the PWF for the given GPML
 	 * @return string
 	 */
 	public function doRender() {
@@ -38,13 +38,13 @@ class PNG extends Base {
 			return false;
 		}
 
-		$png = $this->converter->getgpml2png(
+		$pwf = $this->converter->getgpml2pwf(
 			$gpml->fetchText(),
 			[]
 		);
-		if ( $png ) {
-			wfDebugLog( __METHOD__,  "Converted gpml to png\n" );
-			return $png;
+		if ( $pwf ) {
+			wfDebugLog( __METHOD__,  "Converted gpml to pwf\n" );
+			return $pwf;
 		}
 		$err = error_get_last();
 		$pathId = $this->pathway->getId();
