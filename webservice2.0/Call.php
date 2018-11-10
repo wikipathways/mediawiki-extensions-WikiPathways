@@ -230,7 +230,7 @@ class Call {
 		global $wgUser, $wgAuth;
 
 		if ( $wgUser->isLoggedIn() ) {
-			return [ "auth" => $wgUser->mToken ];
+			return [ "auth" => $wgUser->getToken() ];
 		}
 
 		$user = User::newFromName( $name );
@@ -242,7 +242,7 @@ class Call {
 		if ( $user->checkPassword( $pass ) ) {
 			$wgAuth->updateUser( $user );
 			$wgUser = $user;
-			return [ "auth" => $user->mToken ];
+			return [ "auth" => $user->getToken() ];
 		} else {
 			// throw new Exception("Wrong password");
 			throw new Fault( "Sender", "Wrong password" );
@@ -261,7 +261,7 @@ class Call {
 		if ( $user->checkPassword( $pass ) ) {
 			$wgAuth->updateUser( $user );
 			$wgUser = $user;
-			return [ "auth" => $user->mToken ];
+			return [ "auth" => $user->getToken() ];
 		} else {
 			// throw new Exception("Wrong password");
 			throw new Fault( "Sender", "Wrong password" );
@@ -641,7 +641,7 @@ class Call {
 			throw new Fault( "Sender", "Invalid user name" );
 		}
 		$user->load();
-		if ( $user->mToken == $token ) {
+		if ( $user->getToken() == $token ) {
 			$wgAuth->updateUser( $user );
 			$wgUser = $user;
 		} else {
