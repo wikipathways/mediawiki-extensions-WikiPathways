@@ -140,7 +140,7 @@
 	"callback": "WikiPathways\\Hook::onRegistration",
 	"Hooks": {
 		"ContentGetParserOutput": "WikiPathways\\Hook::onContentGetParserOutput",
-		"AbortNewAccount": "abortOnBadDomain",
+		"AbortNewAccount": "WikiPathways\\Hook::abortOnBadDomain",
 		"ArticleSaveComplete":  [
 			"WikiPathways\\Hook::updateTags"
 		],

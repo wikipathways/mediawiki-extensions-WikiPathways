@@ -25,6 +25,7 @@ use Content;
 use ParserOptions;
 use ParserOutput;
 use Title;
+use User;
 
 class Hook {
 
@@ -259,5 +260,15 @@ class Hook {
 		ParserOutput &$po
 	) {
 		return !Pathway::$InternalUpdate;
+	}
+
+	/**
+	 * 
+	 */
+	public static function abortOnBadDomain(
+		User $user,
+		$message
+	) {
+		return true;
 	}
 }
