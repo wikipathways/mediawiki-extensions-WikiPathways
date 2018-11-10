@@ -139,30 +139,30 @@
 	],
 	"callback": "WikiPathways\\Hook::onRegistration",
 	"Hooks": {
-		"ContentGetParserOutput": "WikiPathways\\Hook::onContentGetParserOutput",
 		"AbortNewAccount": "WikiPathways\\Hook::abortOnBadDomain",
-		"ArticleSaveComplete":  [
-			"WikiPathways\\Hook::updateTags"
-		],
-		"userCan": [
-			"WikiPathways\\Hook::checkDeleted",
-			"WikiPathways\\Hook::checkSoleAuthor"
-		],
-		"LanguageGetMagic": [
-			"WikiPathways\\MagicWord::onLanguageGetMagic",
-			"WikiPathways\\Hook::pathwayMagic"
-		],
+		"ArticleSaveComplete": "WikiPathways\\Hook::updateTags",
+		"BeforePageDisplay": "WikiPathways\\Hook::stopDisplay",
+		"ContentGetParserOutput": "WikiPathways\\Hook::onContentGetParserOutput",
 		"LinkerMakeExternalLink":  "WikiPathways\\Hook::externalLink",
 		"MagicWordMagicWords": "WikiPathways\\MagicWord::onMagicWordMagicWords",
 		"MagicWordwgVariableIDs":  "WikiPathways\\MagicWord::onMagicWordwgVariableIDs",
-		"PageDisplay": "WikiPathways\\Hook::stopDisplay",
-		"ParserGetVariableValueSwitch":  "WikiPathways\\MagicWord::onParserGetVariableValueSwitch",
-		"userCan": "WikiPathways\\PermissionManager::checkRestrictions",
+		"ParserGetVariableValueSwitch": "WikiPathways\\MagicWord::onParserGetVariableValueSwitch",
+		"QuestyCaptchaCreateQnA": "WikiPathways\\Hook::onQuestyCaptchaCreateQnA",
+		"SpecialPageBeforeExecute": "WikiPathways\\Hook::onSpecialPageBeforeExecute",
 		"SkinTemplateContentActions": "WikiPathways\\PermissionManager::addPermissionTab",
 		"UnknownAction": "WikiPathways\\PermissionManager::permissionTabAction",
 		"MakeGlobalVariablesScript": [
 			"WikiPathways\\CurationTag::onMakeGlobalVariablesScript",
 			"WikiPathways\\XrefPanel::onMakeGlobalVariablesScript"
+		],
+		"userCan": [
+			"WikiPathways\\Hook::checkDeleted",
+			"WikiPathways\\Hook::checkSoleAuthor",
+			"WikiPathways\\PermissionManager::checkRestrictions"
+		],
+		"LanguageGetMagic": [
+			"WikiPathways\\MagicWord::onLanguageGetMagic",
+			"WikiPathways\\Hook::pathwayMagic"
 		]
 	},
 	"GroupPermissions": {

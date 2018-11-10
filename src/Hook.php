@@ -21,11 +21,14 @@
  */
 namespace WikiPathways;
 
+use Block;
 use Content;
 use ParserOptions;
 use ParserOutput;
+use RawMessage;
 use Title;
 use User;
+use UserBlockedError;
 
 class Hook {
 
@@ -47,7 +50,10 @@ class Hook {
 		// $wgAjaxExportList[] = "jsGetResults";
 		// $wgAjaxExportList[] = "jsSearchPathways";
 	}
-	// Probably better to put this in parser init hook
+
+	/**
+	 * Set up hooks for parsing.
+	 */
 	public static function pathwayViewer() {
 		global $wgParser;
 		$wgParser->setHook( "wishlist", "WikiPathways\\TopWishes::renderWishlist" );
@@ -92,6 +98,12 @@ class Hook {
 		);
 	}
 
+	/**
+	 * Set up all the magic words
+	 *
+	 * @param array &$magicWords to modify
+	 * @param string $langCode that we're modifying
+	 */
 	public static function pathwayMagic( &$magicWords, $langCode ) {
 		$magicWords['PathwayViewer'] = [ 0, 'PathwayViewer' ];
 		$magicWords['pwImage'] = [ 0, 'pwImage' ];
@@ -105,24 +117,24 @@ class Hook {
 
 	/* http://developers.pathvisio.org/ticket/1559 */
 	public static function stopDisplay( $output, $sk ) {
-		global $wgUser;
-
 		$title = $output->getPageTitle();
 		if ( 'mediawiki:questycaptcha-qna' === strtolower( $title )
 			|| 'mediawiki:questycaptcha-q&a' === strtolower( $title )
 		) {
-			if ( !$title->userCan( "edit" ) ) {
+			if ( !Title::newFromText( "MediaWiki:Questycaptcha-qna" )->userCan( "edit" ) ) {
 				$output->clearHTML();
+				throw new UserBlockedError( new Block(
+					$output->getUser()->getName(), 1, 1, 'secrets', 'indefinite'
+				) );
 
-				$wgUser->mBlock = new Block(
-					'127.0.0.1', 'WikiSysop', 'WikiSysop', 'none', 'indefinite'
-				);
-				$wgUser->mBlockedby = 0;
-
-				$output->blockedPage();
 				return false;
 			}
 		}
+	}
+
+	public static function onPageDisplay() {
+		global $wgCaptchaQuestions;
+		self::onQuestyCaptchaCreateQnA( $wgCaptchaQuestions );
 	}
 
 	/* http://www.pathvisio.org/ticket/1539 */
@@ -270,5 +282,49 @@ class Hook {
 		$message
 	) {
 		return true;
+	}
+
+	public static function onSpecialPageBeforeExecute( $specialPage, $subPage = null ) {
+		if ( $specialPage->getName() === "CreateAccount" && $subPage === null ) {
+			global $wgCaptchaQuestions;
+
+			self::onQuestyCaptchaCreateQnA( $wgCaptchaQuestions );
+		}
+
+	}
+
+	public static function onQuestyCaptchaCreateQnA( &$captchaQuestions ) {
+		$all = wfMessage( 'wp-questy-qna' )->text();
+		$qna = preg_split( "/\n=== Q&A ===\n/", $all, 2 );
+		$count = 0;
+
+		$captchaQuestions = [];
+		if ( !isset( $qna[1] ) ) {
+			throw new ErrorPageError( "questycaptcha-setup", 'wp-questy-no-qna' );
+		}
+		foreach ( preg_split( "/\n/", $qna[1] ) as $l ) {
+			if ( strtolower( substr( $l, 0, 2 ) ) == "q:" ) {
+				$msg = new RawMessage( trim( substr( $l, 2 ) ) );
+				$captchaQuestions[$count]["question"] = $msg->toString();
+			}
+
+			if ( strtolower( substr( $l, 0, 2 ) ) == "a:" ) {
+				$captchaQuestions[$count]["answer"] = trim( substr( $l, 2 ) );
+			}
+			if ( isset( $captchaQuestions[$count]["answer"] ) &&
+				 isset( $captchaQuestions[$count]["question"] ) ) {
+				// global $wgParser;
+				// $captchaQuestions[$count]["question"]
+				// 	= $wgParser->recursiveTagParse( $captchaQuestions[$count]["question"] );
+				$count++;
+			}
+		}
+		if ( $count < 1 ) {
+			throw new ErrorPageError( "questycaptcha-setup", 'wp-questy-no-qna-list' );
+		}
+		foreach ( $captchaQuestions as $index => $qna ) {
+			$captchaQuestions[$qna["question"]] = $qna["answer"];
+			unset( $captchaQuestions[$index] );
+		}
 	}
 }
