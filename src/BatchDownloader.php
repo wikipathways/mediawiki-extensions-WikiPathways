@@ -20,6 +20,8 @@
  */
 namespace WikiPathways;
 
+use Html;
+
 class BatchDownloader {
 	private $species;
 	private $fileType;
@@ -29,7 +31,8 @@ class BatchDownloader {
 	private $displayStats;
 
 	function __construct(
-		$species, $fileType, $listPage = '', $includeTag = '', $excludeTags = null, $displayStats = false
+		$species, $fileType, $listPage = '', $includeTag = '', $excludeTags = null,
+		$displayStats = false
 	) {
 		$this->species = $species;
 		$this->fileType = $fileType;
@@ -90,13 +93,16 @@ class BatchDownloader {
 			}
 			if ( $nrPathways > 0 ) {
 				// skip listing species with 0 pathways
-				$html .= tag( 'li',
-					tag( 'a', $species . $stats, [
-						'href' => WPI_URL . '/'.
-						"batchDownload.php?species=$species&fileType=$fileType$listParam$tagParam$excludeParam",
-						'target' => '_new'
-					] )
-				);
+				$html .=
+					  Html::element( 'li', [],
+									 Html::element( 'a', [
+										 'href' => WPI_URL
+										 . "/batchDownload.php?species=$species"
+										 . "&fileType=$fileType"
+										 . "$listParam$tagParam$excludeParam",
+										 'target' => '_new'
+									 ],  $species . $stats )
+					  );
 			}
 		}
 		$html = tag( 'ul', $html );
