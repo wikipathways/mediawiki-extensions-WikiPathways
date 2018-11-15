@@ -20,38 +20,7 @@
  */
 namespace WikiPathways\PathwayCache;
 
-use WikiPathways\Pathway;
-use WikiPathways\GPML\Converter;
-
-class OWL extends Base {
+use WikiPathways\PathwayCache\Convertible;
+class OWL extends Convertible {
 	protected $mimeType = "application/vnd.biopax.rdf+xml";
-
-	/**
-	 * Get the OWL for the given GPML
-	 * @return string
-	 */
-	public function doRender() {
-		$gpml = Factory::getCache( 'GPML', $this->pathway );
-
-		if ( !$gpml->isCached() ) {
-			error_log( "No file for GPML!" );
-			return false;
-		}
-
-		$owl = $this->converter->getgpml2owl(
-			$gpml->fetchText(),
-			[]
-		);
-		if ( $owl ) {
-			wfDebugLog( __METHOD__,  "Converted gpml to owl\n" );
-			return $owl;
-		}
-		$err = error_get_last();
-		$pathId = $this->pathway->getId();
-		$ver = $this->pathway->getActiveRevision();
-		$msg = "Trouble converting $pathId (v $ver) : {$err['message']}";
-		wfDebugLog( __METHOD__,  "$msg\n" );
-		error_log( $msg );
-		return false;
-	}
 }

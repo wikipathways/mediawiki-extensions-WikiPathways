@@ -37,6 +37,7 @@ class Factory {
 	public static function getCache( $type, Pathway $pathway ) {
 		$class = self::$prefix . strtoupper( $type );
 		if ( !class_exists( $class ) ) {
+			print($class);
 			throw new MWException( "No Cache object for $type!" );
 		}
 		$pathId = $pathway->getID();

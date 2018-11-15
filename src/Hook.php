@@ -252,10 +252,14 @@ class Hook {
 	function checkSoleAuthor( $title, $user, $action, &$result ) {
 		// Users are allowed to delete their own pathway
 		if ( $action == 'delete' && $title->getNamespace() == NS_PATHWAY ) {
+# TODO: Mark, this line is throwing an error:
+# Fatal error: Uncaught Error: Class 'WikiPathways\MWUtils' not found in /home/wikipathways.org/extensions/WikiPathways/src/Hook.php on line 256
+/*
 			if ( MWUtils::isOnlyAuthor( $user, $title->getArticleId() ) && $title->userCan( 'edit' ) ) {
 				$result = true;
 				return false;
 			}
+//*/
 		}
 		$result = null;
 		return true;

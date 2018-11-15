@@ -20,37 +20,7 @@
  */
 namespace WikiPathways\PathwayCache;
 
-use MWException;
-use WikiPathways\Pathway;
-use WikiPathways\GPML\Converter;
-
-class SVG extends Base {
-	public function doRender() {
-		wfDebugLog( __METHOD__,  "saveSvgCache() called\n" );
-		$json = Factory::getCache( 'JSON', $this->pathway );
-		if ( !$json->isCached() ) {
-			throw new MWException( "No JSON!" );
-		}
-		$svg = $this->converter->getpvjson2svg(
-			$json->fetchText(), [ "static" => false ]
-		);
-		if ( !$svg ) {
-			wfDebugLog(
-				__METHOD__,  "Unable to convert to svg."
-			);
-			return false;
-		}
-		return $svg;
-	}
-
-	/**
-	 * Get the SVG for the given JSON
-	 * @return string
-	 */
-	public function getSvg() {
-		wfDebugLog( __METHOD__,  "got pvjson in process of getting svg\n" );
-		wfDebugLog( __METHOD__,  "got svg\n" );
-		$this->svg = $svg;
-		return $svg;
-	}
+use WikiPathways\PathwayCache\Convertible;
+class SVG extends Convertible {
+	protected $mimeType = "image/svg+xml";
 }

@@ -20,38 +20,7 @@
  */
 namespace WikiPathways\PathwayCache;
 
-use WikiPathways\Pathway;
-use WikiPathways\GPML\Converter;
-
-class PNG extends Base {
+use WikiPathways\PathwayCache\Convertible;
+class PNG extends Convertible {
 	protected $mimeType = "image/png";
-
-	/**
-	 * Get the PNG for the given GPML
-	 * @return string
-	 */
-	public function doRender() {
-		$gpml = Factory::getCache( 'GPML', $this->pathway );
-
-		if ( !$gpml->isCached() ) {
-			error_log( "No file for GPML!" );
-			return false;
-		}
-
-		$png = $this->converter->getgpml2png(
-			$gpml->fetchText(),
-			[]
-		);
-		if ( $png ) {
-			wfDebugLog( __METHOD__,  "Converted gpml to png\n" );
-			return $png;
-		}
-		$err = error_get_last();
-		$pathId = $this->pathway->getId();
-		$ver = $this->pathway->getActiveRevision();
-		$msg = "Trouble converting $pathId (v $ver) : {$err['message']}";
-		wfDebugLog( __METHOD__,  "$msg\n" );
-		error_log( $msg );
-		return false;
-	}
 }

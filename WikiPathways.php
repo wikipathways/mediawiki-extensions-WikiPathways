@@ -87,6 +87,11 @@ $wpiURL = "$wgServer$wpiPathName";
 $wpiFileCache = "$IP/images/wikipathways";
 
 // File types
+# TODO: Mark, how should we handle the case where we need different SVGs,
+# for different purposes, e.g., one type for the viewer and another for a
+# stand-alone download? Or different types based on theme?
+#define( "FILETYPE_SVG", "svg" );
+#define( "FILETYPE_IMG", "react.svg" );
 define( "FILETYPE_IMG", "svg" );
 define( "FILETYPE_JSON", "json" );
 define( "FILETYPE_GPML", "gpml" );

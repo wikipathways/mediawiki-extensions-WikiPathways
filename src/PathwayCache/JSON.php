@@ -20,41 +20,7 @@
  */
 namespace WikiPathways\PathwayCache;
 
-use WikiPathways\Pathway;
-use WikiPathways\GPML\Converter;
-
-class JSON extends Base {
+use WikiPathways\PathwayCache\Convertible;
+class JSON extends Convertible {
 	protected $mimeType = "application/json";
-
-	/**
-	 * Get the JSON for this pathway, as a string (the active revision
-	 * will be used, see Pathway::getActiveRevision) Gets the JSON
-	 * representation of the GPML code, formatted to match the
-	 * structure of SVG, as a string.  TODO: we aren't caching this
-	 */
-	public function doRender() {
-		$gpml = Factory::getCache( 'GPML', $this->pathway );
-
-		if ( !$gpml->isCached() ) {
-			error_log( "No file for GPML!" );
-			return false;
-		}
-
-		$pathId = $this->pathway->getId();
-		$ver = $this->pathway->getActiveRevision();
-		$json = $this->converter->gpml2pvjson(
-			$gpml->fetchText(),
-			[ "identifier" => $pathId, "version" => $ver,
-			  "organism" => $this->pathway->getSpecies() ]
-		);
-		if ( $json ) {
-			wfDebugLog( __METHOD__,  "Converted gpml to pvjson\n" );
-			return $json;
-		}
-		$err = error_get_last();
-		$msg = "Trouble converting $pathId (v $ver) : {$err['message']}";
-		wfDebugLog( __METHOD__,  "$msg\n" );
-		error_log( $msg );
-		return false;
-	}
 }
