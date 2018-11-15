@@ -8,7 +8,7 @@
 ini_set( "error_reporting", 0 );
 
 $m = [];
-$wpiBridgeURL = 'http://webservice.bridgedb.org/';
+$wpiBridgeURL = 'https://webservice.bridgedb.org/';
 $url = $wpiBridgeURL;
 preg_match( '#bridgedb.php/?(.*)#', $_SERVER['REQUEST_URI'], $m );
 if ( isset( $m[1] ) && $m[1] ) {

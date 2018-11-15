@@ -47,23 +47,24 @@ class Convertible extends Base {
 	 * The file format will be determined by the
 	 * output file extension.
 	 *
-	 * @param string $gpmlFile source
-	 * @param string $outFile destination
+	 * @param string $gpmlFile path to source
+	 * @param string $outFile path to destination
+	 * @param array $opts = [] options
 	 * @return bool
 	 */
-	private function convert( $gpmlFile, $outFile, $opts ) {
+	private function convert( $gpmlFile, $outFile, $opts = [] ) {
 		if ( file_exists( $outFile ) ) {
 			return true;
 		}
 
-		$gpmlPath = $this->getFileLocation( FILETYPE_GPML );
+		#$gpmlPath = $this->getFileLocation( FILETYPE_GPML );
 		$identifier = $this->pathway->getId();
 		$version = $this->pathway->getActiveRevision();
 		$organism = $this->pathway->getSpecies();
 
 		# TODO: this doesn't seem to match what's going on elsewhere
 		Converter::convert(
-			$gpmlPath,
+			$gpmlFile,
 			$outFile,
 			[ "identifier" => $identifier,
 			  "version" => $version,
