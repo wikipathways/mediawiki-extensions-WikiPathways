@@ -620,6 +620,7 @@ class Call {
 			wfDebug( "COLOR EXPORTER: $cmd\n" );
 			exec( $cmd, $output, $status );
 
+			$msg = "";
 			foreach ( $output as $line ) {
 				$msg .= $line . "\n";
 			}
@@ -859,6 +860,9 @@ terms: " . $e );
 
 		$result = json_decode( $output );
 
+		if ( $result === null ) {
+			return $r["error"] = "Error decoding json: " . json_last_error();
+		}
 		if ( sizeof( $result->query->search ) == 0 ) {
 			return $r["error"] = "No results found";
 		}

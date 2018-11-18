@@ -48,6 +48,6 @@ class MimeTypes {
 	 * @return string type for the mimetype
 	 */
 	public static function getMimeType( $extension ) {
-		return self::$types[$extension];
+		return isset( self::$types[$extension] ) ? self::$types[$extension] : null;
 	}
 }
