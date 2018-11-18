@@ -116,6 +116,7 @@
 		"WikiPathways\\ThumbPathwaysPager": "src/ThumbPathwaysPager.php",
 		"WikiPathways\\TissueAnalyzer": "src/TissueAnalyzer.php",
 		"WikiPathways\\TopWishes": "src/TopWishes.php",
+		"WikiPathways\\Util": "src/Util.php",
 		"WikiPathways\\Wish": "src/Wish.php",
 		"WikiPathways\\Xref": "src/Xref.php",
 		"WikiPathways\\XrefPanel": "src/XrefPanel.php",
