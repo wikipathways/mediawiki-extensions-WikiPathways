@@ -33,7 +33,8 @@ use WikiPathways\Xref;
 class Call {
 	/**
 	 * Get a list of all available organisms.
-	 * @return array of string $organisms Array with the names of all supported organisms
+	 * @return array of string $organisms Array with the names of all
+	 * supported organisms
 	 **/
 	public static function listOrganisms() {
 		return [ "organisms" => \WikiPathways\Pathway::getAvailableSpecies() ];
@@ -42,7 +43,8 @@ class Call {
 	/**
 	 * Get a list of all available pathways.
 	 * @param string $organism The organism to filter by (optional)
-	 * @return array of object PathwayInfo $pathways Array of pathway info objects
+	 * @return array of object PathwayInfo $pathways Array of pathway
+	 * info objects
 	 **/
 	public static function listPathways( $organism=false ) {
 		try {
@@ -61,7 +63,8 @@ class Call {
 	/**
 	 * Get the GPML code for a pathway
 	 * @param string $pwId The pathway identifier
-	 * @param int $revision The revision number of the pathway (use 0 for most recent)
+	 * @param int $revision The revision number of the pathway (use 0
+	 * for most recent)
 	 * @return object Pathway $pathway The pathway
 	 **/
 	public static function getPathway( $pwId, $revision = 0 ) {
@@ -71,7 +74,10 @@ class Call {
 				$pathway->setActiveRevision( $revision );
 			}
 			$pwi = new Pathway( $pathway );
-			if ( !isset( $_REQUEST["format"] ) || $_REQUEST["format"] === "XML" ) {
+			if (
+				!isset( $_REQUEST["format"] )
+				|| $_REQUEST["format"] === "XML"
+			) {
 				$pwi->gpml = base64_encode( $pwi->gpml );
 			}
 			// return array("pathway" => base64_encode($pwi));
@@ -102,8 +108,8 @@ class Call {
 	/**
 	 * Get the revision history of the pathway.
 	 * @param string $pwId The pathway identifier
-	 * @param string $timestamp Limit by time, only history items after the given
-	 * time will be included.
+	 * @param string $timestamp Limit by time, only history items
+	 * after the given time will be included.
 	 * @return object PathwayHistory $history The pathway history
 	 **/
 	public static function getPathwayHistory( $pwId, $timestamp ) {
@@ -114,7 +120,10 @@ class Call {
 			$res = $dbr->select(
 				"revision",
 				[ "rev_id", "rev_user_text", "rev_timestamp", "rev_comment" ],
-				[ 'rev_page' => $id, 'rev_timestamp >= ' . $dbr->addQuotes( $timestamp ) ]
+				[
+					'rev_page' => $id,
+					'rev_timestamp >= ' . $dbr->addQuotes( $timestamp )
+				]
 			);
 
 			$hist = new PathwayHistory( $pathway );
@@ -152,7 +161,8 @@ class Call {
 
 		$gpml = self::decodeGpml( $gpml ); // checks if its base64
 
-		$file = fopen( '/home/wikipathways/log-update.txt', 'a' );
+		global $wpiPathwayUpdateLog;
+		$file = fopen( $wpiPathwayUpdateLog, 'a' );
 		$resp = -1;
 
 		try {
@@ -165,17 +175,20 @@ class Call {
 			// Only update if the given revision is the newest
 			// Or if this is a new pathway
 
-			if ( !$pathway->exists() || $revision == $pathway->getLatestRevision() ) {
+			if (
+				!$pathway->exists()
+				|| $revision == $pathway->getLatestRevision()
+			) {
 				fwrite( $file, "update pathway\n" );
 				$pathway->updatePathway( $gpml, $description );
 				$resp = $pathway->getLatestRevision();
 			} else {
 				fwrite( $file, "error - revision out of date\n" );
 				throw new Fault(
-					"Sender", "Revision out of date: your GPML code originates from "
-					. "an old revision. This means somebody else modified the pathway "
-					. "since you downloaded it. Please apply your changes on the newest"
-					. "version"
+					"Sender", "Revision out of date: your GPML code originates "
+					. "from an old revision. This means somebody else modified "
+					. "the pathway since you downloaded it. Please apply your "
+					. "changes on the newest version"
 				);
 			}
 		} catch ( Exception $e ) {
@@ -199,7 +212,8 @@ class Call {
 	 * @param string $gpml The GPML code for the new pathway
 	 * @param string $auth The authentication info
 	 * @param string $username The user name
-	 * @return object PathwayInfo $pathwayInfo The pathway info of the created pathway
+	 * @return object PathwayInfo $pathwayInfo The pathway info of the
+	 * created pathway
 	 **/
 	public static function createPathway( $gpml, $auth, $username ) {
 		$gpml = self::decodeGpml( $gpml );
@@ -210,7 +224,9 @@ class Call {
 				authenticate( $username, $auth, true );
 			}
 
-			$pathway = \WikiPathways\Pathway::createNewPathway( $gpml, "New pathway" );
+			$pathway = \WikiPathways\Pathway::createNewPathway(
+				$gpml, "New pathway"
+			);
 			return [ "pathwayInfo" => new PathwayInfo( $pathway ) ];
 		} catch ( Exception $e ) {
 			throw new Fault( "Receiver", $e );
@@ -222,7 +238,7 @@ class Call {
 	 * Start a logged in session, using an existing WikiPathways account.
 	 * This function will return an authentication code that can be used
 	 * to excecute methods that need authentication (e.g. updatePathway)
-	 * @param string $name The usernameset_include_path(get_include_path().PATH_SEPARATOR.realpath('../includes').PATH_SEPARATOR.realpath('../').PATH_SEPARATOR);
+	 * @param string $name The username
 	 * @param string $pass The password
 	 * @return string $auth The authentication code
 	 **/
@@ -273,7 +289,8 @@ class Call {
 	 * @param string $fileType The file type to convert to, e.g.
 	 * 'svg', 'png' or 'txt'
 	 * @param string $pwId The pathway identifier
-	 * @param int $revision The revision number of the pathway (use 0 for most recent)
+	 * @param int $revision The revision number of the pathway (use 0
+	 * for most recent)
 	 * @return base64Binary $data The converted file data (base64 encoded)
 	 **/
 	public static function getPathwayAs( $fileType, $pwId, $revision = 0 ) {
@@ -285,16 +302,15 @@ class Call {
 			throw new Fault( "Receiver", "Unable to get pathway: " . $e );
 		}
 
-		// if($fileType==="jpg" ||  $fileType==="pdf" ||  $fileType==="png")
-		// return $data;
-		// else
-		// var_dump($_REQUEST);
-		if ( !isset( $_REQUEST["format"] ) || strtolower( $_REQUEST["format"] ) === "xml" || $_REQUEST["format"] === "json" ) {
+		if (
+			!isset( $_REQUEST["format"] )
+			|| strtolower( $_REQUEST["format"] ) === "xml"
+			|| $_REQUEST["format"] === "json"
+		) {
 			return [ "data" => base64_encode( $data ) ];
-
-		} else { return [ "data" => $data ];
+		} else {
+			return [ "data" => $data ];
 		}
-		// return array("data" => "aa".$p->getFileLocation($fileType));
 	}
 
 	/**
@@ -302,12 +318,16 @@ class Call {
 	 * only retains items for a limited time, so it's not guaranteed
 	 * that you will get all changes since the given timestamp.
 	 * @param string $timestamp Get the changes after this time
-	 * @return array of object PathwayInfo $pathways A list of the changed pathways
+	 * @return array of object PathwayInfo $pathways A list of the
+	 * changed pathways
 	 **/
 	public static function getRecentChanges( $timestamp ) {
-		// check safety of $timestamp, must be exactly 14 digits and nothing else.
+		// check safety of $timestamp, must be exactly 14 digits and
+		// nothing else.
 		if ( !preg_match( "/^\d{14}$/", $timestamp ) ) {
-			throw new Fault( "Sender", "Invalid timestamp " . htmlentities( $timestamp ) );
+			throw new Fault(
+				"Sender", "Invalid timestamp " . htmlentities( $timestamp )
+			);
 		}
 
 		$dbr = wfGetDB( DB_SLAVE );
@@ -335,12 +355,16 @@ class Call {
 		while ( $row = $dbr->fetchRow( $res ) ) {
 			try {
 				$ts = $row['rc_title'];
-				$p = \WikiPathways\Pathway::newFromTitle( Title::newFromText( $ts, NS_PATHWAY ) );
+				$p = \WikiPathways\Pathway::newFromTitle(
+					Title::newFromText( $ts, NS_PATHWAY )
+				);
 				if ( !$p->getTitleObject()->isRedirect() && $p->isReadable() ) {
 					$objects[] = new PathwayInfo( $p );
 				}
 			} catch ( Exception $e ) {
-				wfDebug( "Unable to create pathway object for recent changes: $e" );
+				wfDebug(
+					"Unable to create pathway object for recent changes: $e"
+				);
 			}
 
 		}
@@ -352,7 +376,8 @@ class Call {
 	 * @param string $query The query, e.g. 'apoptosis'
 	 * @param string $species Optional, limit the query by species. Leave
 	 * blank to search on all species
-	 * @return array of object SearchResult $result Array of SearchResult objects
+	 * @return array of object SearchResult $result Array of
+	 * SearchResult objects
 	 **/
 	public static function findPathwaysByText( $query, $species = '' ) {
 		try {
@@ -371,9 +396,11 @@ class Call {
 	/**
 	 * Find pathways by a datanode xref.
 	 * @param array of string $ids The datanode identifier (e.g. 'P45985')
-	 * @param array of string $codes Optional, limit the query by database (e.g. 'S' for UniProt). Leave
-	 * blank to search on all databases
-	 * @return array of object SearchResult $result Array of SearchResult objects
+	 * @param array of string $codes Optional, limit the query by
+	 * database (e.g. 'S' for UniProt). Leave blank to search on all
+	 * databases
+	 * @return array of object SearchResult $result Array of
+	 * SearchResult objects
 	 **/
 	public static function findPathwaysByXref( $ids, $codes = '' ) {
 		try {
@@ -381,7 +408,9 @@ class Call {
 				if ( count( $codes ) == 1 ) { // One code for all ids
 					$codes = array_fill( 0, count( $ids ), $codes[0] );
 				} elseif ( count( $codes ) != count( $ids ) ) {
-					throw new Fault( "Sender", "Number of supplied ids does not match number of system codes" );
+					throw new Fault(
+						"Sender", "Number of supplied ids does not match "
+						. "number of system codes" );
 				}
 			} else {
 				$codes = array_fill( 0, count( $ids ), '' );
@@ -408,8 +437,10 @@ class Call {
 
 	/**
 	 * Find pathways by literature references.
-	 * @param string $query The query, can be a pubmed id, author name or title keyword.
-	 * @return array of object SearchResult $result Array of SearchResult objects
+	 * @param string $query The query, can be a pubmed id, author name
+	 * or title keyword.
+	 * @return array of object SearchResult $result Array of
+	 * SearchResult objects
 	 */
 	public static function findPathwaysByLiterature( $query ) {
 		try {
@@ -447,8 +478,10 @@ class Call {
 
 	/**
 	 * Find interactions.
-	 * @param string $query The name of an entity to find interactions for (e.g. 'P53')
-	 * @return array of object SearchResult $result Array of SearchResult objects
+	 * @param string $query The name of an entity to find interactions
+	 * for (e.g. 'P53')
+	 * @return array of object SearchResult $result Array of
+	 * SearchResult objects
 	 **/
 	public static function findInteractions( $query ) {
 		try {
@@ -469,12 +502,15 @@ class Call {
 	 * the number of datanodes on the pathway (due to a many-to-many mapping
 	 * between the different databases).
 	 * @param string $pwId The pathway identifier.
-	 * @param string $code The database code to translate to (e.g. 'S' for UniProt).
+	 * @param string $code The database code to translate to (e.g. 'S'
+	 * for UniProt).
 	 * @return array of string $xrefs The translated xrefs.
 	 */
 	public static function getXrefList( $pwId, $code ) {
 		try {
-			$list = PathwayIndex::listPathwayXrefs( new \WikiPathways\Pathway( $pwId ), $code );
+			$list = PathwayIndex::listPathwayXrefs(
+				new \WikiPathways\Pathway( $pwId ), $code
+			);
 			return [ "xrefs" => $list ];
 		} catch ( Exception $e ) {
 			throw new Fault( "Receiver", "Unable to process request: " . $e );
@@ -492,7 +528,9 @@ class Call {
 	 * @param string $username The user name
 	 * @return bool $success
 	 */
-	public static function saveCurationTag( $pwId, $tagName, $text, $revision, $auth, $username ) {
+	public static function saveCurationTag(
+		$pwId, $tagName, $text, $revision, $auth, $username
+	) {
 		if ( $auth ) {
 			authenticate( $username, $auth, true );
 		}
@@ -501,10 +539,7 @@ class Call {
 			$pathway = new \WikiPathways\Pathway( $pwId );
 			if ( $pathway->exists() ) {
 				$pageId = $pathway->getTitleObject()->getArticleId();
-				// if($revision !=  0)
-				CurationTag::saveTag( $pageId, $tagName, $text, $revision );
-				// else
-				// CurationTag::saveTag($pageId, $tagName, $text);
+				\WikiPathways\CurationTag::saveTag( $pageId, $tagName, $text, $revision );
 			}
 		} catch ( Exception $e ) {
 			wfDebug( "ERROR: $e" );
@@ -521,7 +556,9 @@ class Call {
 	 * @param string $username The user name
 	 * @return bool $success
 	 **/
-	public static function removeCurationTag( $pwId, $tagName, $auth, $username ) {
+	public static function removeCurationTag(
+		$pwId, $tagName, $auth, $username
+	) {
 		if ( $auth ) {
 			authenticate( $username, $auth, true );
 		}
@@ -530,7 +567,7 @@ class Call {
 			$pathway = new \WikiPathways\Pathway( $pwId );
 			if ( $pathway->exists() ) {
 				$pageId = $pathway->getTitleObject()->getArticleId();
-				CurationTag::removeTag( $tagName, $pageId );
+				\WikiPathways\CurationTag::removeTag( $tagName, $pageId );
 			}
 		} catch ( Exception $e ) {
 			wfDebug( "ERROR: $e" );
@@ -582,7 +619,7 @@ class Call {
 	public static function getCurationTagHistory( $pwId, $timestamp = 0 ) {
 		$pw = new \WikiPathways\Pathway( $pwId );
 		$pageId = $pw->getTitleObject()->getArticleId();
-		$hist = CurationTag::getHistory( $pageId, $timestamp );
+		$hist = \WikiPathways\CurationTag::getHistory( $pageId, $timestamp );
 		$wshist = [];
 		foreach ( $hist as $h ) {
 			$wshist[] = new CurationTagHistory( $h );
@@ -593,22 +630,30 @@ class Call {
 	/**
 	 * Get a colored image version of the pahtway.
 	 * @param string $pwId The pathway identifier
-	 * @param string $revision The revision of the pathway (use '0' for most recent)
-	 * @param array of string $graphId An array with graphIds of the objects to color
-	 * @param array of string $color An array with colors of the objects (should be the same length as $graphId)
+	 * @param string $revision The revision of the pathway (use '0'
+	 * for most recent)
+	 * @param array of string $graphId An array with graphIds of the
+	 * objects to color
+	 * @param array of string $color An array with colors of the
+	 * objects (should be the same length as $graphId)
 	 * @param string $fileType The image type (One of 'svg', 'pdf' or 'png').
 	 * @return base64Binary $data The image data (base64 encoded)
 	 **/
-	public static function getColoredPathway( $pwId, $revision, $graphId, $color, $fileType ) {
+	public static function getColoredPathway(
+		$pwId, $revision, $graphId, $color, $fileType
+	) {
 		try {
 			$p = new \WikiPathways\Pathway( $pwId );
 			$p->setActiveRevision( $revision );
 			$gpmlFile = realpath( $p->getFileLocation( FILETYPE_GPML ) );
 
-			$outFile = WPI_TMP_PATH . "/" . $p->getTitleObject()->getDbKey() . '.' . $fileType;
+			$outFile = WPI_TMP_PATH . "/" . $p->getTitleObject()->getDbKey()
+					 . '.' . $fileType;
 
 			if ( count( $color ) != count( $graphId ) ) {
-				throw new Exception( "Number of colors doesn't match number of graphIds" );
+				throw new Exception(
+					"Number of colors doesn't match number of graphIds"
+				);
 			}
 			$colorArg = '';
 			for ( $i = 0; $i < count( $color ); $i++ ) {
@@ -616,7 +661,8 @@ class Call {
 			}
 
 			$basePath = WPI_SCRIPT_PATH;
-			$cmd = "java -jar $basePath/bin/pathvisio_color_exporter.jar '$gpmlFile' '$outFile' $colorArg 2>&1";
+			$cmd = "java -jar $basePath/bin/pathvisio_color_exporter.jar "
+				 . "'$gpmlFile' '$outFile' $colorArg 2>&1";
 			wfDebug( "COLOR EXPORTER: $cmd\n" );
 			exec( $cmd, $output, $status );
 
@@ -625,7 +671,10 @@ class Call {
 				$msg .= $line . "\n";
 			}
 			if ( $status != 0 ) {
-				throw new Exception( "Unable to convert to $outFile:\nStatus:$status\nMessage:$msg" );
+				throw new Exception(
+					"Unable to convert to $outFile:\n"
+					. "Status:$status\nMessage:$msg"
+				);
 			}
 			$data = file_get_contents( $outFile );
 		} catch ( Exception $e ) {
@@ -651,8 +700,11 @@ class Call {
 		if ( $write ) { // Also check for write access
 			$rights = $user->getRights();
 			if ( !in_array( 'webservice_write', $rights ) ) {
-				throw new Fault( "Sender", "Account doesn't have write access for the web service. \n".
-								   "Contact the site administrator to request write permissions." );
+				throw new Fault(
+					"Sender", "Account doesn't have write access for the "
+					. "web service. \nContact the site administrator to "
+					. "request write permissions."
+				);
 			}
 		}
 	}
@@ -666,7 +718,9 @@ class Call {
 	 * @param string $user The username
 	 * @return bool $success
 	 */
-	public static function saveOntologyTag( $pwId, $term, $termId, $auth, $user ) {
+	public static function saveOntologyTag(
+		$pwId, $term, $termId, $auth, $user
+	) {
 		if ( $auth ) {
 			authenticate( $user, $auth, true );
 		}
@@ -737,8 +791,9 @@ class Call {
 
 			$termObjects = [];
 		} catch ( Exception $e ) {
-			throw new Fault( "Receiver", "Unable to get ontology
-terms: " . $e );
+			throw new Fault(
+				"Receiver", "Unable to get ontology terms: " . $e
+			);
 		}
 		return [ "terms" => $terms ];
 	}
@@ -772,8 +827,9 @@ terms: " . $e );
 
 			$termObjects = [];
 		} catch ( Exception $e ) {
-			throw new Fault( "Receiver", "Unable to get ontology
-terms: " . $e );
+			throw new Fault(
+				"Receiver", "Unable to get ontology terms: " . $e
+			);
 		}
 		return [ "terms" => $terms ];
 	}
@@ -781,7 +837,8 @@ terms: " . $e );
 	/**
 	 * Get a list of pathways tagged with a given ontology term
 	 * @param string $term The Ontology term
-	 * @return array of object PathwayInfo $pathways Array of pathway info objects
+	 * @return array of object PathwayInfo $pathways Array of pathway
+	 * info objects
 	 **/
 	public static function getPathwaysByOntologyTerm( $term ) {
 		try {
@@ -806,19 +863,23 @@ terms: " . $e );
 	}
 
 	/**
-	 * Get a list of pathways tagged with a ontology term which is the child of the given Ontology term
+	 * Get a list of pathways tagged with a ontology term which is the
+	 * child of the given Ontology term
 	 * @param string $term The Ontology term
-	 * @return array of object PathwayInfo $pathways Array of pathway info objects
+	 * @return array of object PathwayInfo $pathways Array of pathway
+	 * info objects
 	 **/
 	public static function getPathwaysByParentOntologyTerm( $term ) {
 		try {
 			$dbr = wfGetDB( DB_SLAVE );
-			// added OR statement as temporary fix while term_path method in otag is broken
+			// added OR statement as temporary fix while term_path
+			// method in otag is broken
 			$res = $dbr->select( 'ontology', '*', $dbr->makeList( [
-									 'term_path'
-									 . $dbr->buildLike( $dbr->anyString(), $term, $dbr->anyString() ),
-									 'term_id' => $term
-								 ], $dbr::LIST_OR ), __METHOD__ );
+				'term_path' . $dbr->buildLike(
+					$dbr->anyString(), $term, $dbr->anyString()
+				),
+				'term_id' => $term
+			], $dbr::LIST_OR ), __METHOD__ );
 			$objects = [];
 			while ( $row = $dbr->fetchObject( $res ) ) {
 				$pathway = \WikiPathways\Pathway::newFromTitle(
@@ -842,7 +903,10 @@ terms: " . $e );
 	}
 
 	public static function getUserByOrcid( $orcid ) {
-		$url = 'http://www.wikipathways.org/api.php?action=query&list=search&srwhat=text&srsearch=%22{{User+ORCID|'.$orcid.'}}%22&srnamespace=2&format=json';
+		$url = 'http://www.wikipathways.org/api.php'
+			 . '?action=query&list=search&srwhat=text'
+			 . '&srsearch=%22{{User+ORCID|'.$orcid.'}}%22'
+			 . '&srnamespace=2&format=json';
 
 		$ch = curl_init();
 
@@ -861,16 +925,19 @@ terms: " . $e );
 		$result = json_decode( $output );
 
 		if ( $result === null ) {
-			return $r["error"] = "Error decoding json: " . json_last_error();
+			$r["error"] = "Error decoding json: " . json_last_error();
 		}
 		if ( sizeof( $result->query->search ) == 0 ) {
-			return $r["error"] = "No results found";
+			$r["error"] = "No results found";
 		}
 		if ( sizeof( $result->query->search ) > 1 ) {
-			return $r["error"] = "Ambiguous result. 2 or more results were found";
+			$r["error"] = "Ambiguous result. 2 or more results were found";
 		}
 
-		return $r["success"] = $result->query->search[0]->title;
+		if ( !isset( $r["error"] ) ) {
+			$r["success"] = $result->query->search[0]->title;
+		}
+		return $r;
 	}
 
 	public static function isClearGPML( $xml ) {

@@ -44,41 +44,39 @@ class Util {
 
 	/**
 	 * Get all authors for a page
-	 * @param $pageId The article id
-	 * @return An array with the user ids of the authors
+	 * @param int $pageId The article id
+	 * @return array with the user ids of the authors
 	 */
 	public static function getAuthors( $pageId ) {
 		$users = [];
 		$dbr = wfGetDB( DB_SLAVE );
-		$query = "SELECT DISTINCT(rev_user) FROM revision WHERE " .
-			"rev_page = {$pageId}";
-		$res = $dbr->query( $query );
-		while ( $row = $dbr->fetchObject( $res ) ) {
-			$users[] = $row->rev_user;
+		$res = $dbr->select( "revision", "DISTINCT(rev_user) as user", [ "rev_page" => $pageId ] );
+		foreach ( $res as $row ) {
+			$users[] = $row->user;
 		}
-		$dbr->freeResult( $res );
 		return $users;
 	}
 
 	/**
 	 * Get the timestamp of the latest edit
+	 * @param int $inNS Only for this namespace
 	 */
-	public static function getLatestTimestamp( $namespace = '' ) {
-		$revision = Revision::newFromId( self::getLatestRevision( $namespace ) );
+	public static function getLatestTimestamp( $inNS = null ) {
+		$revision = Revision::newFromId( self::getLatestRevision( $inNS ) );
 		return $revision->getTimestamp();
 	}
 
 	/**
 	 * Get the latest revision for all pages.
-	 * @param $namespace Only include pages for the given namespace
+	 * @param int $inNS Only include pages for the given namespace
 	 */
-	public static function getLatestRevision( $namespace = '' ) {
+	public static function getLatestRevision( $inNS = null ) {
 		$dbr = wfGetDB( DB_SLAVE );
-		$ns = [];
-		if ( $namespace ) {
-			$ns['page_namespace'] = $namespace;
+		$namespace = [];
+		if ( $inNS !== null ) {
+			$namespace['page_namespace'] = $inNS;
 		}
-		$res = $dbr->select( "page", "MAX(page_latest) as latest", $ns );
+		$res = $dbr->select( "page", "MAX(page_latest) as latest", $namespace );
 		$row = $dbr->fetchObject( $res );
 		$rev = $row->latest;
 		$dbr->freeResult( $res );

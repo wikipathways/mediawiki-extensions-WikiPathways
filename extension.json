@@ -252,6 +252,8 @@
 		"remoteExtPath": "WikiPathways/modules"
 	},
 	"config": {
+		"prefix": "wpi",
+		"PathwayUpdateLog": "/home/wikipathways/log-update.txt"
 	},
 	"manifest_version": 1
 }
