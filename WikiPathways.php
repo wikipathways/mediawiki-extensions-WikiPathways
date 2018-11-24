@@ -417,3 +417,7 @@ unset( $_useEmail );
 
 $wgReCaptchaPublicKey = getenv( 'WP_RECAPTCHA_PUBLIC' );
 $wgReCaptchaPrivateKey = getenv( 'WP_RECAPTCHA_PRIVATE' );
+
+$indexServiceUrl = getenv( 'WP_INDEX_SERVICE' );
+
+
