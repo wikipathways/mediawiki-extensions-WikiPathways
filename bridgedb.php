@@ -8,8 +8,11 @@
 ini_set( "error_reporting", 0 );
 
 $m = [];
-$wpiBridgeURL = 'https://webservice.bridgedb.org/';
-$url = $wpiBridgeURL;
+$wpiBridgeUrl = getenv( 'WP_BRIDGE_URL' );
+if ( !$wpiBridgeUrl ) {
+    $wpiBridgeUrl = 'https://webservice.bridgedb.org/';
+}
+$url = $wpiBridgeUrl;
 preg_match( '#bridgedb.php/?(.*)#', $_SERVER['REQUEST_URI'], $m );
 if ( isset( $m[1] ) && $m[1] ) {
 	$url = $wpiBridgeURL . $m[1];

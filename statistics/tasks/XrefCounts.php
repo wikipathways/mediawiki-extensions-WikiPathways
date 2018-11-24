@@ -141,15 +141,17 @@ class XrefCounts
         fclose($fout);
     }
 
-    static function mapID($id, $system, $db, $ds) 
+    static function mapID($id, $system, $db, $ds)
     {
-        global $wpiBridgeUrl;
-        if(!$wpiBridgeUrl) { $wpiBridgeUrl = 'http://webservice.bridgedb.org/'; 
+        $wpiBridgeUrl = getenv( 'WP_BRIDGE_URL' );
+        if(!$wpiBridgeUrl) {
+            $wpiBridgeUrl = 'http://webservice.bridgedb.org/';
         }
 
         $mapped = array();
 
-        if($db == "metabolites") { $db = "Homo sapiens"; 
+        if($db == "metabolites") {
+            $db = "Homo sapiens";
         }
         $db_url = urlencode($db);
         $ds_url = urlencode($ds);
