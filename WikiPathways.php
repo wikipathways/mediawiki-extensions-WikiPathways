@@ -414,3 +414,6 @@ if ( getenv( 'WP_USEEMAIL' ) !== 'false') {
 }
 $wgEnableUserEmail = $wgEnotifUserTalk = $wgEnotifWatchlist = $_useEmail;
 unset( $_useEmail );
+
+$wgReCaptchaPublicKey = getenv( 'WP_RECAPTCHA_PUBLIC' );
+$wgReCaptchaPrivateKey = getenv( 'WP_RECAPTCHA_PRIVATE' );
