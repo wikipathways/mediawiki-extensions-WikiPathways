@@ -387,12 +387,6 @@ $wgPasswordSender = "no-reply@wikipathways.com";
 
 $wgContentHandlerTextFallback = 'serialize';
 
-// Disable email on test server
-$wgEnableEmail = true;
-$wgEnableUserEmail = false;
-$wgEnotifUserTalk = false;
-$wgEnotifWatchlist = false;
-
 $wgAllowUserJs = true;
 $wgAllowUserCss = true;
 
@@ -411,3 +405,12 @@ $wgRSSUrlNumberOfAllowedRedirects = 1;
 $wgAllowExternalImages = true;
 
 $wgEnableUploads=true;
+
+# for email field in account creation
+$wgEnableEmail = true;
+$_useEmail = false;
+if ( getenv( 'WP_USEEMAIL' ) !== 'false') {
+    $_useEmail = true;
+}
+$wgEnableUserEmail = $wgEnotifUserTalk = $wgEnotifWatchlist = $_useEmail;
+unset( $_useEmail );
