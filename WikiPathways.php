@@ -407,7 +407,7 @@ $_useEmail = false;
 if ( getenv( 'WP_USEEMAIL' ) !== 'false' ) {
 	$_useEmail = true;
 }
-$wgEnableUserEmail = $wgEnotifUserTalk = $wgEnotifWatchlist = $_useEmail;
+$wgEmailAuthentication = $wgEnableUserEmail = $wgEnotifUserTalk = $wgEnotifWatchlist = $_useEmail;
 unset( $_useEmail );
 
 $wgReCaptchaPublicKey = getenv( 'WP_RECAPTCHA_PUBLIC' );
