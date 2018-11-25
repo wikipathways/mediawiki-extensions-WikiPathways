@@ -26,6 +26,7 @@ use Content;
 use ParserOptions;
 use ParserOutput;
 use RawMessage;
+use RequestContext;
 use Title;
 use User;
 use UserBlockedError;
@@ -279,12 +280,30 @@ class Hook {
 	}
 
 	/**
-	 * 
+	 * @param User $user to be created
+	 * @param string &$message to return
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/AbortNewAccount
+	 * @deprecated
 	 */
-	public static function abortOnBadDomain(
-		User $user,
-		$message
-	) {
+	public static function abortOnBadDomain( User $user, &$message ) {
+		// Maybe?
+		$email = $user->getEmail();
+		$email = RequestContext::getMain()->getText( 'wpEmail' );
+		$emailSplitList = split( "@", $email, 2 );
+		if ( isset( $emailSplitList[1] ) ) {
+			$domain = $emailSplitList[1];
+			$badDomains = split( " ", getenv( "WP_BAD_EMAIL_DOMAINS" ) );
+			if ( in_array( $domain, $badDomains ) ) {
+				$message = "Your e-mail domain has been blocked";
+				return false;
+			}
+		} else {
+			$badEmails = split( " ", getenv( "WP_BAD_EMAILS" ) );
+			if ( in_array( $domain, $badEmails ) ) {
+				$message = "Your email has been blocked";
+				return false;
+			}
+		}
 		return true;
 	}
 
