@@ -20,15 +20,10 @@
  * @author Mark A. Hershberger
  */
 
-# Passwords and secrets and such
-if ( file_exists( "$IP/../pass.php" ) ) {
-    require_once "$IP/../pass.php";
-}
-
 if ( getenv( 'WP_USESSL' ) !== 'false' ) {
-    $scheme = "https";
+	$scheme = "https";
 } else {
-    $scheme = "http";
+	$scheme = "http";
 }
 $wgServer = "$scheme://" . getenv( 'WP_DOMAIN' );
 
@@ -90,8 +85,8 @@ $wpiFileCache = "$IP/images/wikipathways";
 # TODO: Mark, how should we handle the case where we need different SVGs,
 # for different purposes, e.g., one type for the viewer and another for a
 # stand-alone download? Or different types based on theme?
-#define( "FILETYPE_SVG", "svg" );
-#define( "FILETYPE_IMG", "react.svg" );
+# define( "FILETYPE_SVG", "svg" );
+# define( "FILETYPE_IMG", "react.svg" );
 define( "FILETYPE_IMG", "svg" );
 define( "FILETYPE_JSON", "json" );
 define( "FILETYPE_GPML", "gpml" );
@@ -404,20 +399,18 @@ $wgAllowImageTag = true;
 $wgRSSUrlNumberOfAllowedRedirects = 1;
 $wgAllowExternalImages = true;
 
-$wgEnableUploads=true;
+$wgEnableUploads = true;
 
 # for email field in account creation
 $wgEnableEmail = true;
 $_useEmail = false;
-if ( getenv( 'WP_USEEMAIL' ) !== 'false') {
-    $_useEmail = true;
+if ( getenv( 'WP_USEEMAIL' ) !== 'false' ) {
+	$_useEmail = true;
 }
-$wgEnableUserEmail = $wgEnotifUserTalk = $wgEnotifWatchlist = $_useEmail;
+$wgEmailAuthentication = $wgEnableUserEmail = $wgEnotifUserTalk = $wgEnotifWatchlist = $_useEmail;
 unset( $_useEmail );
 
 $wgReCaptchaPublicKey = getenv( 'WP_RECAPTCHA_PUBLIC' );
 $wgReCaptchaPrivateKey = getenv( 'WP_RECAPTCHA_PRIVATE' );
 
 $indexServiceUrl = getenv( 'WP_INDEX_SERVICE' );
-
-
