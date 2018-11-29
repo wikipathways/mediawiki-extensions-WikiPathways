@@ -75,7 +75,7 @@
 		"WikiPathways\\PathwayCache\\JSON": "src/PathwayCache/JSON.php",
 		"WikiPathways\\PathwayCache\\PNG": "src/PathwayCache/PNG.php",
 		"WikiPathways\\PathwayCache\\SVG": "src/PathwayCache/SVG.php",
-		"WikiPathways\\PathwayCache\\REACT.SVG": "src/PathwayCache/REACT.SVG.php",
+		"WikiPathways\\PathwayCache\\REACT": "src/PathwayCache/REACT.php",
 		"WikiPathways\\PathwayCache\\TXT": "src/PathwayCache/TXT.php",
 		"WikiPathways\\PathwayCache\\OWL": "src/PathwayCache/OWL.php",
 		"WikiPathways\\PathwayCache\\PDF": "src/PathwayCache/PDF.php",

@@ -24,33 +24,7 @@ use MWException;
 use WikiPathways\Pathway;
 use WikiPathways\GPML\Converter;
 
-class "REACT.SVG" extends Base {
-	public function doRender() {
-		wfDebugLog( __METHOD__,  "saveSvgCache() called\n" );
-		$json = Factory::getCache( 'JSON', $this->pathway );
-		if ( !$json->isCached() ) {
-			throw new MWException( "No JSON!" );
-		}
-		$svg = $this->converter->getpvjson2svg(
-			$json->fetchText(), [ "static" => false ]
-		);
-		if ( !$svg ) {
-			wfDebugLog(
-				__METHOD__,  "Unable to convert to svg."
-			);
-			return false;
-		}
-		return $svg;
-	}
-
-	/**
-	 * Get the SVG for the given JSON
-	 * @return string
-	 */
-	public function getSvg() {
-		wfDebugLog( __METHOD__,  "got pvjson in process of getting svg\n" );
-		wfDebugLog( __METHOD__,  "got svg\n" );
-		$this->react.svg = $svg;
-		return $svg;
-	}
+class REACT extends Convertible {
+        # TODO: should this be the same as what we have for the SVG class?
+	protected $mimeType = "image/svg+xml";
 }
