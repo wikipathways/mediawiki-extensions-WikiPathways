@@ -23,6 +23,7 @@ namespace WikiPathways;
 
 class MimeTypes {
 	private static $types = [
+		FILETYPE_SVG => "image/svg+xml",
 		FILETYPE_IMG => "image/svg+xml",
 		FILETYPE_GPML => "text/xml",
 		FILETYPE_PNG => "image/png",
