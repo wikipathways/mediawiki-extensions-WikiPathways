@@ -288,17 +288,16 @@ class Hook {
 	public static function abortOnBadDomain( User $user, &$message ) {
 		// Maybe?
 		$email = $user->getEmail();
-		$email = RequestContext::getMain()->getText( 'wpEmail' );
-		$emailSplitList = split( "@", $email, 2 );
+		$emailSplitList = preg_split( "/@/", $email, 2 );
 		if ( isset( $emailSplitList[1] ) ) {
 			$domain = $emailSplitList[1];
-			$badDomains = split( " ", getenv( "WP_BAD_EMAIL_DOMAINS" ) );
+			$badDomains = preg_split( "/\ /", getenv( "WP_BAD_EMAIL_DOMAINS" ) );
 			if ( in_array( $domain, $badDomains ) ) {
 				$message = "Your e-mail domain has been blocked";
 				return false;
 			}
 		} else {
-			$badEmails = split( " ", getenv( "WP_BAD_EMAILS" ) );
+			$badEmails = preg_split( "/\ /", getenv( "WP_BAD_EMAILS" ) );
 			if ( in_array( $domain, $badEmails ) ) {
 				$message = "Your email has been blocked";
 				return false;
