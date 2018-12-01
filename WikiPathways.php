@@ -35,8 +35,8 @@ $wgSitename = "WikiPathways";
 
 wfLoadExtensions( [
 	"Cite",
-	"ConfirmEdit",
-#	"ConfirmEdit/QuestyCaptcha",
+	#"ConfirmEdit",
+	"ConfirmEdit/QuestyCaptcha",
 	"CodeEditor",
 	"EmbedVideo",
 	"Gadgets",
