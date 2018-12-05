@@ -24,7 +24,7 @@ use MWException;
 use WikiPathways\Pathway;
 use WikiPathways\GPML\Converter;
 
-class REACT extends Convertible {
+class PVJSSVG extends Convertible {
         # TODO: should this be the same as what we have for the SVG class?
 	protected $mimeType = "image/svg+xml";
 }

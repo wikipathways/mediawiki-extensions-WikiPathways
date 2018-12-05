@@ -2,7 +2,7 @@
 global $wgScriptPath;
 
 // File types
-define( "FILETYPE_IMG", "react" );
+define( "FILETYPE_IMG", "pvjssvg" );
 define( "FILETYPE_SVG", "svg" );
 define( "FILETYPE_GPML", "gpml" );
 define( "FILETYPE_MAPP", "mapp" );

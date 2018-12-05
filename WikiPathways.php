@@ -86,7 +86,7 @@ $wpiFileCache = "$IP/images/wikipathways";
 # for different purposes, e.g., one type for the viewer and another for a
 # stand-alone download? Or different types based on theme?
 define( "FILETYPE_SVG", "svg" );
-define( "FILETYPE_IMG", "react" );
+define( "FILETYPE_IMG", "pvjssvg" );
 define( "FILETYPE_JSON", "json" );
 define( "FILETYPE_GPML", "gpml" );
 define( "FILETYPE_MAPP", "mapp" );
