@@ -173,6 +173,7 @@ $wgArticlePath = "/$1";
 $wgUsePathInfo = true;
 $wgShowExceptionDetails = true;
 $wgShowSQLErrors = true;
+#$wgShowDBErrorBacktrace = true;
 
 $wgReadOnlyFile = "readonly.enable";
 
