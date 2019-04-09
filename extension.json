@@ -26,7 +26,6 @@
 		"BrowsePathwaysPage": "WikiPathways\\BrowsePathways",
 		"MostEditedPathwaysPage": "WikiPathways\\MostEditedPathways",
 		"NewPathwaysPage": "WikiPathways\\NewPathways",
-		"OntologyIndex": "WikiPathways\\OntologyIndex",
 		"PopularPathwaysPage": "WikiPathways\\PopularPathways",
 		"SearchPathways": "WikiPathways\\SearchPathways",
 		"ShowError": "WikiPathways\\ShowError",
