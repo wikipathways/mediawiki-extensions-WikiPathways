@@ -72,6 +72,7 @@ class PathwayBibliography {
 			if ( (string)$xref->ID && ( strtolower( $xref->DB ) == 'pubmed' ) ) {
 				$l = new Linker();
 				$out .= ' '. $l->makeExternalLink( 'http://www.ncbi.nlm.nih.gov/pubmed/' . $xref->ID, "PubMed" );
+				$out .= ' '. $l->makeExternalLink( 'https://europepmc.org/abstract/MED/' . $xref->ID, "Europe PMC" );
 			}
 		}
 
